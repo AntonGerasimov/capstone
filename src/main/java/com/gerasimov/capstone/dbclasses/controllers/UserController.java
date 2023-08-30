@@ -36,13 +36,7 @@ public class UserController {
 
     @PostMapping
     public String addUser(@ModelAttribute("user") User user) {
-        String firstName = user.getFullName().getFirstName();
-        String lastName = user.getFullName().getLastName();
-        FullName fullName = new FullName(firstName, lastName);
-
-
-        User updatedUser =user.withFullName(firstName, lastName);
-        userService.saveUser(updatedUser);
+        userService.saveUser(user);
         return "redirect:/users"; // Redirect to the user list page after successful addition
     }
 }
