@@ -1,76 +1,75 @@
-CREATE DATABASE IF NOT EXISTS RestaurantDB;
+CREATE DATABASE IF NOT EXISTS restaurantdb;
 
-USE RestaurantDB;
+USE restaurantdb;
 
-CREATE TABLE IF NOT EXISTS ROLES
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS dishes;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS addresses;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS roles;
+
+CREATE TABLE roles
 (
-    ROLE_ID         INT NOT NULL,
-    ROLE_NAME       VARCHAR(14),
-    PRIMARY KEY (ROLE_ID)
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    role_name       VARCHAR(14)
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS USERS
+CREATE TABLE users
 (
-    USER_ID         INT AUTO_INCREMENT PRIMARY KEY,
-    FIRST_NAME      VARCHAR(14),
-    LAST_NAME       VARCHAR(14),
-    EMAIL           VARCHAR(50) NOT NULL UNIQUE,
-    USERNAME        VARCHAR(14),
-    PASSWORD        VARCHAR(14),
-    ROLE_ID         INT,
-    IS_ACTIVE       BOOLEAN,
-    CONSTRAINT FK_USER_ROLE FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ROLE_ID)
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    first_name      VARCHAR(14),
+    last_name       VARCHAR(14),
+    email           VARCHAR(50) NOT NULL UNIQUE,
+    username        VARCHAR(14),
+    password        VARCHAR(14),
+    role_id         INT,
+    is_active       BOOLEAN,
+    CONSTRAINT fk_user_role FOREIGN KEY (role_id) REFERENCES roles (id)
 
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS ADDRESSES
+CREATE TABLE addresses
 (
-    ADDRESS_ID      INT NOT NULL,
-    USER_ID         INT,
-    STREET          VARCHAR(20),
-    HOUSE           VARCHAR(5),
-    APARTMENT       VARCHAR(5),
-    PRIMARY KEY (ADDRESS_ID),
-    CONSTRAINT FK_ADDRESS_USER FOREIGN KEY (USER_ID) REFERENCES USERS (USER_ID)
-) ENGINE=InnoDB;
-
-
-CREATE TABLE IF NOT EXISTS ORDERS
-(
-    ORDER_ID        INT NOT NULL,
-    CUSTOMER_ID     INT,
-    ORDER_DATETIME  DATETIME,
-    ORDER_STATUS    VARCHAR(14),
-    DELIVERY_ADDRESS_ID INT,
-    PRIMARY KEY (ORDER_ID),
-    CONSTRAINT FK_ORDER_CUSTOMER FOREIGN KEY (CUSTOMER_ID) REFERENCES USERS (USER_ID),
-    CONSTRAINT FK_ORDER_ADDRESS FOREIGN KEY (DELIVERY_ADDRESS_ID) REFERENCES ADDRESSES (ADDRESS_ID)
-) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS DISHES
-(
-    DISH_ID         INT NOT NULL,
-    DISH_NAME       VARCHAR(14),
-    DESCRIPTION     VARCHAR(200),
-    PRICE           DECIMAL,
-    IS_AVAILABLE    BOOLEAN,
-    PRIMARY KEY (DISH_ID)
-) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS ORDER_ITEMS
-(
-    ORDER_ITEM_ID   INT NOT NULL,
-    ORDER_ID        INT NOT NULL,
-    DISH_ID         INT NOT NULL,
-    DISH_PRICE      DECIMAL,
-    QUANTITY        INT NOT NULL,
-    PRIMARY KEY (ORDER_ITEM_ID),
-    FOREIGN KEY (ORDER_ID) REFERENCES ORDERS (ORDER_ID),
-    FOREIGN KEY (DISH_ID) REFERENCES DISHES (DISH_ID)
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    user_id         INT,
+    street          VARCHAR(20),
+    house           VARCHAR(5),
+    apartment       VARCHAR(5),
+    CONSTRAINT fk_address_user FOREIGN KEY (user_id) REFERENCES users (id)
 ) ENGINE=InnoDB;
 
 
+CREATE TABLE orders
+(
+    id                  INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id         INT,
+    created             DATETIME,
+    status              VARCHAR(14),
+    delivery_address_id INT,
+    CONSTRAINT fk_order_customer FOREIGN KEY (customer_id) REFERENCES users (id),
+    CONSTRAINT fk_order_address FOREIGN KEY (delivery_address_id) REFERENCES addresses (id)
+) ENGINE=InnoDB;
 
+CREATE TABLE dishes
+(
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    name            VARCHAR(14),
+    description     VARCHAR(200),
+    category        VARCHAR(50),
+    price           DECIMAL(8, 2),
+    is_available    BOOLEAN
+) ENGINE=InnoDB;
 
+CREATE TABLE order_items
+(
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    order_id        INT NOT NULL,
+    dish_id         INT NOT NULL,
+    dish_price      DECIMAL(8, 2),
+    quantity        INT NOT NULL CHECK (quantity > 0),
+    FOREIGN KEY (order_id) REFERENCES orders (id),
+    FOREIGN KEY (dish_id) REFERENCES dishes (id)
+) ENGINE=InnoDB;
 
 COMMIT;
