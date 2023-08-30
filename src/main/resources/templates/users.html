@@ -1,0 +1,19 @@
+<!-- src/main/resources/templates/users.html -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User List</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1>User List</h1>
+<ul>
+    <li th:each="user : ${users}">
+        id: <span th:text="${user.id}"></span>,
+        Name: <span th:text="${user.fullName}"></span>
+        Email: <span th:text="${user.email}"></span>
+    </li>
+</ul>
+<a th:href="@{/users/new}" class="btn btn-primary">Add New User</a>
+</body>
+</html>

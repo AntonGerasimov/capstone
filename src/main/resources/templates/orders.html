@@ -1,0 +1,16 @@
+<!-- src/main/resources/templates/orders.html -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Order List</title>
+</head>
+<body>
+<h1>Order List</h1>
+<ul>
+    <li th:each="order : ${orders}">
+        id: <span th:text="${order.id}"></span>,
+        Customer: <span th:text="${order.customer}"></span>
+    </li>
+</ul>
+</body>
+</html>
