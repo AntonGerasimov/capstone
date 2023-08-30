@@ -1,9 +1,7 @@
 package com.gerasimov.capstone.dbclasses.controllers;
 
-import com.gerasimov.capstone.dbclasses.domain.Address;
-import com.gerasimov.capstone.dbclasses.domain.User;
+import com.gerasimov.capstone.dbclasses.domain.AddressDto;
 import com.gerasimov.capstone.dbclasses.services.AddressService;
-import com.gerasimov.capstone.dbclasses.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +20,7 @@ public class AddressController {
 
     @GetMapping("/addresses")
     public ModelAndView getAllAddresses(Model model){
-        List<Address> addresses = addressService.getAllAddresses();
+        List<AddressDto> addresses = addressService.getAllAddresses();
         model.addAttribute("addresses", addresses);
         return new ModelAndView("addresses");
     }

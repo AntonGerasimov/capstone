@@ -1,13 +1,9 @@
 package com.gerasimov.capstone.dbclasses.services;
 
-import com.gerasimov.capstone.dbclasses.domain.Address;
-import com.gerasimov.capstone.dbclasses.domain.User;
-import com.gerasimov.capstone.dbclasses.entity.AddressEntity;
-import com.gerasimov.capstone.dbclasses.entity.UserEntity;
+import com.gerasimov.capstone.dbclasses.domain.AddressDto;
+import com.gerasimov.capstone.dbclasses.entity.Address;
 import com.gerasimov.capstone.dbclasses.mappers.AddressMapper;
-import com.gerasimov.capstone.dbclasses.mappers.UserMapper;
 import com.gerasimov.capstone.dbclasses.repositories.AddressRepository;
-import com.gerasimov.capstone.dbclasses.repositories.RoleRepository;
 import com.gerasimov.capstone.dbclasses.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,9 +27,9 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<Address> getAllAddresses(){
-        List<AddressEntity> addressEntities = addressRepository.findAll();
-        List<Address> addresses = addressEntities.stream()
+    public List<AddressDto> getAllAddresses(){
+        List<Address> addressEntities = addressRepository.findAll();
+        List<AddressDto> addresses = addressEntities.stream()
                 .map(addressMapper::mapAddressEntityToDomain)
                 .collect(Collectors.toList());
         return addresses;

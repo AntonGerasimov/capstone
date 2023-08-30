@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Table(name = "DISHES")
 @Getter
 @Setter
-public class DishEntity {
+public class Dish {
     @Id
     private Long dishId;
     private String dishName;

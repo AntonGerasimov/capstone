@@ -1,8 +1,6 @@
 package com.gerasimov.capstone.dbclasses.controllers;
 
-import com.gerasimov.capstone.dbclasses.domain.Address;
-import com.gerasimov.capstone.dbclasses.domain.Dish;
-import com.gerasimov.capstone.dbclasses.services.AddressService;
+import com.gerasimov.capstone.dbclasses.domain.DishDto;
 import com.gerasimov.capstone.dbclasses.services.DishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -23,7 +21,7 @@ public class DishController {
 
     @GetMapping("/dishes")
     public ModelAndView getAllDishes(Model model){
-        List<Dish> dishes = dishService.getAllDishes();
+        List<DishDto> dishes = dishService.getAllDishes();
         model.addAttribute("dishes", dishes);
         return new ModelAndView("dishes");
     }

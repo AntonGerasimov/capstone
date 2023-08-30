@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 @Getter
 @Setter
-public class UserEntity {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,11 +22,11 @@ public class UserEntity {
     private Long roleId;
     private boolean isActive = true;
 
-    public UserEntity(){
+    public User(){
 
     }
 
-    public UserEntity(String firstName, String lastName, String email, String username, String password, Long roleId, boolean isActive){
+    public User(String firstName, String lastName, String email, String username, String password, Long roleId, boolean isActive){
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

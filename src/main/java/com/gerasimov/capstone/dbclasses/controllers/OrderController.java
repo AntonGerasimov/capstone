@@ -1,8 +1,6 @@
 package com.gerasimov.capstone.dbclasses.controllers;
 
-import com.gerasimov.capstone.dbclasses.domain.Dish;
-import com.gerasimov.capstone.dbclasses.domain.Order;
-import com.gerasimov.capstone.dbclasses.services.DishService;
+import com.gerasimov.capstone.dbclasses.domain.OrderDto;
 import com.gerasimov.capstone.dbclasses.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -22,7 +20,7 @@ public class OrderController {
 
     @GetMapping("/orders")
     public ModelAndView getAllOrders(Model model){
-        List<Order> orders = orderService.getAllOrders();
+        List<OrderDto> orders = orderService.getAllOrders();
         model.addAttribute("orders", orders);
         return new ModelAndView("orders");
     }

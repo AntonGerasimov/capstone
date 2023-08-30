@@ -1,14 +1,12 @@
 package com.gerasimov.capstone.dbclasses.mappers;
 
-import com.gerasimov.capstone.dbclasses.domain.Address;
-import com.gerasimov.capstone.dbclasses.domain.FullAddress;
-import com.gerasimov.capstone.dbclasses.domain.Order;
-import com.gerasimov.capstone.dbclasses.domain.User;
-import com.gerasimov.capstone.dbclasses.entity.AddressEntity;
-import com.gerasimov.capstone.dbclasses.entity.OrderEntity;
-import com.gerasimov.capstone.dbclasses.entity.UserEntity;
+import com.gerasimov.capstone.dbclasses.domain.AddressDto;
+import com.gerasimov.capstone.dbclasses.domain.OrderDto;
+import com.gerasimov.capstone.dbclasses.domain.UserDto;
+import com.gerasimov.capstone.dbclasses.entity.Address;
+import com.gerasimov.capstone.dbclasses.entity.Order;
+import com.gerasimov.capstone.dbclasses.entity.User;
 import com.gerasimov.capstone.dbclasses.repositories.AddressRepository;
-import com.gerasimov.capstone.dbclasses.repositories.DishRepository;
 import com.gerasimov.capstone.dbclasses.repositories.OrderRepository;
 import com.gerasimov.capstone.dbclasses.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +31,16 @@ public class OrderMapper {
         this.addressMapper = addressMapper;
     }
 
-    public Order mapOrderEntityToDomain(OrderEntity orderEntity) {
+    public OrderDto mapOrderEntityToDomain(Order orderEntity) {
         Long id = orderEntity.getOrderId();
         Long customerId = orderEntity.getCustomerId();
-        UserEntity customerEntity = userRepository.findById(customerId).orElse(null);
-        User customer = userMapper.mapUserEntityToDomain(customerEntity);
+        User customerEntity = userRepository.findById(customerId).orElse(null);
+        UserDto customer = userMapper.mapUserEntityToDomain(customerEntity);
         LocalDateTime orderDateTime = orderEntity.getOrderDatetime();
         String status = orderEntity.getOrderStatus();
         Long addressId = orderEntity.getDeliveryAddressId();
-        AddressEntity addressEntity = addressRepository.getById(addressId);
-        Address address = addressMapper.mapAddressEntityToDomain(addressEntity);
-        return new Order(id, customer, orderDateTime, status, address);
+        Address addressEntity = addressRepository.getById(addressId);
+        AddressDto address = addressMapper.mapAddressEntityToDomain(addressEntity);
+        return new OrderDto(id, customer, orderDateTime, status, address);
     }
 }

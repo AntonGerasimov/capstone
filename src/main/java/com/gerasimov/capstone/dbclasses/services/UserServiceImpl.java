@@ -1,7 +1,7 @@
 package com.gerasimov.capstone.dbclasses.services;
 
-import com.gerasimov.capstone.dbclasses.domain.User;
-import com.gerasimov.capstone.dbclasses.entity.UserEntity;
+import com.gerasimov.capstone.dbclasses.domain.UserDto;
+import com.gerasimov.capstone.dbclasses.entity.User;
 import com.gerasimov.capstone.dbclasses.mappers.UserMapper;
 import com.gerasimov.capstone.dbclasses.repositories.RoleRepository;
 import com.gerasimov.capstone.dbclasses.repositories.UserRepository;
@@ -27,17 +27,17 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<User> getAllUsers(){
-        List<UserEntity> userEntities = userRepository.findAll();
-        List<User> users = userEntities.stream()
+    public List<UserDto> getAllUsers(){
+        List<User> userEntities = userRepository.findAll();
+        List<UserDto> users = userEntities.stream()
                 .map(userMapper::mapUserEntityToDomain)
                 .collect(Collectors.toList());
         return users;
     }
 
     @Override
-    public void saveUser(User user){
-        UserEntity userEntity = userMapper.mapUserDomainToEntity(user);
+    public void saveUser(UserDto user){
+        User userEntity = userMapper.mapUserDomainToEntity(user);
         userRepository.save(userEntity);
     }
 }

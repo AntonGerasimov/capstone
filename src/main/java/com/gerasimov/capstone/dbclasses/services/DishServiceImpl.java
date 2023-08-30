@@ -1,13 +1,9 @@
 package com.gerasimov.capstone.dbclasses.services;
 
-import com.gerasimov.capstone.dbclasses.domain.Dish;
-import com.gerasimov.capstone.dbclasses.domain.User;
-import com.gerasimov.capstone.dbclasses.entity.DishEntity;
+import com.gerasimov.capstone.dbclasses.domain.DishDto;
+import com.gerasimov.capstone.dbclasses.entity.Dish;
 import com.gerasimov.capstone.dbclasses.mappers.DishMapper;
-import com.gerasimov.capstone.dbclasses.mappers.UserMapper;
 import com.gerasimov.capstone.dbclasses.repositories.DishRepository;
-import com.gerasimov.capstone.dbclasses.repositories.RoleRepository;
-import com.gerasimov.capstone.dbclasses.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +25,9 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public List<Dish> getAllDishes() {
-        List<DishEntity> dishEntities = dishRepository.findAll();
-        List<Dish> dishes = dishEntities.stream()
+    public List<DishDto> getAllDishes() {
+        List<Dish> dishEntities = dishRepository.findAll();
+        List<DishDto> dishes = dishEntities.stream()
                 .map(dishMapper::mapDishEntityToDomain)
                 .collect(Collectors.toList());
         return dishes;

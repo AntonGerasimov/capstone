@@ -7,19 +7,19 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class Order {
+public class OrderDto {
     private final Long id;
-    private final User customer;
+    private final UserDto customer;
     private final LocalDateTime orderDateTime;
     private final String status;
-    private final Address deliveryAddress;
+    private final AddressDto deliveryAddress;
 
     @JsonCreator
-    public Order(@JsonProperty("id") final Long id,
-                @JsonProperty("customer") final User customer,
-                @JsonProperty("OrderDateTime") final LocalDateTime orderDateTime,
-                @JsonProperty("Status") final String status,
-                @JsonProperty("DeliveryAddress") final Address deliveryAddress) {
+    public OrderDto(@JsonProperty("id") final Long id,
+                    @JsonProperty("customer") final UserDto customer,
+                    @JsonProperty("OrderDateTime") final LocalDateTime orderDateTime,
+                    @JsonProperty("Status") final String status,
+                    @JsonProperty("DeliveryAddress") final AddressDto deliveryAddress) {
         this.id = id;
         this.customer = customer;
         this.orderDateTime = orderDateTime;

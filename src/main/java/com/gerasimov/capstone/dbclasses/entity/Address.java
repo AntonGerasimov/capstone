@@ -1,7 +1,6 @@
 package com.gerasimov.capstone.dbclasses.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
@@ -12,7 +11,7 @@ import javax.persistence.Table;
 @Table(name = "ADDRESSES")
 @Getter
 @Setter
-public class AddressEntity {
+public class Address {
     @Id
     private Long addressId;
     private Long userId;

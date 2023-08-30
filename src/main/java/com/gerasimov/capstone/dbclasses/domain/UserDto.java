@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class User {
+public class UserDto {
     private final Long id;
     private final FullName fullName;
     private final String email;
@@ -15,13 +15,13 @@ public class User {
     private final boolean isActive;
 
     @JsonCreator
-    public User(@JsonProperty("id") final Long id,
-                @JsonProperty("fullName") final FullName fullName,
-                @JsonProperty("email") final String email,
-                @JsonProperty("username") final String username,
-                @JsonProperty("password") final String password,
-                @JsonProperty("role") final String role,
-                @JsonProperty("isActive") final boolean isActive) {
+    public UserDto(@JsonProperty("id") final Long id,
+                   @JsonProperty("fullName") final FullName fullName,
+                   @JsonProperty("email") final String email,
+                   @JsonProperty("username") final String username,
+                   @JsonProperty("password") final String password,
+                   @JsonProperty("role") final String role,
+                   @JsonProperty("isActive") final boolean isActive) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
@@ -31,7 +31,7 @@ public class User {
         this.isActive = isActive;
     }
 
-    public User(){
+    public UserDto(){
         this.id = null;
         this.fullName = null;
         this.email = null;

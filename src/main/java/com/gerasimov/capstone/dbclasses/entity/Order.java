@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "ORDERS")
 @Getter
 @Setter
-public class OrderEntity {
+public class Order {
     @Id
     private Long orderId;
     private Long customerId;

@@ -1,11 +1,8 @@
 package com.gerasimov.capstone.dbclasses.services;
 
-import com.gerasimov.capstone.dbclasses.domain.Dish;
-import com.gerasimov.capstone.dbclasses.domain.Order;
-import com.gerasimov.capstone.dbclasses.entity.OrderEntity;
-import com.gerasimov.capstone.dbclasses.mappers.DishMapper;
+import com.gerasimov.capstone.dbclasses.domain.OrderDto;
+import com.gerasimov.capstone.dbclasses.entity.Order;
 import com.gerasimov.capstone.dbclasses.mappers.OrderMapper;
-import com.gerasimov.capstone.dbclasses.repositories.DishRepository;
 import com.gerasimov.capstone.dbclasses.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,9 +24,9 @@ public class OrderServiceImpl implements OrderService{
         this.orderMapper = orderMapper;
     }
     @Override
-    public List<Order> getAllOrders(){
-        List<OrderEntity> orderEntities = orderRepository.findAll();
-        List<Order> orders = orderEntities.stream()
+    public List<OrderDto> getAllOrders(){
+        List<Order> orderEntities = orderRepository.findAll();
+        List<OrderDto> orders = orderEntities.stream()
                 .map(orderMapper::mapOrderEntityToDomain)
                 .collect(Collectors.toList());
         return orders;

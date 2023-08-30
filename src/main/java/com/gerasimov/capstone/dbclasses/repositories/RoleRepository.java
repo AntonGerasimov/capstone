@@ -1,10 +1,10 @@
 package com.gerasimov.capstone.dbclasses.repositories;
 
-import com.gerasimov.capstone.dbclasses.entity.RoleEntity;
+import com.gerasimov.capstone.dbclasses.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
-    RoleEntity findByRoleName(String roleName);
+public interface RoleRepository extends JpaRepository<Role, Long> {
+    Role findByRoleName(String roleName);
 }

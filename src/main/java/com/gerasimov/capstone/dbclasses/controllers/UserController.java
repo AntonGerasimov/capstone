@@ -1,9 +1,7 @@
 package com.gerasimov.capstone.dbclasses.controllers;
 
-import com.gerasimov.capstone.dbclasses.domain.FullAddress;
 import com.gerasimov.capstone.dbclasses.domain.FullName;
-import com.gerasimov.capstone.dbclasses.domain.User;
-import com.gerasimov.capstone.dbclasses.entity.UserEntity;
+import com.gerasimov.capstone.dbclasses.domain.UserDto;
 import com.gerasimov.capstone.dbclasses.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,7 +23,7 @@ public class UserController {
 
     @GetMapping
     public ModelAndView getAllUsers(Model model){
-        List<User> users = userService.getAllUsers();
+        List<UserDto> users = userService.getAllUsers();
         model.addAttribute("users", users);
         return new ModelAndView("users");
     }
@@ -46,7 +44,7 @@ public class UserController {
     ) {
         FullName fullName = new FullName(firstName, lastName);
         boolean isActive = true;
-        User user = new User(null, fullName, email, username, password, role, isActive);
+        UserDto user = new UserDto(null, fullName, email, username, password, role, isActive);
         userService.saveUser(user);
         return "redirect:/users"; // Redirect to the user list page after successful addition
     }

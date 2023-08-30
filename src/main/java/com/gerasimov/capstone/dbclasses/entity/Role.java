@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Table(name = "roles")
 @Getter
 @Setter
-public class RoleEntity {
+public class Role {
     @Id
     private Long id;
     private String roleName;

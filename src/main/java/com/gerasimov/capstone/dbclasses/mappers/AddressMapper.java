@@ -1,14 +1,12 @@
 package com.gerasimov.capstone.dbclasses.mappers;
 
-import com.gerasimov.capstone.dbclasses.domain.Address;
+import com.gerasimov.capstone.dbclasses.domain.AddressDto;
 import com.gerasimov.capstone.dbclasses.domain.FullAddress;
-import com.gerasimov.capstone.dbclasses.domain.User;
-import com.gerasimov.capstone.dbclasses.entity.AddressEntity;
-import com.gerasimov.capstone.dbclasses.entity.UserEntity;
+import com.gerasimov.capstone.dbclasses.domain.UserDto;
+import com.gerasimov.capstone.dbclasses.entity.Address;
+import com.gerasimov.capstone.dbclasses.entity.User;
 import com.gerasimov.capstone.dbclasses.repositories.AddressRepository;
-import com.gerasimov.capstone.dbclasses.repositories.RoleRepository;
 import com.gerasimov.capstone.dbclasses.repositories.UserRepository;
-import com.gerasimov.capstone.dbclasses.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,15 +23,15 @@ public class AddressMapper {
         this.userMapper = userMapper;
     }
 
-    public Address mapAddressEntityToDomain(AddressEntity addressEntity) {
+    public AddressDto mapAddressEntityToDomain(Address addressEntity) {
         Long id = addressEntity.getAddressId();
         Long userId = addressEntity.getUserId();
-        UserEntity userEntity = userRepository.findById(userId).orElse(null);
-        User user = userMapper.mapUserEntityToDomain(userEntity);
+        User userEntity = userRepository.findById(userId).orElse(null);
+        UserDto user = userMapper.mapUserEntityToDomain(userEntity);
         String street = addressEntity.getStreet();
         String house = addressEntity.getHouse();
         String apartment = addressEntity.getApartment();
-        return new Address(id, user, new FullAddress(street, house, apartment));
+        return new AddressDto(id, user, new FullAddress(street, house, apartment));
     }
 
 }

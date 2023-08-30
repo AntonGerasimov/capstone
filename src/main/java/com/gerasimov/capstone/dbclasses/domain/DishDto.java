@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class Dish {
+public class DishDto {
     private final Long dishId;
     private final String dishName;
     private final String description;
     private final double price;
     private final boolean isAvailable;
     @JsonCreator
-    public Dish(@JsonProperty("id") final Long dishId,
+    public DishDto(@JsonProperty("id") final Long dishId,
                    @JsonProperty("name") final String dishName,
                    @JsonProperty("description") final String description,
                    @JsonProperty("price") final double price,

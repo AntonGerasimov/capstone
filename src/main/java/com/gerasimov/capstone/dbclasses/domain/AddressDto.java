@@ -6,15 +6,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class Address {
+public class AddressDto {
     private final Long addressId;
-    private final User user;
+    private final UserDto user;
     private final FullAddress fullAddress;
 
     @JsonCreator
-    public Address(@JsonProperty("id") final Long addressId,
-                @JsonProperty("user") final User user,
-                @JsonProperty("street") final FullAddress fullAddress) {
+    public AddressDto(@JsonProperty("id") final Long addressId,
+                      @JsonProperty("user") final UserDto user,
+                      @JsonProperty("street") final FullAddress fullAddress) {
         this.addressId = addressId;
         this.user = user;
         this.fullAddress = fullAddress;
