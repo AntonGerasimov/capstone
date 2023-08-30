@@ -2,8 +2,6 @@ package com.gerasimov.capstone.dbclasses.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import lombok.Data;
 
 @Data
@@ -41,19 +39,6 @@ public class User {
         this.password = null;
         this.role = null;
         this.isActive = true;
-    }
-
-    public User withFullName(String firstName, String lastName) {
-        FullName fullName = new FullName(firstName, lastName);
-        return new User(
-                this.id,
-                fullName,
-                this.email,
-                this.username,
-                this.password,
-                this.role,
-                this.isActive
-        );
     }
 
 }
