@@ -25,7 +25,7 @@ public class UserMapper {
         Long id = userEntity.getId();
         FullName fullName = new FullName(userEntity.getFirstName(), userEntity.getLastName());
         String email = userEntity.getEmail();
-        String userName = userEntity.getUserName();
+        String userName = userEntity.getUsername();
         String password = userEntity.getPassword();
         RoleEntity roleEntity = roleRepository.findById(userEntity.getRoleId()).orElse(null);
         String role = roleEntity.getRoleName();
