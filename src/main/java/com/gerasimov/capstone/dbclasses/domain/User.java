@@ -16,8 +16,6 @@ public class User {
     private final String role;
     private final boolean isActive;
 
-
-
     @JsonCreator
     public User(@JsonProperty("id") final Long id,
                 @JsonProperty("fullName") final FullName fullName,

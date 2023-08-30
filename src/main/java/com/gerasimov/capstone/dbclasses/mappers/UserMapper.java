@@ -39,7 +39,9 @@ public class UserMapper {
         String email = user.getEmail();
         String userName = user.getUsername();
         String password = user.getPassword();
-        Long roleId = 1L;
+        String roleName = user.getRole();
+        RoleEntity roleEntity = roleRepository.findByRoleName(roleName);
+        Long roleId = roleEntity.getId();
         boolean isActive = user.isActive();
         return new UserEntity(firstName, lastName, email, userName, password, roleId, isActive);
     }
