@@ -8,8 +8,8 @@
 <h1>Address List</h1>
 <ul>
     <li th:each="address : ${addresses}">
-        id: <span th:text="${address.addressId}"></span>,
-        Name: <span th:text="${address.user}"></span>
+        id: <span th:text="${address.id}"></span>,
+        User Name: <span th:text="${address.user}"></span>
     </li>
 </ul>
 </body>

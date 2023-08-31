@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -15,14 +16,12 @@ public class AddressServiceImpl implements AddressService {
     AddressRepository addressRepository;
     AddressMapper addressMapper;
 
-
     @Override
     public List<AddressDto> getAllAddresses(){
         List<Address> addressEntities = addressRepository.findAll();
-        List<AddressDto> addresses = null;
-//        List<AddressDto> addresses = addressEntities.stream()
-//                .map(addressMapper::mapAddressEntityToDomain)
-//                .collect(Collectors.toList());
+        List<AddressDto> addresses = addressEntities.stream()
+                .map(addressMapper::addressToAddressDto)
+                .collect(Collectors.toList());
         return addresses;
     }
 }

@@ -3,21 +3,17 @@ package com.gerasimov.capstone.dbclasses.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AddressDto {
-    private final Long addressId;
-    private final UserDto user;
-    private final FullAddress fullAddress;
-
-    @JsonCreator
-    public AddressDto(@JsonProperty("id") final Long addressId,
-                      @JsonProperty("user") final UserDto user,
-                      @JsonProperty("street") final FullAddress fullAddress) {
-        this.addressId = addressId;
-        this.user = user;
-        this.fullAddress = fullAddress;
-
-    }
+    private Long id;
+    private UserDto user;
+    private String street;
+    private String house;
+    private String apartment;
 }
