@@ -5,7 +5,7 @@ import com.gerasimov.capstone.dbclasses.domain.UserDto;
 import java.util.List;
 
 public interface UserService {
-    List<UserDto> getAllUsers();
+    List<UserDto> getAll();
 
-    void saveUser(UserDto user);
+    void save(UserDto user);
 }

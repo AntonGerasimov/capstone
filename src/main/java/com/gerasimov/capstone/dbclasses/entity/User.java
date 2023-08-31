@@ -23,7 +23,11 @@ public class User {
     private String email;
     private String username;
     private String password;
-    private Long roleId;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
     private boolean isActive = true;
 
 }

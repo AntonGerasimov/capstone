@@ -5,7 +5,6 @@ import com.gerasimov.capstone.dbclasses.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.Model;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public class UserController {
 
     @GetMapping
     public String listUsers(Model model) {
-        List<UserDto> users = userService.getAllUsers();
+        List<UserDto> users = userService.getAll();
         model.addAttribute("users", users);
         return "users/list"; // This maps to the "list.html" Thymeleaf template
     }
@@ -31,7 +30,7 @@ public class UserController {
 
     @PostMapping
     public String createUser(@ModelAttribute("user") UserDto userDto) {
-        userService.saveUser(userDto);
+        userService.save(userDto);
         return "redirect:/users";
     }
 
