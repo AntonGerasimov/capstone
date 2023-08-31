@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create User</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Create User</h1>
+    <form th:action="@{/users}" th:object="${user}" method="post">
+        <div class="form-group">
+            <label for="firstName">First Name:</label>
+            <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+            <br>
+            <label for="lastname">Last Name:</label>
+            <input type="text" class="form-control" id="lastname" th:field="*{lastName}" required>
+            <br>
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" th:field="*{email}" required>
+            <br>
+            <label for="username">Username:</label>
+            <input type="text" class="form-control" id="username" th:field="*{username}" required>
+            <br>
+            <label for="password">Password:</label>
+            <input type="text" class="form-control" id="password" th:field="*{password}" required>
+            <br>
+            <label for="role">Role:</label>
+            <input type="text" class="form-control" id="role" th:field="*{role}" required>
+        </div>
+
+        <br>
+        <button type="submit" class="btn btn-primary">Create User</button>
+    </form>
+</div>
+</body>
+</html>
+

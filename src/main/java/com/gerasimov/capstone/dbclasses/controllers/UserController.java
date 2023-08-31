@@ -17,28 +17,22 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public ModelAndView getAllUsers(Model model) {
+    public String listUsers(Model model) {
         List<UserDto> users = userService.getAllUsers();
         model.addAttribute("users", users);
-        return new ModelAndView("users");
+        return "users/list"; // This maps to the "list.html" Thymeleaf template
     }
+
     @GetMapping("/new")
-    public String showAddUserForm(Model model) {
-        return "new-user"; // Return the name of the Thymeleaf template for the new user page
+    public String newUserForm(Model model) {
+        model.addAttribute("user", new UserDto());
+        return "users/new"; // This maps to the "new.html" Thymeleaf template
     }
 
     @PostMapping
-    public String addUser(
-            @RequestParam String firstName,
-            @RequestParam String lastName ,
-            @RequestParam String email,
-            @RequestParam String username,
-            @RequestParam String password,
-            @RequestParam String role
-    ) {
-        boolean isActive = true;
-        UserDto user = new UserDto(null, firstName, lastName, email, username, password, role, isActive);
-        userService.saveUser(user);
-        return "redirect:/users"; // Redirect to the user list page after successful addition
+    public String createUser(@ModelAttribute("user") UserDto userDto) {
+        userService.saveUser(userDto);
+        return "redirect:/users";
     }
+
 }
