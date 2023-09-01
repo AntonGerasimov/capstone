@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class RootController {
     @GetMapping("/")
     public String index() {
-        return "index"; // This corresponds to the "index.html" template name
+        return "index";
     }
 }

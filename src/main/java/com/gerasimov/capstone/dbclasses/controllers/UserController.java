@@ -19,13 +19,13 @@ public class UserController {
     public String listUsers(Model model) {
         List<UserDto> users = userService.findAll();
         model.addAttribute("users", users);
-        return "users/list"; // This maps to the "list.html" Thymeleaf template
+        return "users/list";
     }
 
     @GetMapping("/new")
     public String newUserForm(Model model) {
         model.addAttribute("user", new UserDto());
-        return "users/new"; // This maps to the "new.html" Thymeleaf template
+        return "users/new";
     }
 
 
