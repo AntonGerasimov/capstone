@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,9 +16,14 @@ import java.time.LocalDateTime;
 @Setter
 public class Order {
     @Id
-    private Long orderId;
-    private Long customerId;
-    private LocalDateTime orderDatetime;
-    private String orderStatus;
-    private Long deliveryAddressId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private User customer;
+    private LocalDateTime created;
+    private String status;
+    @ManyToOne
+    @JoinColumn(name = "delivery_address_id")
+    private Address deliveryAddress;
 }

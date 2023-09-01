@@ -1,9 +1,10 @@
-package com.gerasimov.capstone.dbclasses.services;
+package com.gerasimov.capstone.dbclasses.services.impl;
 
 import com.gerasimov.capstone.dbclasses.domain.AddressDto;
 import com.gerasimov.capstone.dbclasses.entity.Address;
 import com.gerasimov.capstone.dbclasses.mappers.AddressMapper;
 import com.gerasimov.capstone.dbclasses.repositories.AddressRepository;
+import com.gerasimov.capstone.dbclasses.services.AddressService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class AddressServiceImpl implements AddressService {
     public List<AddressDto> getAllAddresses(){
         List<Address> addressEntities = addressRepository.findAll();
         List<AddressDto> addresses = addressEntities.stream()
-                .map(addressMapper::addressToAddressDto)
+                .map(addressMapper::toDto)
                 .collect(Collectors.toList());
         return addresses;
     }

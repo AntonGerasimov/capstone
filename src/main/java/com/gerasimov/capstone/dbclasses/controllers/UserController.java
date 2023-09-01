@@ -28,10 +28,17 @@ public class UserController {
         return "users/new"; // This maps to the "new.html" Thymeleaf template
     }
 
+
     @PostMapping
-    public String createUser(@ModelAttribute("user") UserDto userDto) {
+    public String createUser(@ModelAttribute("user") UserDto userDto, Model model) {
+        if (userService.emailExists(userDto.getEmail())) {
+            // Email already exists, return an error message
+            model.addAttribute("emailExistsError", "This email already exists.");
+            return "users/new"; // Return to the registration form with the error message
+        }
         userService.save(userDto);
-        return "redirect:/users";
+        model.addAttribute("username", userDto.getUsername());
+        return "users/success";
     }
 
 }

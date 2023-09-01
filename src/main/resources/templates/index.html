@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Restaurant</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+</head>
+<body>
+<h1>Welcome to Our Restaurant</h1>
+
+<a th:href="@{/users/new}" class="btn btn-primary">Register</a>
+
+<a th:href="@{/users}" class="btn btn-primary">I am admin</a>
+
+</body>
+</html>

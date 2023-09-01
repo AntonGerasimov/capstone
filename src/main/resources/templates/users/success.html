@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Testing JavaScript</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+    <script src="../../static/js/alert.js"></script>
+</head>
+<body>
+<h1>Thank you for registration!</h1>
+
+<p>Welcome, <span th:text="${username}"></span>!</p>
+
+<a th:href="@{/}" class="btn btn-primary">Go make your first order!</a>
+</body>
+</html>

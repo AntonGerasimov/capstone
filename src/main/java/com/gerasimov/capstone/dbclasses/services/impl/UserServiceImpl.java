@@ -24,8 +24,13 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
-    public void save(UserDto userDto) {
+    public UserDto save(UserDto userDto) {
         User user = userMapper.toEntity(userDto);
         userRepository.save(user);
+        return userDto;
+    }
+
+    public boolean emailExists(String email){
+        return userRepository.existsByEmail(email);
     }
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class OrderDto {
     private Long id;
     private UserDto customer;
-    private LocalDateTime orderDateTime;
+    private LocalDateTime created;
     private String status;
     private AddressDto deliveryAddress;
 }

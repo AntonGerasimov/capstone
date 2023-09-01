@@ -10,6 +10,8 @@
     <li th:each="address : ${addresses}">
         id: <span th:text="${address.id}"></span>,
         User Name: <span th:text="${address.user}"></span>
+        Street: <span th:text="${address.street}"></span>
+        House: <span th:text="${address.house}"></span>
     </li>
 </ul>
 </body>

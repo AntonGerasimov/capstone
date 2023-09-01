@@ -9,7 +9,8 @@
 <ul>
     <li th:each="order : ${orders}">
         id: <span th:text="${order.id}"></span>,
-        Customer: <span th:text="${order.customer}"></span>
+        Customer: <span th:text="${order.customer}"></span>,
+        Address: <span th:text="${order.deliveryAddress}"></span>
     </li>
 </ul>
 </body>

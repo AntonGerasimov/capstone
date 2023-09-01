@@ -7,5 +7,7 @@ import java.util.List;
 public interface UserService {
     List<UserDto> getAll();
 
-    void save(UserDto user);
+    UserDto save(UserDto user);
+
+    boolean emailExists(String email);
 }
