@@ -5,11 +5,30 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
 
 </head>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var password = document.getElementById("password");
+        var repeatPassword = document.getElementById("repeatPassword");
+        var passwordError = document.getElementById("passwordError");
+
+        repeatPassword.addEventListener("input", function () {
+            if (password.value !== repeatPassword.value) {
+                repeatPassword.setCustomValidity("Passwords must match");
+                passwordError.textContent = "Passwords must match";
+            } else {
+                repeatPassword.setCustomValidity("");
+                passwordError.textContent = "";
+            }
+        });
+    });
+</script>
+
 <body>
 
 <div class="container">
     <h1>Please fill this form to register in our Restaurant</h1>
-    <form th:action="@{/users}" th:object="${user}" method="post" onsubmit="return validateForm()">
+    <form th:action="@{/users}" th:object="${user}" method="post">
         <div class="form-group">
             <label for="firstName">First Name:</label>
             <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
@@ -29,7 +48,7 @@
             <label for="repeatPassword">Repeat Password:</label>
             <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" required>
 
-            <p th:if="${#fields.hasErrors('password')}" style="color: red;">Passwords do not match.</p>
+            <p id="passwordError" style="color: red;"></p>
 
             <!--            <br>-->
 <!--            <label for="role">Role:</label>-->
@@ -37,41 +56,14 @@
         </div>
 
         <br>
-        <button type="submit" class="btn btn-primary" onclick="return validateNames()">Create User</button>
+        <button type="submit" class="btn btn-primary">Create User</button>
 
     </form>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var form = document.querySelector("form");
-        form.addEventListener("submit", function (event) {
-            if (!validateForm()) {
-                event.preventDefault(); // Prevent form submission
-            }
-        });
-    });
-
-
-function validateForm() {
-    var password = document.getElementById("password").value;
-    var repeatPassword = document.getElementById("repeatPassword").value;
-    var errorField = document.querySelector('[th:if="${#fields.hasErrors(\'password\')}"]');
-
-    errorField.innerHTML = "Passwords do not match.";
-    return false; // Prevent form submission
-
-
-<!--    if (password !== repeatPassword) {-->
-<!--        errorField.innerHTML = "Passwords do not match.";-->
-<!--        return false; // Prevent form submission-->
-<!--    } else {-->
-<!--        errorField.innerHTML = ""; // Clear error message-->
-<!--        return true; // Allow form submission-->
-<!--    }-->
-}
-</script>
-
 </body>
+
+
+
 </html>
 
