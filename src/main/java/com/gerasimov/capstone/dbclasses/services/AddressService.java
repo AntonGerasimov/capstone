@@ -5,5 +5,5 @@ import com.gerasimov.capstone.dbclasses.domain.AddressDto;
 import java.util.List;
 
 public interface AddressService {
-    List<AddressDto> getAllAddresses();
+    List<AddressDto> findAll();
 }

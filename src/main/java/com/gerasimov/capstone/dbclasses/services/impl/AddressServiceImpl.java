@@ -18,7 +18,7 @@ public class AddressServiceImpl implements AddressService {
     AddressMapper addressMapper;
 
     @Override
-    public List<AddressDto> getAllAddresses(){
+    public List<AddressDto> findAll(){
         List<Address> addressEntities = addressRepository.findAll();
         List<AddressDto> addresses = addressEntities.stream()
                 .map(addressMapper::toDto)

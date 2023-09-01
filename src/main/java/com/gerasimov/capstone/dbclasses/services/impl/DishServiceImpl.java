@@ -19,7 +19,7 @@ public class DishServiceImpl implements DishService {
     private final DishMapper dishMapper;
 
     @Override
-    public List<DishDto> getAllDishes() {
+    public List<DishDto> findAll() {
         List<Dish> dishEntities = dishRepository.findAll();
         List<DishDto> dishes = dishEntities.stream()
                 .map(dishMapper::toDto)

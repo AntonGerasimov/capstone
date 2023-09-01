@@ -19,7 +19,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
 
     @Override
-    public List<OrderDto> getAllOrders(){
+    public List<OrderDto> findAll(){
         List<Order> orderEntities = orderRepository.findAll();
         List<OrderDto> orders = orderEntities.stream()
                 .map(orderMapper::toDto)

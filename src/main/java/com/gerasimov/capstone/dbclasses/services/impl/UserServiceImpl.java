@@ -17,7 +17,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private UserMapper userMapper;
 
-    public List<UserDto> getAll() {
+    public List<UserDto> findAll() {
         List<User> users = userRepository.findAll();
         return users.stream()
                 .map(userMapper::toDto)

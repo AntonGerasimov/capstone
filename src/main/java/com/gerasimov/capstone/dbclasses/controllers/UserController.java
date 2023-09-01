@@ -17,7 +17,7 @@ public class UserController {
 
     @GetMapping
     public String listUsers(Model model) {
-        List<UserDto> users = userService.getAll();
+        List<UserDto> users = userService.findAll();
         model.addAttribute("users", users);
         return "users/list"; // This maps to the "list.html" Thymeleaf template
     }
