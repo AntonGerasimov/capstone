@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS roles;
 CREATE TABLE roles
 (
     id              INT AUTO_INCREMENT PRIMARY KEY,
-    role_name       VARCHAR(14)
+    name       VARCHAR(14)
 ) ENGINE=InnoDB;
 
 CREATE TABLE users
@@ -22,7 +22,7 @@ CREATE TABLE users
     last_name       VARCHAR(14),
     email           VARCHAR(50) NOT NULL UNIQUE,
     username        VARCHAR(14),
-    password        VARCHAR(14),
+    password        VARCHAR(64),
     role_id         INT,
     is_active       BOOLEAN,
     CONSTRAINT fk_user_role FOREIGN KEY (role_id) REFERENCES roles (id)
