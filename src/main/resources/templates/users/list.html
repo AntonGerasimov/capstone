@@ -5,7 +5,7 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
     <style>
         .navbar-nav {
-            margin-left: 25%; /* Установите отступ слева на четверть экрана */
+            margin-left: 25%;
         }
     </style>
 </head>
@@ -87,36 +87,6 @@
     </table>
 
 </div>
-
-<!--<script>-->
-<!--    var updateSuccess = false;-->
-
-<!--    function updateRole(userId) {-->
-<!--        const roleSelect = document.getElementById('roleSelect_' + userId);-->
-<!--        const selectedRole = roleSelect.value;-->
-
-<!--        // Make an AJAX request to update the role in the database-->
-<!--        fetch('/users/update-role', {-->
-<!--            method: 'POST',-->
-<!--            headers: {-->
-<!--                'Content-Type': 'application/json'-->
-<!--            },-->
-<!--            body: JSON.stringify({-->
-<!--                userId: userId,-->
-<!--                newRole: selectedRole-->
-<!--            })-->
-<!--        }).then(response => {-->
-<!--            if (response.ok) {-->
-<!--                // Role update successful, you can display a success message if needed-->
-<!--                updateSuccess = true;-->
-<!--            } else {-->
-<!--                // Role update failed, handle error as needed-->
-<!--            }-->
-<!--        }).catch(error => {-->
-<!--            console.error('Error updating role:', error);-->
-<!--        });-->
-<!--    }-->
-<!--</script>-->
 
 </body>
 </html>

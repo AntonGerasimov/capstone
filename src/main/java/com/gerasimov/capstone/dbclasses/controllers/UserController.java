@@ -49,14 +49,10 @@ public class UserController {
         Long userId = Long.parseLong(requestBody.get("userId"));
         Role newRole = roleRepository.findByName(requestBody.get("newRole"));
 
-        // Fetch the user from the database and update the role
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setRole(newRole);
-//            return ResponseEntity.ok("Role updated successfully");
-        } else {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
         List<UserDto> users = userService.findAll();
