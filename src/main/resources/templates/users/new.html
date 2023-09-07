@@ -1,91 +1,58 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Create User</title>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}"/>
+    <style>
+        .navbar-nav {
+            margin-left: 25%; /* Установите отступ слева на четверть экрана */
+        }
+
+        /* CSS style for red colored field in case of bad input */
+        .error-field {
+            border: 1px solid red;
+        }
+
+    </style>
 
 </head>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var firstNameInput = document.getElementById("firstName");
-        var lastNameInput = document.getElementById("lastname");
-        var firstNameError = document.getElementById("firstNameError");
-        var lastNameError = document.getElementById("lastNameError");
-
-        function validateNameInput(input, errorElement) {
-            var nameValue = input.value.trim();
-            var namePattern = /^[a-zA-Z]+$/;
-
-            if (!namePattern.test(nameValue)) {
-                input.setCustomValidity("Please enter a valid name with letters only");
-                errorElement.textContent = "Please enter a valid name with letters only";
-            } else {
-                input.setCustomValidity("");
-                errorElement.textContent = "";
-            }
-        }
-
-        firstNameInput.addEventListener("input", function () {
-            validateNameInput(firstNameInput, firstNameError);
-        });
-
-        lastNameInput.addEventListener("input", function () {
-            validateNameInput(lastNameInput, lastNameError);
-        });
-    });
-</script>
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var password = document.getElementById("password");
-        var repeatPassword = document.getElementById("repeatPassword");
-        var passwordError = document.getElementById("passwordError");
-
-        repeatPassword.addEventListener("input", function () {
-            if (password.value !== repeatPassword.value) {
-                repeatPassword.setCustomValidity("Passwords must match");
-                passwordError.textContent = "Passwords must match";
-            } else {
-                repeatPassword.setCustomValidity("");
-                passwordError.textContent = "";
-            }
-        });
-    });
-</script>
-
 <body>
+
+<header class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar-nav">
+        <a class="nav-item nav-link" th:href="@{/}" th:text="Home">Home</a></li>
+    </nav>
+</header>
 
 <div class="container">
     <h1>Registration</h1>
-    <form th:action="@{/users}" th:object="${user}" method="post">
+    <form th:action="@{/users/success}" th:object="${user}" method="post">
         <div class="form-group">
             <label for="firstName">First Name:</label>
-            <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+            <input type="text" class="form-control" id="firstName" th:field="*{firstName}" maxlength="30" required>
             <p id="firstNameError" style="color: red;"></p>
             <br>
             <label for="lastname">Last Name:</label>
-            <input type="text" class="form-control" id="lastname" th:field="*{lastName}" required>
+            <input type="text" class="form-control" id="lastname" th:field="*{lastName}" maxlength="30" required>
             <p id="lastNameError" style="color: red;"></p>
             <br>
             <label for="email">Email:</label>
-            <input type="email" class="form-control" id="email" th:field="*{email}" required>
+            <input type="email" class="form-control" id="email" th:field="*{email}" maxlength="50" required>
             <br>
             <label for="username">Username:</label>
-            <input type="text" class="form-control" id="username" th:field="*{username}" required>
+            <input type="text" class="form-control" id="username" th:field="*{username} " maxlength="30"required>
             <br>
             <label for="password">Password:</label>
-            <input type="password" class="form-control" id="password" th:field="*{password}" required>
+            <input type="password" class="form-control" id="password" th:field="*{password}" maxlength="30"required>
             <br>
             <label for="repeatPassword">Repeat Password:</label>
-            <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" required>
+            <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" maxlength="30"required>
 
             <p id="passwordError" style="color: red;"></p>
 
-            <!--            <br>-->
-<!--            <label for="role">Role:</label>-->
-<!--            <input type="text" class="form-control" id="role" th:field="*{role}" required>-->
+            <p th:if="${duplicateEmailException}" th:text="${duplicateEmailException}" style="color: red;"></p>
+
         </div>
 
         <br>
@@ -94,8 +61,59 @@
     </form>
 </div>
 
+
 </body>
 
+<script>
+
+function validateNames() {
+    var firstNameInput = document.getElementById("firstName");
+    var lastNameInput = document.getElementById("lastname");
+    var firstNameError = document.getElementById("firstNameError");
+    var lastNameError = document.getElementById("lastNameError");
+
+    function validateNameInput(input, errorElement) {
+        var nameValue = input.value.trim();
+        var namePattern = /^[a-zA-Z]+$/;
+
+        if (!namePattern.test(nameValue)) {
+            input.setCustomValidity("Please enter a valid name with letters only");
+            errorElement.textContent = "Please enter a valid name with letters only";
+        } else {
+            input.setCustomValidity("");
+            errorElement.textContent = "";
+        }
+    }
+
+    firstNameInput.addEventListener("input", function () {
+        validateNameInput(firstNameInput, firstNameError);
+    });
+
+    lastNameInput.addEventListener("input", function () {
+        validateNameInput(lastNameInput, lastNameError);
+    });
+}
+
+function passwordMatches() {
+        var password = document.getElementById("password");
+        var repeatPassword = document.getElementById("repeatPassword");
+
+        repeatPassword.addEventListener("input", function () {
+            if (password.value !== repeatPassword.value) {
+                repeatPassword.setCustomValidity("Passwords must match");
+                repeatPassword.classList.add("error-field");
+            } else {
+                repeatPassword.setCustomValidity("");
+                repeatPassword.classList.remove("error-field");
+            }
+        });
+}
+
+document.addEventListener("DOMContentLoaded", validateNames);
+document.addEventListener("DOMContentLoaded", passwordMatches);
+
+
+</script>
 
 
 </html>

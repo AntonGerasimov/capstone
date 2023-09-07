@@ -18,10 +18,10 @@ CREATE TABLE roles
 CREATE TABLE users
 (
     id              INT AUTO_INCREMENT PRIMARY KEY,
-    first_name      VARCHAR(14),
-    last_name       VARCHAR(14),
+    first_name      VARCHAR(30),
+    last_name       VARCHAR(30),
     email           VARCHAR(50) NOT NULL UNIQUE,
-    username        VARCHAR(14),
+    username        VARCHAR(30),
     password        VARCHAR(64),
     role_id         INT,
     is_active       BOOLEAN,

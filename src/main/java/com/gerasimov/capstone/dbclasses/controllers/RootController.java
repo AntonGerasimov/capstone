@@ -1,6 +1,6 @@
 package com.gerasimov.capstone.dbclasses.controllers;
 
-import com.gerasimov.capstone.dbclasses.AuthenticationResult;
+import com.gerasimov.capstone.dbclasses.util.AuthenticationResult;
 import com.gerasimov.capstone.dbclasses.services.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;

@@ -3,9 +3,21 @@
 <head>
     <title>User List</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+    <style>
+        .navbar-nav {
+            margin-left: 25%; /* Установите отступ слева на четверть экрана */
+        }
+    </style>
 </head>
 <body>
+
+<header class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar-nav">
+        <a class="nav-item nav-link" th:href="@{/}" th:text="Home">Home</a></li>
+    </nav>
+</header>
 <div class="container">
+    <div th:if="${updateSuccess}" class="alert alert-success">Success</div>
     <h1>User List</h1>
     <table class="table">
         <thead>
@@ -16,24 +28,95 @@
             <th>Email</th>
             <th>Username</th>
             <th>Role</th>
-
         </tr>
         </thead>
         <tbody>
+<!--        <tr th:each="user : ${users}">-->
+<!--            <td th:text="${user.id}"></td>-->
+<!--            <td th:text="${user.firstName}"></td>-->
+<!--            <td th:text="${user.lastName}"></td>-->
+<!--            <td th:text="${user.email}"></td>-->
+<!--            <td th:text="${user.username}"></td>-->
+<!--            <td>-->
+<!--                &lt;!&ndash; Check if the user's ID is 1, i.e. admin. Show its role without changing &ndash;&gt;-->
+<!--                <span th:if="${user.id == 1}" th:text="${user.role.name}"></span>-->
+<!--                &lt;!&ndash; If user's ID is not 1, display a dropdown &ndash;&gt;-->
+<!--                <select th:if="${user.id != 1}" class="role-select" th:id="'roleSelect_' + ${user.id}">-->
+<!--                    <option value="common" th:selected="${user.role.name == 'common'}">Common</option>-->
+<!--                    <option value="manager" th:selected="${user.role.name == 'manager'}">Manager</option>-->
+<!--                    <option value="admin" th:selected="${user.role.name == 'admin'}">Admin</option>-->
+<!--                </select>-->
+<!--            </td>-->
+
+<!--            <td>-->
+<!--                &lt;!&ndash; Check if the user's ID is not 1 (admin) &ndash;&gt;-->
+<!--                <button th:if="${user.id != 1}" class="btn btn-primary" th:onclick="updateRole(${user.id})" type="button">Save</button>-->
+<!--            </td>-->
+
+<!--        </tr>-->
+
         <tr th:each="user : ${users}">
-            <td th:text="${user.id}"></td>
-            <td th:text="${user.firstName}"></td>
-            <td th:text="${user.lastName}"></td>
-            <td th:text="${user.email}"></td>
-            <td th:text="${user.username}"></td>
-            <td th:text="${user.role.name}"></td>
-            <td th:text="${user.password}"></td>
+            <form th:action="@{/users}" method="post">
+                <!-- Hidden input to store user ID -->
+                <input type="hidden" name="userId" th:value="${user.id}" />
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.firstName}"></td>
+                <td th:text="${user.lastName}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.username}"></td>
+
+                <td>
+                    <span th:if="${user.id == 1}" th:text="${user.role.name}"></span>
+                    <!-- Dropdown for role selection -->
+                    <select th:if="${user.id != 1}" name="newRole">
+                        <option value="common" th:selected="${user.role.name == 'common'}">Common</option>
+                        <option value="manager" th:selected="${user.role.name == 'manager'}">Manager</option>
+                        <option value="admin" th:selected="${user.role.name == 'admin'}">Admin</option>
+                    </select>
+                </td>
+
+                <td>
+                    <!-- Submit button to update role -->
+                    <button  th:if="${user.id != 1}" class="btn btn-primary" type="submit">Save</button>
+                </td>
+            </form>
         </tr>
+
+
         </tbody>
     </table>
 
-    <a th:href="@{/users/new}" class="btn btn-primary">Create New User</a>
-
 </div>
+
+<!--<script>-->
+<!--    var updateSuccess = false;-->
+
+<!--    function updateRole(userId) {-->
+<!--        const roleSelect = document.getElementById('roleSelect_' + userId);-->
+<!--        const selectedRole = roleSelect.value;-->
+
+<!--        // Make an AJAX request to update the role in the database-->
+<!--        fetch('/users/update-role', {-->
+<!--            method: 'POST',-->
+<!--            headers: {-->
+<!--                'Content-Type': 'application/json'-->
+<!--            },-->
+<!--            body: JSON.stringify({-->
+<!--                userId: userId,-->
+<!--                newRole: selectedRole-->
+<!--            })-->
+<!--        }).then(response => {-->
+<!--            if (response.ok) {-->
+<!--                // Role update successful, you can display a success message if needed-->
+<!--                updateSuccess = true;-->
+<!--            } else {-->
+<!--                // Role update failed, handle error as needed-->
+<!--            }-->
+<!--        }).catch(error => {-->
+<!--            console.error('Error updating role:', error);-->
+<!--        });-->
+<!--    }-->
+<!--</script>-->
+
 </body>
 </html>

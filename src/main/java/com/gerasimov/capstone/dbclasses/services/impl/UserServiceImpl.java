@@ -8,6 +8,7 @@ import com.gerasimov.capstone.dbclasses.mappers.UserMapper;
 import com.gerasimov.capstone.dbclasses.repositories.RoleRepository;
 import com.gerasimov.capstone.dbclasses.repositories.UserRepository;
 import com.gerasimov.capstone.dbclasses.services.UserService;
+import com.gerasimov.capstone.exceptions.DuplicateUserException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,9 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDto save(UserDto userDto) {
+        if (emailExists(userDto.getEmail())){
+            throw new DuplicateUserException("Duplicate user with email: " + userDto.getEmail());
+        }
         Role role = roleRepository.findById(1L).orElse(null);
         userDto.setRole(role);
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
@@ -42,4 +46,5 @@ public class UserServiceImpl implements UserService {
     public boolean emailExists(String email){
         return userRepository.existsByEmail(email);
     }
+
 }

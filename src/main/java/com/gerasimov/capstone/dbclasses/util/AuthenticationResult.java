@@ -1,4 +1,4 @@
-package com.gerasimov.capstone.dbclasses;
+package com.gerasimov.capstone.dbclasses.util;
 
 import lombok.AllArgsConstructor;
 

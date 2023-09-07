@@ -1,4 +1,4 @@
-package com.gerasimov.capstone.dbclasses;
+package com.gerasimov.capstone;
 
 
 import org.springframework.boot.SpringApplication;
