@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class AuthService {
 
-
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     public AuthenticationResult authenticate(String username, String providedPassword) {

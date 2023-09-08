@@ -20,15 +20,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/**").permitAll() // Publicly accessible URLs
-                .anyRequest().authenticated() // All other URLs require authentication
-                .and()
+                    .antMatchers("/users").hasRole("admin")
+                    .antMatchers("/**").permitAll() // Publicly accessible URLs
+                    .anyRequest().authenticated() // All other URLs require authentication
+                    .and()
                 .formLogin() // Enable form-based authentication
-                .loginPage("/login") // Custom login page URL
-                .permitAll() // Allow access to the login page
-                .and()
+                    .loginPage("/login") // Custom login page URL
+                    .loginProcessingUrl("/login")
+                    .defaultSuccessUrl("/users/success")
+                    .permitAll() // Allow access to the login page
+                    .and()
                 .logout() // Enable logout
-                .logoutUrl("/logout") // Custom logout URL
-                .permitAll(); // Allow access to the logout page
+                    .logoutSuccessUrl("/")
+                    .invalidateHttpSession(true)
+                    .permitAll(); // Allow access to the logout page
     }
+
 }
