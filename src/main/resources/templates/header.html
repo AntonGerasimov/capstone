@@ -1,0 +1,25 @@
+<!-- src/main/resources/templates/header.html -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Restaurant header</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+    <style>
+        .navbar-nav {
+            margin-left: 25%;
+        }
+    </style>
+</head>
+<body>
+
+<header class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar-nav">
+        <a class="nav-item nav-link" th:href="@{/}" th:text="Home">Home</a></li>
+        <a class="nav-item nav-link" th:href="@{/menu}" th:text="Menu">Menu</a></li>
+        <a class="nav-item nav-link" th:href="@{/login}" th:text="Login">Login</a></li>
+        <a class="nav-item nav-link" th:href="@{/logout}" th:text="Logout">Logout</a></li>
+    </nav>
+</header>
+</body>
+</html>
