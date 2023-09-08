@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -20,9 +19,8 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public List<AddressDto> findAll(){
         List<Address> addressEntities = addressRepository.findAll();
-        List<AddressDto> addresses = addressEntities.stream()
+        return addressEntities.stream()
                 .map(addressMapper::toDto)
-                .collect(Collectors.toList());
-        return addresses;
+                .toList();
     }
 }

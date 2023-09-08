@@ -15,10 +15,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @AllArgsConstructor
 public class RootController {
 
-
     @GetMapping("/")
-    public String index() {
+    public String showIndex() {
         return "index";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "redirect:/login";
+    }
+
+    @GetMapping("/logout")
+    public String logout(){
+        log.info("Logout");
+        return "redirect:/";
     }
 
 

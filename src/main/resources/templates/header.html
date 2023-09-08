@@ -15,11 +15,17 @@
 
 <header class="navbar navbar-expand-lg navbar-light bg-light">
     <nav class="navbar-nav">
-        <a class="nav-item nav-link" th:href="@{/}" th:text="Home">Home</a></li>
-        <a class="nav-item nav-link" th:href="@{/menu}" th:text="Menu">Menu</a></li>
-        <a class="nav-item nav-link" th:href="@{/login}" th:text="Login">Login</a></li>
-        <a class="nav-item nav-link" th:href="@{/logout}" th:text="Logout">Logout</a></li>
+        <a class="nav-item nav-link" th:href="@{/}" th:text="Home">Home</a>
+        <a class="nav-item nav-link" th:href="@{/menu}" th:text="Menu">Menu</a>
+        <a class="nav-item nav-link" th:href="@{/login}" th:text="Login">Login</a>
+
+        <a class="nav-item nav-link" href="javascript: document.logoutForm.submit()" role="menuitem"> Logout</a>
+
+        <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+            <input hidden type="submit" value="Sign Out"/>
+        </form>
     </nav>
 </header>
+
 </body>
 </html>

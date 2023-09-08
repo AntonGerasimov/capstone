@@ -31,6 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll() // Allow access to the login page
                     .and()
                 .logout() // Enable logout
+                    .logoutUrl("/logout")
                     .logoutSuccessUrl("/")
                     .invalidateHttpSession(true)
                     .permitAll(); // Allow access to the logout page
