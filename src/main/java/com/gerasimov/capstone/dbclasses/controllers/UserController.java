@@ -2,27 +2,30 @@ package com.gerasimov.capstone.dbclasses.controllers;
 
 import com.gerasimov.capstone.dbclasses.domain.UserDto;
 import com.gerasimov.capstone.dbclasses.entity.Role;
-import com.gerasimov.capstone.dbclasses.entity.User;
 import com.gerasimov.capstone.dbclasses.repositories.RoleRepository;
 import com.gerasimov.capstone.dbclasses.repositories.UserRepository;
+import com.gerasimov.capstone.dbclasses.services.RoleService;
 import com.gerasimov.capstone.dbclasses.services.UserService;
 import com.gerasimov.capstone.exceptions.RestaurantException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @Slf4j
 @AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
+    private RoleService roleService;
     private UserService userService;
 
     @GetMapping
@@ -33,29 +36,39 @@ public class UserController {
     }
 
     @GetMapping("/new")
-    public String newUserForm(Model model) {
+    public String viewNewUserForm(Model model) {
         model.addAttribute("user", new UserDto());
         return "users/new";
     }
 
     @GetMapping("/success")
-    public String userSuccessReg(Model model){
+    public String viewSuccessPage(Model model){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedUsername = authentication.getName();
+        // Pass the authenticated username to the view (HTML template)
+        model.addAttribute("authenticatedUsername", authenticatedUsername);
         return "users/success";
     }
 
-    @PostMapping
-    public String updateRole(@RequestParam Long userId, @RequestParam String newRole) {
-//        Long userId = Long.parseLong(requestBody.get("userId"));
-        Role role = roleRepository.findByName(newRole);
+    @GetMapping("/edit/{id}")
+    public String editUser(@PathVariable Long id, Model model) {
+        UserDto userDto = userService.findById(id);
+        List<Role> roles = roleService.findAll();
+        model.addAttribute("user", userDto);
+        model.addAttribute("roles", roles);
+        return "users/edit";
+    }
 
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setRole(role);
-            return "redirect:/users";
-        } else{
-            return "redirect:/users/new";
-        }
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        userService.delete(id);
+        return "redirect:/users";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String updateUser(@PathVariable Long id, @ModelAttribute UserDto user) {
+        userService.update(id, user);
+        return "redirect:/users";
     }
 
 
@@ -63,9 +76,10 @@ public class UserController {
     @PostMapping("/success")
     public String createUser(@ModelAttribute("user") UserDto userDto, Model model) {
         try{
-            userService.save(userDto);
-            model.addAttribute("username", userDto.getUsername());
+            UserDto newUser = userService.save(userDto);
             log.info("User with username " + userDto.getUsername() + " was created");
+            userService.makeLogin(newUser);
+
             return "users/success";
         } catch (RestaurantException restaurantException){
             // Email already exists, return an error message

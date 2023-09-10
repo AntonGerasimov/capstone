@@ -28,57 +28,20 @@
         </tr>
         </thead>
         <tbody>
-<!--        <tr th:each="user : ${users}">-->
-<!--            <td th:text="${user.id}"></td>-->
-<!--            <td th:text="${user.firstName}"></td>-->
-<!--            <td th:text="${user.lastName}"></td>-->
-<!--            <td th:text="${user.email}"></td>-->
-<!--            <td th:text="${user.username}"></td>-->
-<!--            <td>-->
-<!--                &lt;!&ndash; Check if the user's ID is 1, i.e. admin. Show its role without changing &ndash;&gt;-->
-<!--                <span th:if="${user.id == 1}" th:text="${user.role.name}"></span>-->
-<!--                &lt;!&ndash; If user's ID is not 1, display a dropdown &ndash;&gt;-->
-<!--                <select th:if="${user.id != 1}" class="role-select" th:id="'roleSelect_' + ${user.id}">-->
-<!--                    <option value="common" th:selected="${user.role.name == 'common'}">Common</option>-->
-<!--                    <option value="manager" th:selected="${user.role.name == 'manager'}">Manager</option>-->
-<!--                    <option value="admin" th:selected="${user.role.name == 'admin'}">Admin</option>-->
-<!--                </select>-->
-<!--            </td>-->
-
-<!--            <td>-->
-<!--                &lt;!&ndash; Check if the user's ID is not 1 (admin) &ndash;&gt;-->
-<!--                <button th:if="${user.id != 1}" class="btn btn-primary" th:onclick="updateRole(${user.id})" type="button">Save</button>-->
-<!--            </td>-->
-
-<!--        </tr>-->
-
         <tr th:each="user : ${users}">
-            <form th:action="@{/users}" method="post">
-                <!-- Hidden input to store user ID -->
-                <input type="hidden" name="userId" th:value="${user.id}" />
-                <td th:text="${user.id}"></td>
-                <td th:text="${user.firstName}"></td>
-                <td th:text="${user.lastName}"></td>
-                <td th:text="${user.email}"></td>
-                <td th:text="${user.username}"></td>
-
-                <td>
-                    <span th:if="${user.id == 1}" th:text="${user.role.name}"></span>
-                    <!-- Dropdown for role selection -->
-                    <select th:if="${user.id != 1}" name="newRole">
-                        <option value="common" th:selected="${user.role.name == 'common'}">Common</option>
-                        <option value="manager" th:selected="${user.role.name == 'manager'}">Manager</option>
-                        <option value="admin" th:selected="${user.role.name == 'admin'}">Admin</option>
-                    </select>
-                </td>
-
-                <td>
-                    <!-- Submit button to update role -->
-                    <button  th:if="${user.id != 1}" class="btn btn-primary" type="submit">Save</button>
-                </td>
-            </form>
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.firstName}"></td>
+            <td th:text="${user.lastName}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.role.name}"></td>
+            <td>
+                <a class="btn btn-primary" th:href="@{/users/edit/{id}(id=${user.id})}">Edit</a>
+            </td>
+            <td>
+                <a class="btn btn-primary" th:href="@{/users/delete/{id}(id=${user.id})}" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+            </td>
         </tr>
-
 
         </tbody>
     </table>
