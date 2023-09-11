@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Add new address</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}"/>
+    <style>
+        .navbar-nav {
+            margin-left: 25%;
+        }
+
+        /* CSS style for red colored field in case of bad input */
+        .error-field {
+            border: 1px solid red;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div th:replace="~{header :: header}"></div>
+
+<div class="container">
+    <h1>Add new address</h1>
+    <form th:action="@{/users/personal-account/addresses/new}" th:object="${address}" method="post">
+        <div class="form-group">
+            <label for="street">Street:</label>
+            <input type="text" class="form-control" id="street" th:field="*{street}" maxlength="20" required>
+            <p id="streetError" style="color: red;"></p>
+            <br>
+            <label for="house">House:</label>
+            <input type="text" class="form-control" id="house" th:field="*{house}" maxlength="10" required>
+            <p id="houseError" style="color: red;"></p>
+            <br>
+            <label for="apartment">Apartment:</label>
+            <input type="text" class="form-control" id="apartment" th:field="*{apartment}" maxlength="10" required>
+            <br>
+            <p id="apartmentError" style="color: red;"></p>
+        </div>
+
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a class="btn btn-primary" href="/users/personal-account/addresses">Cancel</a>
+
+    </form>
+</div>
+
+
+</body>
+
+<script>
+
+function validateNames() {
+    var firstNameInput = document.getElementById("firstName");
+    var lastNameInput = document.getElementById("lastname");
+    var firstNameError = document.getElementById("firstNameError");
+    var lastNameError = document.getElementById("lastNameError");
+
+    function validateNameInput(input, errorElement) {
+        var nameValue = input.value.trim();
+        var namePattern = /^[a-zA-Z]+$/;
+
+        if (!namePattern.test(nameValue)) {
+            input.setCustomValidity("Please enter a valid name with letters only");
+            errorElement.textContent = "Please enter a valid name with letters only";
+        } else {
+            input.setCustomValidity("");
+            errorElement.textContent = "";
+        }
+    }
+
+    firstNameInput.addEventListener("input", function () {
+        validateNameInput(firstNameInput, firstNameError);
+    });
+
+    lastNameInput.addEventListener("input", function () {
+        validateNameInput(lastNameInput, lastNameError);
+    });
+}
+
+function passwordMatches() {
+        var password = document.getElementById("password");
+        var repeatPassword = document.getElementById("repeatPassword");
+
+        repeatPassword.addEventListener("input", function () {
+            if (password.value !== repeatPassword.value) {
+                repeatPassword.setCustomValidity("Passwords must match");
+                repeatPassword.classList.add("error-field");
+            } else {
+                repeatPassword.setCustomValidity("");
+                repeatPassword.classList.remove("error-field");
+            }
+        });
+}
+
+document.addEventListener("DOMContentLoaded", validateNames);
+document.addEventListener("DOMContentLoaded", passwordMatches);
+
+
+</script>
+
+
+</html>
+

@@ -1,9 +1,11 @@
 package com.gerasimov.capstone.dbclasses.controllers;
 
+import com.gerasimov.capstone.dbclasses.domain.AddressDto;
 import com.gerasimov.capstone.dbclasses.domain.UserDto;
 import com.gerasimov.capstone.dbclasses.entity.Role;
 import com.gerasimov.capstone.dbclasses.repositories.RoleRepository;
 import com.gerasimov.capstone.dbclasses.repositories.UserRepository;
+import com.gerasimov.capstone.dbclasses.services.AddressService;
 import com.gerasimov.capstone.dbclasses.services.RoleService;
 import com.gerasimov.capstone.dbclasses.services.UserService;
 import com.gerasimov.capstone.exceptions.RestaurantException;
@@ -12,13 +14,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -28,6 +35,7 @@ public class UserController {
     private RoleService roleService;
     private UserService userService;
 
+
     @GetMapping
     public String listUsers(Model model) {
         List<UserDto> users = userService.findAll();
@@ -35,19 +43,20 @@ public class UserController {
         return "users/list";
     }
 
-    @GetMapping("/new")
-    public String viewNewUserForm(Model model) {
+    @GetMapping("/registration")
+    public String viewRegistrationForm(Model model) {
         model.addAttribute("user", new UserDto());
-        return "users/new";
+        return "users/registration";
     }
 
-    @GetMapping("/success")
-    public String viewSuccessPage(Model model){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedUsername = authentication.getName();
-        // Pass the authenticated username to the view (HTML template)
-        model.addAttribute("authenticatedUsername", authenticatedUsername);
-        return "users/success";
+    @GetMapping("/success-registration")
+    public String viewSuccessRegistrationPage(){
+        return "users/successRegistration";
+    }
+
+    @GetMapping("/success-login")
+    public String viewSuccessLoginPage(){
+        return "users/successLogin";
     }
 
     @GetMapping("/edit/{id}")
@@ -60,10 +69,11 @@ public class UserController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
+    public String deleteUser(@PathVariable Long id, Authentication authentication) {
         userService.delete(id);
         return "redirect:/users";
     }
+
 
     @PostMapping("/edit/{id}")
     public String updateUser(@PathVariable Long id, @ModelAttribute UserDto user) {
@@ -71,24 +81,19 @@ public class UserController {
         return "redirect:/users";
     }
 
-
-
-    @PostMapping("/success")
+    @PostMapping("/registration")
     public String createUser(@ModelAttribute("user") UserDto userDto, Model model) {
         try{
             UserDto newUser = userService.save(userDto);
-            log.info("User with username " + userDto.getUsername() + " was created");
-            userService.makeLogin(newUser);
-
-            return "users/success";
+            model.addAttribute("newUsername", newUser.getUsername());
+            log.info("User with username " + newUser.getUsername() + " was created");
+            return "redirect:/users/success-registration";
         } catch (RestaurantException restaurantException){
             // Email already exists, return an error message
-            model.addAttribute("duplicateEmailException", "This email already exists.");
-            return "users/new"; // Return to the registration form with the error message
+            model.addAttribute("Restaurant exception", "This email already exists.");
+            return "redirect:/users/registration"; // Return to the registration form with the error message
         }
     }
-
-
 
 
 

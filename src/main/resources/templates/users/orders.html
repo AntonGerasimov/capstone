@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Orders history</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+    <style>
+        .navbar-nav {
+            margin-left: 25%;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{header :: header}"></div>
+
+<div class="container">
+    <div th:if="${updateSuccess}" class="alert alert-success">Success</div>
+    <h1>Orders history</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Delivery address</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.created}"></td>
+            <td th:text="${order.status}"></td>
+            <td th:text="${order.deliveryAddress.street}"></td>
+            <td>
+                <a class="btn btn-primary" th:href="@{/users}">More info</a>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

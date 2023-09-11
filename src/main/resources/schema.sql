@@ -34,8 +34,8 @@ CREATE TABLE addresses
     id              INT AUTO_INCREMENT PRIMARY KEY,
     user_id         INT,
     street          VARCHAR(20),
-    house           VARCHAR(5),
-    apartment       VARCHAR(5),
+    house           VARCHAR(10),
+    apartment       VARCHAR(10),
     CONSTRAINT fk_address_user FOREIGN KEY (user_id) REFERENCES users (id)
 ) ENGINE=InnoDB;
 

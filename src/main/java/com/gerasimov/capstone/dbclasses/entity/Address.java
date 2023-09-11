@@ -1,6 +1,5 @@
 package com.gerasimov.capstone.dbclasses.entity;
 
-import com.gerasimov.capstone.dbclasses.domain.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +15,7 @@ import javax.persistence.*;
 @Setter
 public class Address {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     @JoinColumn(name = "user_id")
