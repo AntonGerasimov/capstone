@@ -30,7 +30,7 @@ public class PersonalAccountController {
 
     @GetMapping
     public String viewPersonalAccount(){
-        return "users/personalAccount";
+        return "users/personal-account";
     }
 
     @GetMapping("/edit/{username}")
@@ -39,7 +39,7 @@ public class PersonalAccountController {
         List<Role> roles = roleService.findAll();
         model.addAttribute("user", userDto);
         model.addAttribute("roles", roles);
-        return "users/editPersonalAccount";
+        return "users/edit-personal-account";
     }
 
     @GetMapping("/delete/{username}")
@@ -61,7 +61,7 @@ public class PersonalAccountController {
     @GetMapping("/addresses/add")
     public String viewNewAddressForm(Model model){
         model.addAttribute("address", new AddressDto());
-        return "users/newAddress";
+        return "users/new-address";
     }
 
     @GetMapping("/orders")

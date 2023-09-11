@@ -51,12 +51,12 @@ public class UserController {
 
     @GetMapping("/success-registration")
     public String viewSuccessRegistrationPage(){
-        return "users/successRegistration";
+        return "users/success-registration";
     }
 
     @GetMapping("/success-login")
     public String viewSuccessLoginPage(){
-        return "users/successLogin";
+        return "users/success-login";
     }
 
     @GetMapping("/edit/{id}")
