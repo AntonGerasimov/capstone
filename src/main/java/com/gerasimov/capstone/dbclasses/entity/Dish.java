@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "dishes")
@@ -17,8 +15,9 @@ import javax.persistence.Table;
 @Setter
 public class Dish {
     @Id
-    private Long dishId;
-    private String dishName;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
     private String description;
     private Double price;
     private boolean isAvailable;

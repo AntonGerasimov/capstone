@@ -16,10 +16,10 @@ public class DishController {
     private final DishService dishService;
 
 
-    @GetMapping("/dishes")
-    public ModelAndView getAllDishes(Model model){
-        List<DishDto> dishes = dishService.findAll();
+    @GetMapping("/menu")
+    public String getAllDishes(Model model){
+        List<DishDto> dishes = dishService.findAllAvailable();
         model.addAttribute("dishes", dishes);
-        return new ModelAndView("dishes");
+        return "menu";
     }
 }

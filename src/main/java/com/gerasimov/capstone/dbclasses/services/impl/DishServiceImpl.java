@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -21,9 +20,15 @@ public class DishServiceImpl implements DishService {
     @Override
     public List<DishDto> findAll() {
         List<Dish> dishEntities = dishRepository.findAll();
-        List<DishDto> dishes = dishEntities.stream()
+        return dishEntities.stream()
                 .map(dishMapper::toDto)
-                .collect(Collectors.toList());
-        return dishes;
+                .toList();
+    }
+    @Override
+    public List<DishDto> findAllAvailable(){
+        List<Dish> dishEntities = dishRepository.findByIsAvailableTrue();
+        return dishEntities.stream()
+                .map(dishMapper::toDto)
+                .toList();
     }
 }

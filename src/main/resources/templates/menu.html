@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Addresses</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+    <style>
+        .navbar-nav {
+            margin-left: 25%;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{header :: header}"></div>
+
+<div class="container">
+    <div th:if="${updateSuccess}" class="alert alert-success">Success</div>
+    <h1>Menu</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="dish : ${dishes}">
+            <td th:text="${dish.dishName}"></td>
+            <td th:text="${dish.description}"></td>
+            <td th:text="${dish.price}"></td>
+            <td>
+                <a class="btn btn-primary" th:href="@{/users}">Add</a>
+            </td>
+        </tr>
+
+
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>
