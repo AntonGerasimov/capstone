@@ -17,7 +17,7 @@ INSERT IGNORE INTO users (first_name, last_name, email, username, password, role
     ('John', 'Bonham', 'bonham@gmail.com', 'bonham',
     '$2a$12$WocppmSlhS5v.r8CN4SSUeJuCdwh6ZhQMOANEn.jh/knDCn4xy.Bi', 1, TRUE),
     ('Robert', 'Plant', 'plant@gmail.com', 'plant',
-    '$2a$12$WocppmSlhS5v.r8CN4SSUeJuCdwh6ZhQMOANEn.jh/knDCn4xy.Bi', 1, TRUE);
+    '$2a$12$WocppmSlhS5v.r8CN4SSUeJuCdwh6ZhQMOANEn.jh/knDCn4xy.Bi', 1, FALSE);
 
 INSERT INTO addresses (user_id, street, house, apartment) VALUES
     (2, 'elm', '12', '23'),
