@@ -13,15 +13,30 @@
 
 <div th:replace="~{header :: header}"></div>
 
-<h1>Personal account</h1>
+<!--<h1>Personal account</h1>-->
 
-<a class="btn btn-primary" th:href="@{/users/personal-account/addresses}" >My addresses</a>
-
-<a class="btn btn-primary" th:href="@{/users/personal-account/orders}" >My orders</a>
-
-<a class="btn btn-primary" th:href="@{/users/personal-account/edit/{username}(username=${#authentication.principal.username})}">Edit personal data</a>
+<ul class="nav nav-underline">
+    <h1>Personal account</h1>
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" th:href="@{/users/personal-account}">Personal account</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/users/personal-account/edit/{username}(username=${#authentication.principal.username})}">Edit personal data</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/users/personal-account/addresses}">My addresses</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/users/personal-account/orders}">My orders</a>
+    </li>
+</ul>
 
 <a class="btn btn-primary" th:href="@{/users/personal-account/delete/{username}(username=${#authentication.principal.username})}" onclick="return confirm('Are you sure you want to delete this user?');">Delete account</a>
+
+
+
+
+
 
 
 </body>
