@@ -115,14 +115,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public String delete(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
-            log.info("Delete user with username " + user.getUsername());
-            List<Address> addresses = addressRepository.findByUser(user);
-            addresses.forEach(address -> addressService.delete(address.getId()));
-            user.setRole(null);
-            userRepository.deleteById(userId);
+            log.info("Delete user with username " + user.getUsername() + ". (Make isActive = false)");
+            user.setActive(false);
         }
         return null;
     }
