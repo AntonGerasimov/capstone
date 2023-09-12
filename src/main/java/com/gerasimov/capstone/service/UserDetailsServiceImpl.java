@@ -17,8 +17,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
     private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private RoleRepository roleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws RestaurantException {
