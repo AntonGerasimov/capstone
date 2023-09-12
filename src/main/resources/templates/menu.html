@@ -27,11 +27,11 @@
         </thead>
         <tbody>
         <tr th:each="dish : ${dishes}">
-            <td th:text="${dish.dishName}"></td>
+            <td th:text="${dish.name}"></td>
             <td th:text="${dish.description}"></td>
-            <td th:text="${dish.price}"></td>
+            <td th:text="'$' +${dish.price}"></td>
             <td>
-                <a class="btn btn-primary" th:href="@{/users}">Add</a>
+                <a class="btn btn-primary" th:href="@{/users}">Add to cart</a>
             </td>
         </tr>
 

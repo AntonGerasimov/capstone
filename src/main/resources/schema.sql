@@ -54,8 +54,8 @@ CREATE TABLE orders
 CREATE TABLE dishes
 (
     id              INT AUTO_INCREMENT PRIMARY KEY,
-    name            VARCHAR(14),
-    description     VARCHAR(200),
+    name            VARCHAR(50),
+    description     VARCHAR(1000),
     category        VARCHAR(50),
     price           DECIMAL(8, 2),
     is_available    BOOLEAN

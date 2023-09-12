@@ -36,4 +36,15 @@ INSERT INTO orders (customer_id, created, status, delivery_address_id) VALUES
     (4, '2023-08-08 16:30:00', 'active', 4),
     (5, '2023-08-09 16:30:00', 'active', 5);
 
+INSERT INTO dishes (name, description, category, price, is_available) VALUES
+    ('Pizza Pepperoni',
+    'Made of pizza crust, pizza sauce, cheese, and pepperoni. Pepperoni is basically an American version of salami. Pepperoni is a meat mixture of beef and pork that has been cured and seasoned with paprika and chili powder.Pepperoni is characteristically soft, slightly smoky, and bright red in color.',
+    'Pizza','10.5', TRUE),
+    ('Adjarian khachapuri',
+    'Adjarian khachapuri consists of Imeretian cheese, yeast dough, egg and butter. The dough is rolled out into a rectangle, after which its two ends are formed into symmetrical rolls around uniformly distributed portions of cheese sprinkled along the edges.',
+    'Georgian Cuisine', '5.1', TRUE),
+    ('Dolma',
+    'The delicacy from minced meat and rice wrapped in vine leaves',
+    'Main dishes', '6.25', TRUE);
+
 COMMIT;
