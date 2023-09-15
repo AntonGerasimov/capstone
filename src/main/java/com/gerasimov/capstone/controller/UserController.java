@@ -1,7 +1,7 @@
 package com.gerasimov.capstone.controller;
 
 import com.gerasimov.capstone.domain.UserDto;
-import com.gerasimov.capstone.entity.Role;
+import com.gerasimov.capstone.security.UserDetailsImpl;
 import com.gerasimov.capstone.service.RoleService;
 import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +22,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
+
     private RoleService roleService;
     private UserService userService;
 
@@ -47,30 +50,32 @@ public class UserController {
         return "users/success-login";
     }
 
-    @GetMapping("/edit/{id}")
-    public String editUser(@PathVariable Long id, Model model) {
-        Optional<UserDto> userDto = userService.findById(id);
-        if (userDto.isPresent()){
-            List<Role> roles = roleService.findAll();
-            model.addAttribute("user", userDto);
-            model.addAttribute("roles", roles);
-            return "users/edit";
-        }else{
-            throw new RestaurantException("User that you want to edit can't be found");
+    @GetMapping("/personal-account")
+    public String viewPersonalAccount(Authentication authentication, Model model){
+        try{
+            UserDto authenticatedUser = userService.findAuthenticatedUser(authentication);
+            model.addAttribute("user", authenticatedUser);
+            return "users/personal-account";
+        } catch (RestaurantException e){
+            return "users/registration";
         }
     }
-
-    @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id, Authentication authentication) {
-        userService.delete(id);
-        return "redirect:/users";
+    @GetMapping("/{id}/edit")
+    public String editUser(@PathVariable Long id, Authentication authentication, Model model) {
+        userService.prepareEdit(id, authentication, model);
+        return "users/edit";
     }
 
+    @DeleteMapping("/{id}")
+    public String deleteUser(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        userService.delete(id, request, response, authentication);
+        return userService.findRedirectPageAfterDelete(id, authentication);
+    }
 
-    @PostMapping("/edit/{id}")
-    public String updateUser(@PathVariable Long id, @ModelAttribute UserDto user) {
+    @PostMapping("/{id}/edit")
+    public String updateUser(@PathVariable Long id, @ModelAttribute UserDto user, Authentication authentication) {
         userService.update(id, user);
-        return "redirect:/users";
+        return userService.findRedirectPageAfterEdit(id, authentication);
     }
 
     @PostMapping("/registration")
@@ -90,8 +95,6 @@ public class UserController {
             return "redirect:/users/registration"; // Return to the registration form with the error message
         }
     }
-
-
 
 
 

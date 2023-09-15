@@ -1,5 +1,6 @@
 package com.gerasimov.capstone.mapper;
 
+
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.User;
 import org.mapstruct.Mapper;

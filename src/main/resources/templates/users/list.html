@@ -38,10 +38,12 @@
             <td th:text="${user.username}"></td>
             <td th:text="${user.role.name}"></td>
             <td>
-                <a class="btn btn-primary" th:if="${user.id != 1}" th:href="@{/users/edit/{id}(id=${user.id})}">Edit</a>
+                <a class="btn btn-primary" th:if="${user.id != 1}" th:href="@{/users/{id}/edit(id=${user.id})}">Edit</a>
             </td>
             <td>
-                <a class="btn btn-primary" th:if="${user.id != 1}" th:href="@{/users/delete/{id}(id=${user.id})}" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                <form th:if="${user.id != 1}" th:action="@{/users/{id}(id=${user.id})}" th:method="delete" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </form>
             </td>
         </tr>
 
@@ -49,6 +51,8 @@
     </table>
 
 </div>
+
+
 
 </body>
 </html>

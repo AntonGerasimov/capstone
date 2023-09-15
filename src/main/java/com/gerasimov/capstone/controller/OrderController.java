@@ -20,4 +20,11 @@ public class OrderController {
         model.addAttribute("orders", orders);
         return new ModelAndView("orders");
     }
+
+    @GetMapping("/users/personal-account/orders")
+    public String viewUserOrders(){
+        return "users/orders";
+    }
+
+
 }

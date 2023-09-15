@@ -24,4 +24,5 @@ public class MapStructConfig {
     public UserMapper userMapper() {
         return UserMapper.INSTANCE;
     }
+
 }

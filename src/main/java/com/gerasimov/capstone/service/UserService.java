@@ -1,7 +1,11 @@
 package com.gerasimov.capstone.service;
 
 import com.gerasimov.capstone.domain.UserDto;
+import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,11 +18,14 @@ public interface UserService {
 
     Optional<UserDto> save(UserDto user);
 
-    Optional<UserDto> update(Long id, UserDto user);
+    void prepareEdit(Long editId, Authentication authentication, Model model);
 
-    Optional<UserDto> updateByUsername(String username, UserDto user);
+    void update(Long id, UserDto user);
 
-    void delete(Long userId); //returns the redirected page
+    void delete(Long userId, HttpServletRequest request, HttpServletResponse response, Authentication authentication);
 
     boolean emailExists(String email);
+    String findRedirectPageAfterEdit(Long id, Authentication authentication);
+    String findRedirectPageAfterDelete(Long id, Authentication authentication);
+    UserDto findAuthenticatedUser(Authentication authentication);
 }

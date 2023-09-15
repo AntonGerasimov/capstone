@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,10 +18,10 @@
 <h1>Edit User</h1>
 
 
-<form th:action="@{/users/edit/{id}(id=${user.id})}" method="POST" th:object="${user}">
+<form th:action="@{/users/{id}/edit/(id=${user.id})}" method="POST" th:object="${user}">
 
-    <label for="id">Id:</label>
-    <input class="form-control" type="text" id = "id" name = "id" th:field="*{id}" disabled="disabled" />
+    <label sec:authorize="hasRole('admin')" for="id">Id:</label>
+    <input sec:authorize="hasRole('admin')" class="form-control" type="text" id = "id" name = "id" th:field="*{id}" disabled="disabled" />
     <br>
     <label for="firstName">First Name:</label>
     <input class="form-control" type="text" id="firstName" name="firstName" th:field="*{firstName}" required />
@@ -35,8 +35,8 @@
     <label for="username">Username:</label>
     <input class="form-control" type="text" id="username" name="username" th:field="*{username}" disabled="disabled" />
     <br>
-    <label for="role">Role:</label>
-    <select id="role" name="role.id" th:field="*{role.id}" required>
+    <label sec:authorize="hasRole('admin')" for="role">Role:</label>
+    <select sec:authorize="hasRole('admin')" id="role" name="role.id" th:field="*{role.id}" required>
         <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
     </select>
 

@@ -4,6 +4,7 @@ import com.gerasimov.capstone.domain.AddressDto;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Address;
 import com.gerasimov.capstone.entity.Order;
+import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.mapper.AddressMapper;
 import com.gerasimov.capstone.mapper.UserMapper;
 import com.gerasimov.capstone.repository.AddressRepository;
@@ -48,7 +49,7 @@ public class AddressServiceImpl implements AddressService {
             addressRepository.save(addressMapper.toEntity(addressDto));
             return addressDto;
         }else{
-            return null;
+            throw new RestaurantException("Can't find user in database");
         }
     }
 
@@ -70,5 +71,15 @@ public class AddressServiceImpl implements AddressService {
         return addressesEntities.stream()
                 .map(addressMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public List<AddressDto> findAllForAuthenticatedUser(Authentication authentication){
+        Optional<UserDto> authenticatedUser = userService.findByUsername(authentication.getName());
+        if (authenticatedUser.isPresent()){
+            return findAllByUser(authenticatedUser.get());
+        }else{
+            throw new RestaurantException("Can't find authenticated user");
+        }
     }
 }

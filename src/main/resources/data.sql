@@ -1,9 +1,9 @@
 -- DML
 
 INSERT IGNORE INTO roles (name) VALUES
-    ('common'),
-    ('manager'),
-    ('admin');
+    ('ROLE_common'),
+    ('ROLE_manager'),
+    ('ROLE_admin');
 
 INSERT IGNORE INTO users (first_name, last_name, email, username, password, role_id, is_active) VALUES
     ('admin', 'admin', 'admin@gmail.com', 'admin',

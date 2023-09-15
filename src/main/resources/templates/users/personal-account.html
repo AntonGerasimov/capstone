@@ -21,7 +21,7 @@
         <a class="nav-link active" aria-current="page" th:href="@{/users/personal-account}">Personal account</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" th:href="@{/users/personal-account/edit/{username}(username=${#authentication.principal.username})}">Edit personal data</a>
+        <a class="nav-link" th:href="@{/users/{id}/edit(id=${user.id})}">Edit personal data</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" th:href="@{/users/personal-account/addresses}">My addresses</a>
@@ -31,8 +31,9 @@
     </li>
 </ul>
 
-<a class="btn btn-primary" th:href="@{/users/personal-account/delete/{username}(username=${#authentication.principal.username})}" onclick="return confirm('Are you sure you want to delete this user?');">Delete account</a>
-
+<form th:if="${user.id != 1}" th:action="@{/users/{id}(id=${user.id})}" th:method="delete" onsubmit="return confirm('Are you sure you want to delete this user?');">
+    <button type="submit" class="btn btn-primary">Delete</button>
+</form>
 
 
 
