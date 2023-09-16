@@ -43,11 +43,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .anyRequest().authenticated() // All other URLs require authentication
                     .and()
                 .formLogin() // Enable form-based authentication
-                    .loginPage("/login") // Custom login page URL
-                    .loginProcessingUrl("/login")
-                    .defaultSuccessUrl("/users/success-login")
-                    .permitAll() // Allow access to the login page
-                    .and()
+//                    .loginPage("/login") // Custom login page URL
+//                    .loginProcessingUrl("/login")
+//                    .defaultSuccessUrl("/users/success-login")
+//                    .permitAll() // Allow access to the login page
+                    .disable()
+//                    .and()
                 .logout() // Enable logout
                     .logoutUrl("/logout")
                     .logoutSuccessUrl("/")

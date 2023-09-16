@@ -11,7 +11,10 @@ import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,6 +38,7 @@ public class UserServiceImpl implements UserService {
     private RoleService roleService;
     private UserMapper userMapper;
     private PasswordEncoder passwordEncoder;
+    private AuthenticationManager authenticationManager;
 
     @Override
     public List<UserDto> findAll() {
@@ -63,17 +68,43 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> save(UserDto userDto) {
+    public void login(UserDto newUser, HttpServletRequest request){
+        log.info(String.format("Initiate login for username %s", newUser.getUsername()));
+        Optional<UserDto> dbUserOptional = findByUsername(newUser.getUsername());
+        if (dbUserOptional.isPresent()){
+            UserDto dbUser = dbUserOptional.get();
+            if (dbUser.isActive()){
+                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(newUser.getUsername(), newUser.getPassword());
+                Authentication authentication = authenticationManager.authenticate(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                HttpSession session = request.getSession(true);
+                session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+                log.info(String.format("Successful login of username %s", newUser.getUsername()));
+            } else{
+                log.error(String.format("Can't find user with username %s", newUser.getUsername()));
+                throw new RestaurantException(String.format("Can't find user with username %s", newUser.getUsername()));
+            }
+        }else{
+            log.error(String.format("Can't find user with username", newUser.getUsername()));
+            throw new RestaurantException(String.format("Can't find user with username", newUser.getUsername()));
+        }
+    }
+
+    @Override
+    public UserDto save(UserDto userDto) {
         if (emailExists(userDto.getEmail())){
-            throw new RestaurantException("Duplicate user with email: " + userDto.getEmail());
+            log.error(String.format("User with email %s already exists", userDto.getEmail()));
+            throw new RestaurantException(String.format("User with email %s already exists", userDto.getEmail()));
         }
         Role commonRole = roleService.findCommonRole();
         userDto.setRole(commonRole); // set role to default --- common
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
         userDto.setPassword(encodedPassword);
+        userDto.setActive(true);
         User user = userMapper.toEntity(userDto);
         userRepository.save(user);
-        return Optional.of(userDto);
+        log.info("User with username " + user.getUsername() + " was created");
+        return userDto;
     }
 
     @Override

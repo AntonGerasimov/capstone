@@ -18,7 +18,7 @@ public class DishController {
     @GetMapping("/menu")
     public String getAllDishes(Model model){
         List<DishDto> dishes = dishService.findAllAvailable();
-        model.addAttribute("dishes", dishes);
+        model.addAttribute("menuItems", dishes);
         return "menu";
     }
 }

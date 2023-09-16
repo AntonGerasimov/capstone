@@ -3,11 +3,6 @@
 <head>
     <title>Addresses</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
-    <style>
-        .navbar-nav {
-            margin-left: 25%;
-        }
-    </style>
 </head>
 <body>
 
@@ -17,9 +12,6 @@
     <h1>My addresses</h1>
     <li class="nav-item">
         <a class="nav-link" aria-current="page" th:href="@{/users/personal-account}">Personal account</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" th:href="@{/users/personal-account/edit/{username}(username=${#authentication.principal.username})}">Edit personal data</a>
     </li>
     <li class="nav-item">
         <a class="nav-link active" th:href="@{/users/personal-account/addresses}">My addresses</a>

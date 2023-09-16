@@ -15,8 +15,9 @@ public interface UserService {
     Optional<UserDto> findById(Long id);
 
     Optional<UserDto> findByUsername(String username);
+    void login(UserDto newUser, HttpServletRequest request);
 
-    Optional<UserDto> save(UserDto user);
+    UserDto save(UserDto user);
 
     void prepareEdit(Long editId, Authentication authentication, Model model);
 

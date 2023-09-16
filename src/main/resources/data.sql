@@ -45,6 +45,27 @@ INSERT INTO dishes (name, description, category, price, is_available) VALUES
     'Georgian Cuisine', '5.1', TRUE),
     ('Dolma',
     'The delicacy from minced meat and rice wrapped in vine leaves',
-    'Main dishes', '6.25', TRUE);
+    'Main dishes', '6.25', TRUE),
+    ('Dolma',
+        'The delicacy from minced meat and rice wrapped in vine leaves',
+        'Main dishes', '6.25', TRUE),
+    ('Dolma',
+            'The delicacy from minced meat and rice wrapped in vine leaves',
+            'Main dishes', '6.25', TRUE),
+    ('Dolma',
+            'The delicacy from minced meat and rice wrapped in vine leaves',
+            'Main dishes', '6.25', TRUE),
+    ('Dolma',
+            'The delicacy from minced meat and rice wrapped in vine leaves',
+            'Main dishes', '6.25', TRUE),
+    ('Dolma',
+            'The delicacy from minced meat and rice wrapped in vine leaves',
+            'Main dishes', '6.25', TRUE),
+    ('Dolma',
+            'The delicacy from minced meat and rice wrapped in vine leaves',
+            'Main dishes', '6.25', TRUE),
+    ('Dolma',
+            'The delicacy from minced meat and rice wrapped in vine leaves',
+            'Main dishes', '6.25', TRUE);
 
 COMMIT;

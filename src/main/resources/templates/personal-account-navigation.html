@@ -1,0 +1,11 @@
+<ul class="nav nav-underline" xmlns:th="http://www.thymeleaf.org">
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" th:href="@{/users/{id}/personal-account(id=${#authentication.principal.userDto.id})}">Personal account</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/users/personal-account/addresses}">My addresses</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/users/personal-account/orders}">My orders</a>
+    </li>
+</ul>

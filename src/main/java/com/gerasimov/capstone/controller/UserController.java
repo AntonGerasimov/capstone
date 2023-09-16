@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,8 +51,8 @@ public class UserController {
         return "users/success-login";
     }
 
-    @GetMapping("/personal-account")
-    public String viewPersonalAccount(Authentication authentication, Model model){
+    @GetMapping("/{id}/personal-account")
+    public String viewPersonalAccount(@PathVariable Long id, Authentication authentication, Model model){
         try{
             UserDto authenticatedUser = userService.findAuthenticatedUser(authentication);
             model.addAttribute("user", authenticatedUser);
@@ -79,19 +80,14 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-    public String createUser(@ModelAttribute("user") UserDto userDto, Model model) {
+    public String createUser(@ModelAttribute("user") UserDto userDto, Model model, RedirectAttributes redirectAttributes) {
         try{
-            Optional<UserDto> newUser = userService.save(userDto);
-            if (newUser.isPresent()){
-                model.addAttribute("newUsername", newUser.get().getUsername());
-                log.info("User with username " + newUser.get().getUsername() + " was created");
-                return "redirect:/users/success-registration";
-            } else{
-                throw new RestaurantException("An error occured during save process");
-            }
-        } catch (RestaurantException restaurantException){
+            UserDto newUser = userService.save(userDto);
+            model.addAttribute("newUsername", newUser.getUsername());
+            return "redirect:/users/success-registration";
+        } catch (RestaurantException e){
             // Email already exists, return an error message
-            model.addAttribute("Restaurant exception", "This email already exists.");
+            redirectAttributes.addFlashAttribute("restaurantException", e.getMessage());
             return "redirect:/users/registration"; // Return to the registration form with the error message
         }
     }

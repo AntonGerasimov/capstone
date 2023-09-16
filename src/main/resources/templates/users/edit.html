@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit User</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
-    <style>
-        .navbar-nav {
-            margin-left: 25%;
-        }
-    </style>
 </head>
 <body>
 
 <div th:replace="~{header :: header}"></div>
 
-<h1>Edit User</h1>
+<h1>Edit user account</h1>
 
 
 <form th:action="@{/users/{id}/edit/(id=${user.id})}" method="POST" th:object="${user}">
@@ -35,8 +30,8 @@
     <label for="username">Username:</label>
     <input class="form-control" type="text" id="username" name="username" th:field="*{username}" disabled="disabled" />
     <br>
-    <label sec:authorize="hasRole('admin')" for="role">Role:</label>
-    <select sec:authorize="hasRole('admin')" id="role" name="role.id" th:field="*{role.id}" required>
+    <label th:if="${user.id != 1}" sec:authorize="hasRole('admin')" for="role">Role:</label>
+    <select th:if="${user.id != 1}" sec:authorize="hasRole('admin')" id="role" name="role.id" th:field="*{role.id}" required>
         <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
     </select>
 
