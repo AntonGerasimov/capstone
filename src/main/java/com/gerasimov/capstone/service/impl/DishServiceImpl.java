@@ -26,7 +26,7 @@ public class DishServiceImpl implements DishService {
     }
     @Override
     public List<DishDto> findAllAvailable(){
-        List<Dish> dishEntities = dishRepository.findByIsAvailableTrue();
+        List<Dish> dishEntities = dishRepository.findByIsAvailable();
         return dishEntities.stream()
                 .map(dishMapper::toDto)
                 .toList();

@@ -1,7 +1,6 @@
 package com.gerasimov.capstone.controller;
 
 import com.gerasimov.capstone.domain.UserDto;
-import com.gerasimov.capstone.security.UserDetailsImpl;
 import com.gerasimov.capstone.service.RoleService;
 import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
@@ -16,15 +15,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @Slf4j
 @AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-
-    private RoleService roleService;
     private UserService userService;
 
 

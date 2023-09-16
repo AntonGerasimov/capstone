@@ -1,10 +1,8 @@
 package com.gerasimov.capstone.controller;
 
 import com.gerasimov.capstone.domain.AddressDto;
-import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.AddressService;
-import com.gerasimov.capstone.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -16,14 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @AllArgsConstructor
 @Slf4j
 public class AddressController {
     private final AddressService addressService;
-    private final UserService userService;
 
     @GetMapping("/addresses")
     public ModelAndView getAllAddresses(Model model){
