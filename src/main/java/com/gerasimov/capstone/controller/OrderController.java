@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -21,8 +22,8 @@ public class OrderController {
         return new ModelAndView("orders");
     }
 
-    @GetMapping("/users/personal-account/orders")
-    public String viewUserOrders(){
+    @GetMapping("/users/{id}/orders")
+    public String viewUserOrders(@PathVariable Long id){
         return "users/orders";
     }
 

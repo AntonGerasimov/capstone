@@ -8,9 +8,11 @@ import java.util.List;
 
 public interface AddressService {
     List<AddressDto> findAll();
+    AddressDto findById(Long id);
     List<AddressDto> findAllByUser(UserDto userDto);
     List<AddressDto> findAllForAuthenticatedUser(Authentication authentication);
     AddressDto save(AddressDto addressDto);
+    AddressDto update(Long addressId, AddressDto addressDto, Long userId);
     void delete(Long addressId);
 
 }

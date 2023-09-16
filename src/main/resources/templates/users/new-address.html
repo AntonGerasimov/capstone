@@ -18,7 +18,7 @@
 
 <div class="container">
     <h1>Add new address</h1>
-    <form th:action="@{/users/personal-account/addresses/new}" th:object="${address}" method="post">
+    <form th:action="@{/users/{id}/addresses/add(id=${#authentication.principal.userDto.id})}" th:object="${address}" method="post">
         <div class="form-group">
             <label for="street">Street:</label>
             <input type="text" class="form-control" id="street" th:field="*{street}" maxlength="20" required>
@@ -36,65 +36,13 @@
 
         <br>
         <button type="submit" class="btn btn-primary">Add</button>
-        <a class="btn btn-primary" href="/users/personal-account/addresses">Cancel</a>
+        <a class="btn btn-primary" href="/users/{id}/addresses(id=${#authentication.principal.userDto.id})">Cancel</a>
 
     </form>
 </div>
 
 
 </body>
-
-<script>
-
-function validateNames() {
-    var firstNameInput = document.getElementById("firstName");
-    var lastNameInput = document.getElementById("lastname");
-    var firstNameError = document.getElementById("firstNameError");
-    var lastNameError = document.getElementById("lastNameError");
-
-    function validateNameInput(input, errorElement) {
-        var nameValue = input.value.trim();
-        var namePattern = /^[a-zA-Z]+$/;
-
-        if (!namePattern.test(nameValue)) {
-            input.setCustomValidity("Please enter a valid name with letters only");
-            errorElement.textContent = "Please enter a valid name with letters only";
-        } else {
-            input.setCustomValidity("");
-            errorElement.textContent = "";
-        }
-    }
-
-    firstNameInput.addEventListener("input", function () {
-        validateNameInput(firstNameInput, firstNameError);
-    });
-
-    lastNameInput.addEventListener("input", function () {
-        validateNameInput(lastNameInput, lastNameError);
-    });
-}
-
-function passwordMatches() {
-        var password = document.getElementById("password");
-        var repeatPassword = document.getElementById("repeatPassword");
-
-        repeatPassword.addEventListener("input", function () {
-            if (password.value !== repeatPassword.value) {
-                repeatPassword.setCustomValidity("Passwords must match");
-                repeatPassword.classList.add("error-field");
-            } else {
-                repeatPassword.setCustomValidity("");
-                repeatPassword.classList.remove("error-field");
-            }
-        });
-}
-
-document.addEventListener("DOMContentLoaded", validateNames);
-document.addEventListener("DOMContentLoaded", passwordMatches);
-
-
-</script>
-
 
 </html>
 

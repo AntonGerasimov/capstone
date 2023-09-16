@@ -14,4 +14,5 @@ public class AddressDto {
     private String street;
     private String house;
     private String apartment;
+    private boolean isActive;
 }

@@ -3,7 +3,6 @@ package com.gerasimov.capstone.service.impl;
 import com.gerasimov.capstone.domain.AddressDto;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Address;
-import com.gerasimov.capstone.entity.Order;
 import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.mapper.AddressMapper;
 import com.gerasimov.capstone.mapper.UserMapper;
@@ -16,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,12 +40,23 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public AddressDto findById(Long id){
+        Optional<Address> addressOptional = addressRepository.findById(id);
+        if (addressOptional.isPresent()){
+            return addressMapper.toDto(addressOptional.get());
+        }else{
+            throw new RestaurantException(String.format("Can't find address with id %s", id));
+        }
+    }
+
+    @Override
     public AddressDto save(AddressDto addressDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUsername = authentication.getName();
         Optional<UserDto> user = userService.findByUsername(authenticatedUsername);
         if (user.isPresent()) {
             addressDto.setUser(user.get());
+            addressDto.setActive(true);
             addressRepository.save(addressMapper.toEntity(addressDto));
             return addressDto;
         }else{
@@ -54,14 +65,29 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional
+    public AddressDto update(Long addressId, AddressDto addressDto, Long userId){
+        log.info(String.format("Updating address with id %d", addressId));
+        log.info(addressDto.toString());
+        addressDto.setId(addressId);
+        UserDto userDto = userService.findById(userId).orElse(null);
+        addressDto.setUser(userDto);
+        addressDto.setActive(true);
+        addressRepository.save(addressMapper.toEntity(addressDto));
+        return null;
+    }
+
+    @Override
+    @Transactional
     public void delete(Long addressId){
-        Address address = addressRepository.findById(addressId).orElse(null);
-        if (address != null){
-            log.info("Delete address with id " + address.getId());
-            address.setUser(null);
-            List<Order> orders = orderService.findByDeliveryAddressId(addressId);
-            orders.forEach(order -> orderService.delete(order.getId()));
-            addressRepository.deleteById(addressId);
+        Optional<Address> addressOptional = addressRepository.findById(addressId);
+        if (addressOptional.isPresent()){
+            Address address = addressOptional.get();
+            address.setActive(false);
+            log.info(String.format("Delete address with id %s", address.getId()));
+            log.info("address setActive is " + address.isActive());
+        }else{
+            throw new RestaurantException(String.format("Can't find address with id %d", addressId));
         }
     }
 

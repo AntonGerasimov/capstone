@@ -19,13 +19,13 @@ INSERT IGNORE INTO users (first_name, last_name, email, username, password, role
     ('Robert', 'Plant', 'plant@gmail.com', 'plant',
     '$2a$12$WocppmSlhS5v.r8CN4SSUeJuCdwh6ZhQMOANEn.jh/knDCn4xy.Bi', 1, FALSE);
 
-INSERT INTO addresses (user_id, street, house, apartment) VALUES
-    (2, 'elm', '12', '23'),
-    (1, 'pine', '43', '1'),
-    (3, 'oak', '1', '2'),
-    (4, 'palm', '5', '415'),
-    (5, 'sandalwood', '51B', '91'),
-    (6, 'mango', '26', '2B');
+INSERT INTO addresses (user_id, street, house, apartment, is_active) VALUES
+    (2, 'elm', '12', '23', TRUE),
+    (1, 'pine', '43', '1', TRUE),
+    (3, 'oak', '1', '2', TRUE),
+    (4, 'palm', '5', '415', TRUE),
+    (5, 'sandalwood', '51B', '91', TRUE),
+    (6, 'mango', '26', '2B', TRUE);
 
 INSERT INTO orders (customer_id, created, status, delivery_address_id) VALUES
     (2, '2023-08-28 14:30:00', 'active', 1),

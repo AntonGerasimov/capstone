@@ -14,10 +14,10 @@
         <a class="nav-link" aria-current="page" th:href="@{/users/personal-account}">Personal account</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link active" th:href="@{/users/personal-account/addresses}">My addresses</a>
+        <a class="nav-link active" th:href="@{/users/{id}/addresses(id=${#authentication.principal.userDto.id})}">My addresses</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" th:href="@{/users/personal-account/orders}">My orders</a>
+        <a class="nav-link" th:href="@{/users/{id}/orders(id=${#authentication.principal.userDto.id})}">My orders</a>
     </li>
 </ul>
 
@@ -34,20 +34,22 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="address : ${addresses}">
+        <tr th:each="address : ${addresses}" th:if="${address.isActive}">
             <td th:text="${address.street}"></td>
             <td th:text="${address.house}"></td>
             <td th:text="${address.apartment}"></td>
             <td>
-                <a class="btn btn-primary" th:href="@{/users}">Edit</a>
+                <a class="btn btn-primary" th:href="@{/users/{userId}/addresses/{addressId}/edit(userId=${#authentication.principal.userDto.id}, addressId=${address.id})}">Edit</a>
             </td>
             <td>
-                <a class="btn btn-primary" th:href="@{/users}" onclick="return confirm('Are you sure you want to delete this address?');">Delete</a>
+                <form th:action="@{/users/{userId}/addresses/{addressId}(userId=${#authentication.principal.userDto.id}, addressId=${address.id})}" th:method="delete" onsubmit="return confirm('Are you sure you want to delete this address?');">
+                    <button type="submit" class="btn btn-primary">Delete address</button>
+                </form>
             </td>
         </tr>
         <tr>
             <td>
-                <a class="btn btn-primary" th:href="@{/users/personal-account/addresses/add}">Add new address</a>
+                <a class="btn btn-primary" th:href="@{/users/{id}/addresses/add(id=${#authentication.principal.userDto.id})}">Add new address</a>
             </td>
             <td></td>
             <td></td>

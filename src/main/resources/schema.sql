@@ -36,6 +36,7 @@ CREATE TABLE addresses
     street          VARCHAR(20),
     house           VARCHAR(10),
     apartment       VARCHAR(10),
+    is_active       BOOLEAN,
     CONSTRAINT fk_address_user FOREIGN KEY (user_id) REFERENCES users (id)
 ) ENGINE=InnoDB;
 
