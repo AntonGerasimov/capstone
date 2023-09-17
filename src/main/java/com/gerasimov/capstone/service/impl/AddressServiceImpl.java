@@ -72,7 +72,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<AddressDto> findAllByUser(UserDto userDto){
+    public List<AddressDto> findAvailableForUser(UserDto userDto){
         List<Address> addressesEntities = addressRepository.findByUser(userMapper.toEntity(userDto));
         return addressesEntities.stream()
                 .filter(Address::isActive)
@@ -81,8 +81,8 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<AddressDto> findAllForAuthenticatedUser(Authentication authentication){
+    public List<AddressDto> findAvailableForAuthenticatedUser(Authentication authentication){
         UserDto authenticatedUser = userService.findByUsername(authentication.getName());
-        return findAllByUser(authenticatedUser);
+        return findAvailableForUser(authenticatedUser);
     }
 }

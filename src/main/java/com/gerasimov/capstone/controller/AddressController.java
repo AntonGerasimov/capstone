@@ -28,7 +28,7 @@ public class AddressController {
 
     @GetMapping("/users/{id}/addresses")
     public String viewUserAddresses(@PathVariable Long id, Model model, Authentication authentication){
-        List<AddressDto> addresses = addressService.findAllForAuthenticatedUser(authentication);
+        List<AddressDto> addresses = addressService.findAvailableForAuthenticatedUser(authentication);
         model.addAttribute("addresses", addresses);
         return "users/addresses";
     }

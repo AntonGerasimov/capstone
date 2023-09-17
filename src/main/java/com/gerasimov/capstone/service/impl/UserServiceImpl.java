@@ -101,7 +101,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void update(Long id, UserDto updatedUser) {
         log.info("Updating user with id " + id);
-        log.info(updatedUser.toString());
         UserDto userToUpdate = findById(id);
         updatedUser.setPassword(userToUpdate.getPassword());
         if (updatedUser.getRole() == null) {
@@ -114,18 +113,17 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void delete(Long deleteId, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        if (isAuthenticatedUserAdmin(authentication) || isTheSameUser(deleteId, authentication)) {
-            if (isTheSameUser(deleteId, authentication)) { //user wants to delete itself ---> first need to logout
-                new SecurityContextLogoutHandler().logout(request, response, authentication);
-            }
-            UserDto userDto = findById(deleteId);
-            if (userDto.getId() != 1L) {
-                userDto.setActive(false);
-                userRepository.save(userMapper.toEntity(userDto));
-                log.info("Delete user with username " + userDto.getUsername() + ". (Make isActive = false)");
-            } else {
+        if (hasPermissionToDelete(deleteId, authentication)) {
+
+            if (deleteId.equals(1L)) {
                 throw new RestaurantException("Can't delete main admin!");
             }
+
+            if (isTheSameUser(deleteId, authentication)) { // User wants to delete itself ---> first need to logout
+                logoutCurrentUser(request, response, authentication);
+            }
+
+            deactivateUser(deleteId);
         } else {
             log.error(String.format("User doesn't have permission to edit user with id %s", deleteId));
             throw new RestaurantException("Sorry, you don't have access to edit this user");
@@ -173,6 +171,21 @@ public class UserServiceImpl implements UserService {
         UserDto authenticatedUser = findAuthenticatedUser(authentication);
         Long loggedId = authenticatedUser.getId();
         return Objects.equals(editId, loggedId);
+    }
+
+    private boolean hasPermissionToDelete(Long deleteId, Authentication authentication) {
+        return isAuthenticatedUserAdmin(authentication) || isTheSameUser(deleteId, authentication);
+    }
+
+    private void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        new SecurityContextLogoutHandler().logout(request, response, authentication);
+    }
+
+    private void deactivateUser(Long deleteId) {
+        UserDto userDto = findById(deleteId);
+        userDto.setActive(false);
+        userRepository.save(userMapper.toEntity(userDto));
+        log.info("Delete user with username " + userDto.getUsername() + ". (Make isActive = false)");
     }
 
 }

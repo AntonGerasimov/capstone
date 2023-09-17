@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,7 +24,7 @@
             <form th:action="@{/users/{userId}/addresses/{addressId}/edit(userId=${#authentication.principal.userDto.id}, addressId=${address.id})}" method="POST" th:object="${address}">
 
                 <label sec:authorize="hasRole('admin')" for="id">Id:</label>
-                <input sec:authorize="hasRole('admin')" class="form-control" type="text" id = "id" name = "id" th:field="*{id}" disabled="disabled" />
+                <input sec:authorize="hasRole('admin')" class="form-control" type="text" id = "id" name = "id" th:field="*{id}" th:readonly="true" />
                 <br>
                 <label for="street">Street</label>
                 <input class="form-control" type="text" id="street" name="street" th:field="*{street}" required />
@@ -33,7 +33,7 @@
                 <input class="form-control" type="text" id="house" name="house" th:field="*{house}" required />
                 <br>
                 <label for="apartment">Apartment</label>
-                <input class="form-control" type="text" id="apartment" name="apartment" th:field="*{apartment}"/>
+                <input class="form-control" type="text" id="apartment" name="apartment" th:field="*{apartment}" required/>
                 <br>
                 <br>
 
