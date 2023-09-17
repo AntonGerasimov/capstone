@@ -11,8 +11,8 @@ public interface AddressService {
     AddressDto findById(Long id);
     List<AddressDto> findAllByUser(UserDto userDto);
     List<AddressDto> findAllForAuthenticatedUser(Authentication authentication);
-    AddressDto save(AddressDto addressDto);
-    AddressDto update(Long addressId, AddressDto addressDto, Long userId);
+    AddressDto save(AddressDto addressDto, Authentication authentication);
+    void update(Long addressId, AddressDto addressDto, Long userId);
     void delete(Long addressId);
 
 }

@@ -1,7 +1,6 @@
 package com.gerasimov.capstone.controller;
 
 import com.gerasimov.capstone.domain.AddressDto;
-import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.AddressService;
 import lombok.AllArgsConstructor;
@@ -12,9 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
@@ -51,9 +47,9 @@ public class AddressController {
     }
 
     @PostMapping("/users/{id}/addresses/add")
-    public String addNewAddress(@PathVariable Long id,@ModelAttribute("address") AddressDto addressDto, Model model, RedirectAttributes redirectAttributes){
+    public String addNewAddress(@PathVariable Long id,@ModelAttribute("address") AddressDto addressDto, Model model, Authentication authentication, RedirectAttributes redirectAttributes){
         try{
-            AddressDto newAddress = addressService.save(addressDto);
+            AddressDto newAddress = addressService.save(addressDto, authentication);
             log.info("New address was created. Street: " + newAddress.getStreet() + ". House: " + newAddress.getHouse() + ". Apartment: " + newAddress.getApartment() );
             redirectAttributes.addAttribute("id", id);
             return "redirect:/users/{id}/addresses";
@@ -73,7 +69,7 @@ public class AddressController {
 
 
     @DeleteMapping("/users/{userId}/addresses/{addressId}")
-    public String deleteUser(@PathVariable Long userId, @PathVariable Long addressId, HttpServletRequest request, HttpServletResponse response, Authentication authentication, RedirectAttributes redirectAttributes) {
+    public String deleteAddress(@PathVariable Long userId, @PathVariable Long addressId, RedirectAttributes redirectAttributes) {
         addressService.delete(addressId);
         redirectAttributes.addAttribute("id", userId);
         return "redirect:/users/{id}/addresses";

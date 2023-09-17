@@ -48,6 +48,7 @@ CREATE TABLE orders
     created             DATETIME,
     status              VARCHAR(14),
     delivery_address_id INT,
+    is_active       BOOLEAN,
     CONSTRAINT fk_order_customer FOREIGN KEY (customer_id) REFERENCES users (id),
     CONSTRAINT fk_order_address FOREIGN KEY (delivery_address_id) REFERENCES addresses (id)
 ) ENGINE=InnoDB;

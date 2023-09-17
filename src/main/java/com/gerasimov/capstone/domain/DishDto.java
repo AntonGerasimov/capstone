@@ -13,5 +13,5 @@ public class DishDto {
     private String description;
     private String category;
     private Double price;
-    private boolean isAvailable;
+    private boolean isAvailable = true;
 }

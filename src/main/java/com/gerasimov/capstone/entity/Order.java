@@ -26,4 +26,5 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "delivery_address_id")
     private Address deliveryAddress;
+    private boolean isActive = true;
 }

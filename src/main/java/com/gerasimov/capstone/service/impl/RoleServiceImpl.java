@@ -1,6 +1,7 @@
 package com.gerasimov.capstone.service.impl;
 
 import com.gerasimov.capstone.entity.Role;
+import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.repository.RoleRepository;
 import com.gerasimov.capstone.service.RoleService;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,6 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role findCommonRole(){
-        return roleRepository.findById(1L).orElse(null);
+        return roleRepository.findById(1L).orElseThrow(()-> new RestaurantException("Can't find common role in database"));
     }
 }

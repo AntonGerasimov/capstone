@@ -1,6 +1,7 @@
 package com.gerasimov.capstone.controller;
 
 import com.gerasimov.capstone.domain.UserDto;
+import com.gerasimov.capstone.entity.Role;
 import com.gerasimov.capstone.service.RoleService;
 import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private UserService userService;
+    private RoleService roleService;
 
 
     @GetMapping
@@ -59,7 +61,10 @@ public class UserController {
     }
     @GetMapping("/{id}/edit")
     public String editUser(@PathVariable Long id, Authentication authentication, Model model) {
-        userService.prepareEdit(id, authentication, model);
+        UserDto userDto = userService.prepareEdit(id, authentication);
+        List<Role> roles = roleService.findAll();
+        model.addAttribute("user", userDto);
+        model.addAttribute("roles", roles);
         return "users/edit";
     }
 

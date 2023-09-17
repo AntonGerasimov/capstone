@@ -15,4 +15,5 @@ public class OrderDto {
     private LocalDateTime created;
     private String status;
     private AddressDto deliveryAddress;
+    private boolean isActive = true;
 }

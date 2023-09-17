@@ -2,15 +2,16 @@ package com.gerasimov.capstone.service.impl;
 
 import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.entity.Order;
+import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.mapper.OrderMapper;
 import com.gerasimov.capstone.repository.OrderRepository;
 import com.gerasimov.capstone.service.OrderService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -23,10 +24,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> findAll(){
         List<Order> orderEntities = orderRepository.findAll();
-        List<OrderDto> orders = orderEntities.stream()
+        return orderEntities.stream()
                 .map(orderMapper::toDto)
-                .collect(Collectors.toList());
-        return orders;
+                .toList();
+    }
+
+    @Override
+    public OrderDto findById(Long id){
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RestaurantException(String.format("Can't find order with id %d in database", id)));
+        return orderMapper.toDto(order);
     }
 
     @Override
@@ -35,13 +42,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void delete(Long orderId){
-        Order order = orderRepository.findById(orderId).orElse(null);
-        if (order != null){
-            log.info("Delete order with id " + order.getId());
-            order.setCustomer(null);
-            order.setDeliveryAddress(null);
-            orderRepository.deleteById(orderId);
-        }
+        OrderDto orderDto = findById(orderId);
+        orderDto.setActive(false);
+        orderRepository.save(orderMapper.toEntity(orderDto));
+        log.info("Delete order with id " + orderDto.getId());
     }
 }

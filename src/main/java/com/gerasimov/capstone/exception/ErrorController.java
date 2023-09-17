@@ -18,7 +18,6 @@ public class ErrorController {
         model.addAttribute("error", e.getMessage());
         ModelAndView modelAndView = new ModelAndView("error");
         modelAndView.addObject("exception", "Oops. Something went wrong: " +e.getMessage());
-        request.setAttribute("errorMessage", "Wrong password");
         return modelAndView;
     }
 

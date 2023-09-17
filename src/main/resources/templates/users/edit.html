@@ -16,7 +16,7 @@
 <form th:action="@{/users/{id}/edit/(id=${user.id})}" method="POST" th:object="${user}">
 
     <label sec:authorize="hasRole('admin')" for="id">Id:</label>
-    <input sec:authorize="hasRole('admin')" class="form-control" type="text" id = "id" name = "id" th:field="*{id}" disabled="disabled" />
+    <input sec:authorize="hasRole('admin')" class="form-control" type="text" id = "id" name = "id" th:field="*{id}" th:readonly="true" />
     <br>
     <label for="firstName">First Name:</label>
     <input class="form-control" type="text" id="firstName" name="firstName" th:field="*{firstName}" required />
@@ -25,10 +25,10 @@
     <input class="form-control" type="text" id="lastName" name="lastName" th:field="*{lastName}" required />
     <br>
     <label for="email">Email:</label>
-    <input class="form-control" type="email" id="email" name="email" th:field="*{email}" disabled="disabled" />
+    <input class="form-control" type="email" id="email" name="email" th:field="*{email}" th:readonly="true" />
     <br>
     <label for="username">Username:</label>
-    <input class="form-control" type="text" id="username" name="username" th:field="*{username}" disabled="disabled" />
+    <input class="form-control" type="text" id="username" name="username" th:field="*{username}" th:readonly="true" />
     <br>
     <label th:if="${user.id != 1}" sec:authorize="hasRole('admin')" for="role">Role:</label>
     <select th:if="${user.id != 1}" sec:authorize="hasRole('admin')" id="role" name="role.id" th:field="*{role.id}" required>

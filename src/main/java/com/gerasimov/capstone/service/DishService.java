@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface DishService {
     List<DishDto> findAll();
-    List<DishDto> findAllAvailable();
+    List<DishDto> findAvailable();
 }
