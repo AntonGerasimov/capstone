@@ -27,50 +27,44 @@
 <br>
 <br>
 
-<!--<div class="container">-->
-<!--    <div th:if="${updateSuccess}" class="alert alert-success">Success</div>-->
-<!--    <h1>Menu</h1>-->
-<!--    <table class="table">-->
-<!--        <thead>-->
-<!--        <tr>-->
-<!--            <th>Name</th>-->
-<!--            <th>Description</th>-->
-<!--            <th>Price</th>-->
-<!--            <th></th>-->
-<!--        </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--        <tr th:each="dish : ${dishes}">-->
-<!--            <td th:text="${dish.name}"></td>-->
-<!--            <td th:text="${dish.description}"></td>-->
-<!--            <td th:text="'$' + ${dish.price}"></td>-->
-<!--            <td>-->
-<!--                <a class="btn btn-primary" th:href="@{/users}">Add to cart</a>-->
-<!--            </td>-->
-<!--        </tr>-->
-<!--        </tbody>-->
-<!--    </table>-->
-<!--</div>-->
-
-
-
 <div class="container">
-    <div class="row">
-        <div th:each="menuItem : ${menuItems}" class="col-md-4 mb-4">
-            <div class="card" style="width: 22rem;">
-<!--                <img th:src="${menuItem.imagePath}" class="card-img-top" alt="...">-->
-                <img src="#" class="card-img-top" alt="...">
-                <div class="card-body menu-card-body">
-                    <h5 class="card-title" th:text="${menuItem.name}"></h5>
-                    <p class="card-text menu-truncate" th:text="${menuItem.description}"></p>
-                    <a href="#" class="btn btn-primary">Add to cart</a>
-                    <a href="#" class="btn btn-primary">Show more</a>
-<!--                    <a sec:authorize="hasRole('admin')" href="#" class="btn btn-primary">Edit</a>-->
+    <div th:each="category : ${menuItemsByCategory}" class="mb-4">
+        <h2 th:text="${category.key}" class="text-primary"></h2>
+        <div class="row">
+            <div th:each="menuItem : ${category.value}" class="col-md-4 mb-4">
+                <div class="card" style="width: 22rem;">
+                    <!-- Replace 'src="#"' with your actual image source -->
+                    <img src="#" class="card-img-top" alt="...">
+                    <div class="card-body menu-card-body">
+                        <h5 class="card-title" th:text="${menuItem.name}"></h5>
+                        <p class="card-text menu-truncate" th:text="${menuItem.description}"></p>
+                        <a href="#" class="btn btn-primary">Add to cart</a>
+                        <a href="#" class="btn btn-primary">Show more</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<!--<div class="container">-->
+<!--    <div class="row">-->
+<!--        <div th:each="menuItem : ${menuItems}" class="col-md-4 mb-4">-->
+<!--            <div class="card" style="width: 22rem;">-->
+<!--&lt;!&ndash;                <img th:src="${menuItem.imagePath}" class="card-img-top" alt="...">&ndash;&gt;-->
+<!--                <img src="#" class="card-img-top" alt="...">-->
+<!--                <div class="card-body menu-card-body">-->
+<!--                    <h5 class="card-title" th:text="${menuItem.name}"></h5>-->
+<!--                    <p class="card-text menu-truncate" th:text="${menuItem.description}"></p>-->
+<!--                    <a href="#" class="btn btn-primary">Add to cart</a>-->
+<!--                    <a href="#" class="btn btn-primary">Show more</a>-->
+<!--&lt;!&ndash;                    <a sec:authorize="hasRole('admin')" href="#" class="btn btn-primary">Edit</a>&ndash;&gt;-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 
 
 </body>
