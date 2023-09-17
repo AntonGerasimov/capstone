@@ -8,15 +8,10 @@
 
 <div th:replace="~{header :: header}"></div>
 
-<br>
-<br>
-<br>
-<br>
-<br>
 <div class="container-fluid">
     <div class="row">
         <!-- Column for the navigation menu -->
-        <div class="col-lg-2 col-md-3">
+        <div class="col-lg-2 col-md-3 mt-5">
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" th:href="@{/users/{id}/personal-account(id=${#authentication.principal.userDto.id})}">My orders</a>
@@ -38,7 +33,7 @@
         </div>
 
         <!-- Column for the table -->
-        <div class="col-lg-10 col-md-9 mt-4">
+        <div class="col-lg-10 col-md-9 mt-5">
             <h2>Your orders</h2>
             <table class="table">
                 <thead>
