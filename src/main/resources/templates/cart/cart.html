@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopping Cart</title>
+    <!-- Add your CSS and JavaScript imports here -->
+</head>
+<body>
+<h1>Your Shopping Cart</h1>
+
+<div th:if="${#lists.isEmpty(cartItems)}">
+    <p>Your cart is empty.</p>
+</div>
+
+<table th:if="${not #lists.isEmpty(cartItems)}">
+    <thead>
+    <tr>
+        <th>Item</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${cartItems}">
+        <td th:text="${item.dish.name}"></td>
+        <td th:text="${item.quantity}"></td>
+        <td th:text="${item.dishPrice}"></td>
+<!--        <td th:text="${item.quantity * item.dishPrice}"></td>-->
+<!--        <td>-->
+<!--            <button th:onclick="'removeItem(\'' + ${cartStatus.index} + '\')'">Remove</button>-->
+<!--        </td>-->
+    </tr>
+    </tbody>
+</table>
+
+<p>Total Price: $<span th:text="${totalPrice}"></span></p>
+
+<!-- JavaScript function to remove an item from the cart -->
+<script th:inline="javascript">
+        function removeItem(index) {
+            var csrfToken = /* Add your logic to retrieve the CSRF token */;
+
+            // Make an AJAX request to remove the item from the cart
+            // Use the index parameter to identify the item to remove
+            // Update the cart display accordingly
+        }
+    </script>
+</body>
+</html>

@@ -53,7 +53,7 @@ INSERT INTO dishes (name, description, category, price, is_available) VALUES
             'Creamy spinach and artichoke dip, baked with melted cheese, and served with warm tortilla chips',
             'Appetizers', '6.25', TRUE),
     ('Bruschetta Platter',
-            'Toasted baguette slices topped with diced tomatoes, fresh basil, garlic, and drizzled with balsamic glaze,
+            'Toasted baguette slices topped with diced tomatoes, fresh basil, garlic, and drizzled with balsamic glaze',
             'Appetizers', '6.25', TRUE),
     ('Mozzarella Sticks',
             'Golden-fried mozzarella sticks served with a side of marinara sauce for dipping',

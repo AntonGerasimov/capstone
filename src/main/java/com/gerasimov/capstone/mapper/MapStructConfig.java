@@ -23,6 +23,10 @@ public class MapStructConfig {
     public OrderMapper orderMapper() {
         return OrderMapper.INSTANCE;
     }
+    @Bean
+    public OrderItemMapper orderItemMapper() {
+        return OrderItemMapper.INSTANCE;
+    }
 
     @Bean
     public UserMapper userMapper() {

@@ -2,12 +2,16 @@ package com.gerasimov.capstone.service.impl;
 
 import com.gerasimov.capstone.domain.DishDto;
 import com.gerasimov.capstone.entity.Dish;
+import com.gerasimov.capstone.entity.User;
+import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.mapper.DishMapper;
 import com.gerasimov.capstone.repository.DishRepository;
 import com.gerasimov.capstone.service.DishService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,6 +34,29 @@ public class DishServiceImpl implements DishService {
         return dishEntities.stream()
                 .map(dishMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public DishDto findById(Long id){
+        Dish dish = dishRepository.findById(id).orElseThrow(()->new RestaurantException(String.format("Can't find dish with id %d in database", id)));
+        return dishMapper.toDto(dish);
+    }
+
+    @Override
+    public List<DishDto> getCartItems(HttpSession session) {
+        // Retrieve the cart data from the user's session
+        List<DishDto> cartItems = (List<DishDto>) session.getAttribute("cart");
+
+        if (cartItems == null) {
+            cartItems = new ArrayList<>();
+            session.setAttribute("cart", cartItems);
+        }
+        return cartItems;
+    }
+
+    @Override
+    public void addToCart(){
+
     }
 
 }

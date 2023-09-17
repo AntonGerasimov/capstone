@@ -38,7 +38,11 @@
                     <div class="card-body menu-card-body">
                         <h5 class="card-title" th:text="${menuItem.name}"></h5>
                         <p class="card-text menu-truncate" th:text="${menuItem.description}"></p>
-                        <a href="#" class="btn btn-primary">Add to cart</a>
+                        <form th:action="@{/cart/add}" th:method="post">
+                            <input type="hidden" name="itemId" th:value="${menuItem.id}" />
+                            <button type="submit" class="btn btn-primary">Add to cart</button>
+                        </form>
+<!--                        <a href="#" class="btn btn-primary">Add to cart</a>-->
                         <a href="#" class="btn btn-primary">Show more</a>
                     </div>
                 </div>
