@@ -1,6 +1,7 @@
 package com.gerasimov.capstone.controller;
 
 import com.gerasimov.capstone.domain.AddressDto;
+import com.gerasimov.capstone.domain.AddressDtoLight;
 import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.AddressService;
 import lombok.AllArgsConstructor;
@@ -41,16 +42,16 @@ public class AddressController {
 
     @GetMapping("/users/{userId}/addresses/{addressId}/edit")
     public String viewAddressEditForm(@PathVariable Long userId, @PathVariable Long addressId, Model model){
-        AddressDto addressDto = addressService.findById(addressId);
-        model.addAttribute("address", addressDto);
+        AddressDtoLight addressDtoLight = addressService.findLightById(addressId);
+        model.addAttribute("address", addressDtoLight);
         return "addresses/edit-address";
     }
 
     @PostMapping("/users/{id}/addresses/add")
-    public String addNewAddress(@PathVariable Long id,@ModelAttribute("address") AddressDto addressDto, Model model, Authentication authentication, RedirectAttributes redirectAttributes){
+    public String addNewAddress(@PathVariable Long id, @ModelAttribute("address") AddressDto addressDto, Model model, Authentication authentication, RedirectAttributes redirectAttributes){
         try{
             AddressDto newAddress = addressService.save(addressDto, authentication);
-            log.info("New address was created. Street: " + newAddress.getStreet() + ". House: " + newAddress.getHouse() + ". Apartment: " + newAddress.getApartment() );
+            log.info(String.format("New address was created: %s", newAddress.toString()));
             redirectAttributes.addAttribute("id", id);
             return "redirect:/users/{id}/addresses";
         } catch (RestaurantException restaurantException){
@@ -60,9 +61,9 @@ public class AddressController {
         }
     }
 
-    @PostMapping("/users/{userId}/addresses/{addressId}/edit")
-    public String updateAddress(@PathVariable Long userId, @PathVariable Long addressId, @ModelAttribute AddressDto addressDto, Authentication authentication, RedirectAttributes redirectAttributes) {
-        addressService.update(addressId, addressDto, userId);
+    @PutMapping("/users/{userId}/addresses/{addressId}/edit")
+    public String updateAddress(@PathVariable Long userId, @PathVariable Long addressId, @ModelAttribute AddressDtoLight addressDtoLight, Authentication authentication, RedirectAttributes redirectAttributes) {
+        addressService.update(addressDtoLight);
         redirectAttributes.addAttribute("userId", userId);
         return "redirect:/users/{userId}/addresses";
     }

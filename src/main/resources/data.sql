@@ -1,11 +1,11 @@
 -- DML
 
-INSERT IGNORE INTO roles (name) VALUES
+INSERT INTO roles (name) VALUES
     ('ROLE_common'),
     ('ROLE_manager'),
     ('ROLE_admin');
 
-INSERT IGNORE INTO users (first_name, last_name, email, username, password, role_id, is_active) VALUES
+INSERT INTO users (first_name, last_name, email, username, password, role_id, is_active) VALUES
     ('admin', 'admin', 'admin@gmail.com', 'admin',
     '$2a$12$WocppmSlhS5v.r8CN4SSUeJuCdwh6ZhQMOANEn.jh/knDCn4xy.Bi', 3, TRUE),
     ('John', 'Doe', 'john@gmail.com',  'john',

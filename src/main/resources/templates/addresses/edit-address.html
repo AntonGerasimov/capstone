@@ -21,10 +21,12 @@
             <a class="btn btn-light" href="javascript:history.back();"><span class="bi bi-chevron-left"></span></a>
             <br>
             <h1>Edit address</h1>
-            <form th:action="@{/users/{userId}/addresses/{addressId}/edit(userId=${#authentication.principal.userDto.id}, addressId=${address.id})}" method="POST" th:object="${address}">
+            <form th:action="@{/users/{userId}/addresses/{addressId}/edit(userId=${#authentication.principal.userDto.id}, addressId=${address.id})}" th:method="PUT" th:object="${address}">
 
                 <label sec:authorize="hasRole('admin')" for="id">Id:</label>
                 <input sec:authorize="hasRole('admin')" class="form-control" type="text" id = "id" name = "id" th:field="*{id}" th:readonly="true" />
+                <input sec:authorize="!hasRole('admin')" class="form-control" type="hidden" id = "idHidden" name = "idHidden" th:field="*{id}" />
+
                 <br>
                 <label for="street">Street</label>
                 <input class="form-control" type="text" id="street" name="street" th:field="*{street}" required />
@@ -36,6 +38,8 @@
                 <input class="form-control" type="text" id="apartment" name="apartment" th:field="*{apartment}" required/>
                 <br>
                 <br>
+                <input class="form-control" type="hidden" id = "userHidden" name = "userHidden" th:field="*{userId}" />
+
 
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-primary">Save</button>

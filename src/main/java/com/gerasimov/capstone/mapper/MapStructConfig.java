@@ -9,6 +9,10 @@ public class MapStructConfig {
     public AddressMapper addressMapper() {
         return AddressMapper.INSTANCE;
     }
+    @Bean
+    public AddressLightMapper addressLightMapper() {
+        return AddressLightMapper.INSTANCE;
+    }
 
     @Bean
     public DishMapper dishMapper() {

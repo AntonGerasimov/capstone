@@ -1,9 +1,11 @@
 package com.gerasimov.capstone.service.impl;
 
 import com.gerasimov.capstone.domain.AddressDto;
+import com.gerasimov.capstone.domain.AddressDtoLight;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Address;
 import com.gerasimov.capstone.exception.RestaurantException;
+import com.gerasimov.capstone.mapper.AddressLightMapper;
 import com.gerasimov.capstone.mapper.AddressMapper;
 import com.gerasimov.capstone.mapper.UserMapper;
 import com.gerasimov.capstone.repository.AddressRepository;
@@ -25,6 +27,7 @@ public class AddressServiceImpl implements AddressService {
     private AddressMapper addressMapper;
     private UserMapper userMapper;
     private UserService userService;
+    private AddressLightMapper addressLightMapper;
 
 
     @Override
@@ -43,6 +46,11 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public AddressDtoLight findLightById(Long addressId){
+        return addressLightMapper.toLight(findById(addressId));
+    }
+
+    @Override
     public AddressDto save(AddressDto addressDto, Authentication authentication){
         UserDto userDto = userService.findAuthenticatedUser(authentication);
         addressDto.setUser(userDto);
@@ -53,12 +61,9 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
-    public void update(Long addressId, AddressDto addressDto, Long userId){
-        log.info(String.format("Updating address with id %d", addressId));
-        log.info(addressDto.toString());
-        addressDto.setId(addressId);
-        UserDto userDto = userService.findById(userId);
-        addressDto.setUser(userDto);
+    public void update(AddressDtoLight addressDtoLight){
+        log.info(String.format("Updating address %s", addressDtoLight.toString()));
+        AddressDto addressDto = addressLightMapper.toDto(addressDtoLight);
         addressRepository.save(addressMapper.toEntity(addressDto));
     }
 

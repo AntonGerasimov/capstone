@@ -73,18 +73,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto save(UserDto userDto) {
-        if (emailExists(userDto.getEmail())) {
-            log.error(String.format("User with email %s already exists", userDto.getEmail()));
-            throw new RestaurantException(String.format("User with email %s already exists", userDto.getEmail()));
-        }
-        Role commonRole = roleService.findCommonRole();
-        userDto.setRole(commonRole); // set role to default --- common
-        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
-        userDto.setPassword(encodedPassword);
+        validateEmail(userDto);
+        setDefaultRole(userDto);
+        encodeUserPassword(userDto);
+
         User user = userMapper.toEntity(userDto);
-        userRepository.save(user);
-        log.info("User with username " + user.getUsername() + " was created");
-        return userDto;
+        UserDto savedUser = userMapper.toDto(userRepository.save(user));
+        log.info(String.format("User %s was created", savedUser.toString()));
+        return savedUser;
     }
 
     @Override
@@ -99,13 +95,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void update(Long id, UserDto updatedUser) {
-        log.info("Updating user with id " + id);
-        UserDto userToUpdate = findById(id);
-        updatedUser.setPassword(userToUpdate.getPassword());
-        if (updatedUser.getRole() == null) {
-            updatedUser.setRole(userToUpdate.getRole());
-        }
+    public void update(UserDto updatedUser) {
+        log.info("Updating user " + updatedUser.toString());
         userRepository.save(userMapper.toEntity(updatedUser));
     }
 
@@ -113,21 +104,17 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void delete(Long deleteId, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        if (hasPermissionToDelete(deleteId, authentication)) {
 
-            if (deleteId.equals(1L)) {
-                throw new RestaurantException("Can't delete main admin!");
-            }
-
-            if (isTheSameUser(deleteId, authentication)) { // User wants to delete itself ---> first need to logout
-                logoutCurrentUser(request, response, authentication);
-            }
-
-            deactivateUser(deleteId);
-        } else {
+        if (!hasPermissionToDelete(deleteId, authentication)) {
             log.error(String.format("User doesn't have permission to edit user with id %s", deleteId));
             throw new RestaurantException("Sorry, you don't have access to edit this user");
         }
+
+        if (isTheSameUser(deleteId, authentication)) { // User wants to delete itself ---> first need to logout
+            logoutCurrentUser(request, response, authentication);
+        }
+
+        deactivateUser(deleteId);
     }
 
     @Override
@@ -135,6 +122,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByEmail(email);
     }
 
+    @Override
     public String findRedirectPageAfterEdit(Long id, Authentication authentication) { //suggests that user don't edit himself on /users page
         if (isTheSameUser(id, authentication)) {
             return String.format("redirect:/users/%d/personal-account", id);
@@ -143,6 +131,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     public String findRedirectPageAfterDelete(Long id, Authentication authentication) { //suggests that user don't delete himself on /users page
         if (isTheSameUser(id, authentication)) {
             return "redirect:/";
@@ -151,6 +140,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     public UserDto findAuthenticatedUser(Authentication authentication) {
         if ((authentication != null) && (authentication.isAuthenticated())) {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
@@ -158,6 +148,23 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new RestaurantException(ERROR_NO_LOGGED_USER);
         }
+    }
+
+    private void validateEmail(UserDto userDto){
+        if (emailExists(userDto.getEmail())) {
+            log.error(String.format("User with email %s already exists", userDto.getEmail()));
+            throw new RestaurantException(String.format("User with email %s already exists", userDto.getEmail()));
+        }
+    }
+
+    private void setDefaultRole(UserDto userDto){
+        Role commonRole = roleService.findCommonRole();
+        userDto.setRole(commonRole); // set role to default --- common
+    }
+
+    private void encodeUserPassword(UserDto userDto){
+        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+        userDto.setPassword(encodedPassword);
     }
 
     private boolean isAuthenticatedUserAdmin(Authentication authentication) {
@@ -174,6 +181,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean hasPermissionToDelete(Long deleteId, Authentication authentication) {
+        if (deleteId.equals(1L)) {
+            return false;
+        }
         return isAuthenticatedUserAdmin(authentication) || isTheSameUser(deleteId, authentication);
     }
 
@@ -181,8 +191,8 @@ public class UserServiceImpl implements UserService {
         new SecurityContextLogoutHandler().logout(request, response, authentication);
     }
 
-    private void deactivateUser(Long deleteId) {
-        UserDto userDto = findById(deleteId);
+    private void deactivateUser(Long id) {
+        UserDto userDto = findById(id);
         userDto.setActive(false);
         userRepository.save(userMapper.toEntity(userDto));
         log.info("Delete user with username " + userDto.getUsername() + ". (Make isActive = false)");

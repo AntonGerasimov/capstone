@@ -19,7 +19,7 @@ public interface UserService {
 
     UserDto prepareEdit(Long editId, Authentication authentication);
 
-    void update(Long id, UserDto user);
+    void update(UserDto user);
 
     void delete(Long userId, HttpServletRequest request, HttpServletResponse response, Authentication authentication);
 

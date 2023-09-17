@@ -74,9 +74,9 @@ public class UserController {
         return userService.findRedirectPageAfterDelete(id, authentication);
     }
 
-    @PostMapping("/{id}/edit")
+    @PutMapping("/{id}/edit")
     public String updateUser(@PathVariable Long id, @ModelAttribute UserDto user, Authentication authentication) {
-        userService.update(id, user);
+        userService.update(user);
         return userService.findRedirectPageAfterEdit(id, authentication);
     }
 
