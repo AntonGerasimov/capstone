@@ -51,8 +51,8 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public AddressDto save(AddressDto addressDto, Authentication authentication){
-        UserDto userDto = userService.findAuthenticatedUser(authentication);
+    public AddressDto save(AddressDto addressDto){
+        UserDto userDto = userService.findAuthenticatedUser();
         addressDto.setUser(userDto);
         addressDto.setActive(true);
         addressRepository.save(addressMapper.toEntity(addressDto));

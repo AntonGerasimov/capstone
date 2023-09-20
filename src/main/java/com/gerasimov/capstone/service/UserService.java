@@ -17,14 +17,14 @@ public interface UserService {
 
     UserDto save(UserDto user);
 
-    UserDto prepareEdit(Long editId, Authentication authentication);
+    UserDto prepareEdit(Long editId);
 
     void update(UserDto user);
 
     void delete(Long userId, HttpServletRequest request, HttpServletResponse response, Authentication authentication);
 
     boolean emailExists(String email);
-    String findRedirectPageAfterEdit(Long id, Authentication authentication);
-    String findRedirectPageAfterDelete(Long id, Authentication authentication);
-    UserDto findAuthenticatedUser(Authentication authentication);
+    String findRedirectPageAfterEdit(Long id);
+    String findRedirectPageAfterDelete(Long id);
+    UserDto findAuthenticatedUser();
 }

@@ -1,16 +1,22 @@
 package com.gerasimov.capstone.service.impl;
 
 import com.gerasimov.capstone.domain.OrderDto;
+import com.gerasimov.capstone.domain.OrderItemDto;
+import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Order;
 import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.mapper.OrderMapper;
+import com.gerasimov.capstone.mapper.UserMapper;
 import com.gerasimov.capstone.repository.OrderRepository;
+import com.gerasimov.capstone.service.OrderItemService;
 import com.gerasimov.capstone.service.OrderService;
+import com.gerasimov.capstone.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,8 +24,11 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private final OrderRepository orderRepository;
-    private final OrderMapper orderMapper;
+    private OrderRepository orderRepository;
+    private OrderMapper orderMapper;
+    private UserService userService;
+    private UserMapper userMapper;
+    private OrderItemService orderItemService;
 
     @Override
     public List<OrderDto> findAll(){
@@ -42,6 +51,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderDto> findByCustomer(UserDto userDto){
+        List<Order> orders = orderRepository.findByCustomer(userMapper.toEntity(userDto) );
+        return orders.stream()
+                .map(orderMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public List<OrderItemDto> findOrderItems(OrderDto orderDto){
+        return orderItemService.findByOrder(orderDto);
+    }
+
+    @Override
+    public OrderDto save(OrderDto orderDto){
+        setAuthenticatedUser(orderDto);
+        setCurrentTime(orderDto);
+        setDefaultStatus(orderDto);
+        setActive(orderDto);
+
+        Order order = orderMapper.toEntity(orderDto);
+        OrderDto savedOrderDto = orderMapper.toDto(orderRepository.save(order));
+        log.info(String.format("Order was created: %s", savedOrderDto.toString()));
+        return savedOrderDto;
+    }
+
+
+    @Override
     @Transactional
     public void delete(Long orderId){
         OrderDto orderDto = findById(orderId);
@@ -49,4 +85,24 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(orderMapper.toEntity(orderDto));
         log.info("Delete order with id " + orderDto.getId());
     }
+
+    private void setAuthenticatedUser(OrderDto orderDto){
+        UserDto customer = userService.findAuthenticatedUser();
+        orderDto.setCustomer(customer);
+    }
+
+    private void setCurrentTime(OrderDto orderDto){
+        LocalDateTime created = LocalDateTime.now();
+        orderDto.setCreated(created);
+    }
+    private void setDefaultStatus(OrderDto orderDto){
+        orderDto.setStatus("Created");
+    }
+
+    private void setActive(OrderDto orderDto){
+        orderDto.setActive(true);
+    }
+
+
+
 }

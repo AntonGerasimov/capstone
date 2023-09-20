@@ -21,19 +21,18 @@ public class RootController {
 
     private UserService userService;
 
-    @PostMapping("/test")
-    public ResponseEntity<String> addItemToCartDupl(){
-        log.info("Post request for test");
-//        return "Test request successfully";
-        return ResponseEntity.ok("Item added to cart successfully.");
-    }
-
     @GetMapping("/")
     public String showMainPage() {
         return "index";
     }
 
     @GetMapping("/login")
+    public String loginNotDefault(Model model) {
+        model.addAttribute("newUser", new UserDto());
+        return "login";
+    }
+
+    @GetMapping("/login-default")
     public String login(Model model) {
         model.addAttribute("newUser", new UserDto());
         return "login";
@@ -45,8 +44,9 @@ public class RootController {
         return "redirect:/";
     }
 
-    @PostMapping("/login")
+    @PostMapping("/login-default")
     public String viewAfterLogin(@ModelAttribute UserDto newUser, RedirectAttributes redirectAttributes, HttpServletRequest request){
+        log.info("Post request for logging");
         try{
             userService.login(newUser, request);
             return "redirect:/";

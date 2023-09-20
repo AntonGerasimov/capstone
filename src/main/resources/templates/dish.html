@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity">
+<head>
+    <title>Order</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+</head>
+<body>
+
+<div th:replace="~{header :: header}"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10 col-md-9 mt-5">
+            <h2><span th:text="${dish.name}"></span></h2>
+            <div class="order-info">
+                <img
+                        th:src="@{/images/{id}.jpeg(id=${dish.id})}"
+                        width="300"
+                        height="300"
+                        onerror="this.src='/images/default.jpeg';"
+                />
+                <p><strong>Category:</strong> <span th:text="${dish.category}"></span></p>
+                <p><strong>Description:</strong> <span th:text="${dish.description}"></span></p>
+                <p><strong>Price:</strong> <span th:text="${dish.price}"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

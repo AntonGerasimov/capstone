@@ -48,9 +48,9 @@ public class AddressController {
     }
 
     @PostMapping("/users/{id}/addresses/add")
-    public String addNewAddress(@PathVariable Long id, @ModelAttribute("address") AddressDto addressDto, Model model, Authentication authentication, RedirectAttributes redirectAttributes){
+    public String addNewAddress(@PathVariable Long id, @ModelAttribute("address") AddressDto addressDto, Model model, RedirectAttributes redirectAttributes){
         try{
-            AddressDto newAddress = addressService.save(addressDto, authentication);
+            AddressDto newAddress = addressService.save(addressDto);
             log.info(String.format("New address was created: %s", newAddress.toString()));
             redirectAttributes.addAttribute("id", id);
             return "redirect:/users/{id}/addresses";

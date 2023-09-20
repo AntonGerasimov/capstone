@@ -10,7 +10,7 @@
 
 <div th:replace="~{header :: header}"></div>
 
-<h1>Your Shopping Cart</h1>
+<h1>Your Order</h1>
 
 <div th:if="${#lists.isEmpty(cartItems)}">
     <p>Your cart is empty.</p>
@@ -33,10 +33,9 @@
             <td th:text="${item.id}"> </td>>
             <td th:text="${item.dish.name}"></td>
             <td>
-                <button class="btn btn-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="removeFromCart(this)">-</button>
+
                 <span  th:id="@{quantityId-{dishId}(dishId=${item.dish.id})}" class="ms-1 me-1" th:text="${item.quantity}"></span>
-<!--                th:id="@{quantity-${item.dish.id}}"-->
-                <button class="btn btn-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="addToCart(this)">+</button>
+
             </td>
 
             <td>
@@ -52,59 +51,41 @@
     </table>
 </div>
 
+<select id="addresses" name="addresses" th:field="*{addresses}" required>
+    <option th:each="address : ${addresses}" th:value="${address.id}" th:text="${address.toCartString()}"></option>
+</select>
+
+
+
 
 <p>Total Price: $<span th:text="${totalPrice}"></span></p>
 
-<a class="btn btn-primary" th:href="@{/checkout}">Proceed to Checkout</a>
-
+<button class="btn btn-primary" onclick="makeOrder(this)" th:data-href-url="@{/users/{id}/personal-account(id=${#authentication.principal.userDto.id})}">
+    Make order
+</button>
 
 <script>
-    function addToCart(button){
-        console.log('addToCart');
-        var id = $(button).data('dish-id');
+        function makeOrder(button){
+        var hrefUrl = $(button).data('href-url');
+        var selectedAddressId = $('#addresses').val();
+        var formData = new FormData();
+        formData.append('selectedAddressId', selectedAddressId);
         $.ajax({
-            url: '/cart/' + id + '/add',
+            url: '/cart/make-order',
             type: 'post',
-            success: function() {
-                increaseQuantity(id);
+
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                console.log("Success order");
+                window.location.href = hrefUrl;
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
                 alert("An error occurred while adding the item to the cart.");
             }
         });
-    }
-
-    function removeFromCart(button){
-        console.log('Remove from cart');
-        var id = $(button).data('dish-id');
-        $.ajax({
-            url: '/cart/' + id + '/remove',
-            type: 'post',
-            success: function() {
-                decreaseQuantity(id);
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
-                alert("An error occurred while adding the item to the cart.");
-            }
-        });
-    }
-
-    function increaseQuantity(dishId){
-        var elementId = 'quantityId-' + dishId;
-        var element = document.getElementById(elementId);
-        var currentValue = parseInt(element.textContent, 10);
-        var newValue = currentValue + 1;
-        element.textContent = newValue;
-    }
-
-    function decreaseQuantity(dishId){
-        var elementId = 'quantityId-' + dishId;
-        var element = document.getElementById(elementId);
-        var currentValue = parseInt(element.textContent, 10);
-        var newValue = currentValue - 1;
-        element.textContent = newValue;
     }
 
 </script>

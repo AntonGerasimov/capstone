@@ -50,14 +50,14 @@
                         <div id="cartButtonContainer">
                             <div th:id="@{btnAddToCart-{dishId}(dishId=${menuItem.id})}">
                                 <button class="btn btn-primary" th:data-dish-id="${menuItem.id}" onclick="addToCart(this)">Add to cart</button>
-                                <a href="#" class="btn btn-primary">Show more</a>
+                                <a th:href="@{/dishes/{id}(id=${menuItem.id})}" class="btn btn-primary">Show more</a>
                             </div>
 
                             <div th:id="@{quantityElement-{dishId}(dishId=${menuItem.id})}" style="display: none;">
                                 <button class="btn btn-outline-primary" th:data-dish-id="${menuItem.id}" onclick="removeFromCart(this)">-</button>
                                 <span th:id="@{quantityId-{dishId}(dishId=${menuItem.id})}"  class="ms-1 me-1">0</span>
                                 <button class="btn btn-outline-primary" th:data-dish-id="${menuItem.id}" onclick="addToCart(this)">+</button>
-                                <a href="#" class="btn btn-primary">Show more</a>
+                                <a th:href="@{/dishes/{id}(id=${menuItem.id})}" class="btn btn-primary">Show more</a>
                             </div>
 
                         </div>

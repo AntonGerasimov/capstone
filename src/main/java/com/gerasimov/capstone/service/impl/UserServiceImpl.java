@@ -84,8 +84,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto prepareEdit(Long editId, Authentication authentication) {
-        if (isAuthenticatedUserAdmin(authentication) || isTheSameUser(editId, authentication)) {
+    public UserDto prepareEdit(Long editId) {
+        if (isAuthenticatedUserAdmin() || isTheSameUser(editId)) {
             return findById(editId);
         } else {
             log.error(String.format("User doesn't have permission to edit user with id %s", editId));
@@ -105,12 +105,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void delete(Long deleteId, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 
-        if (!hasPermissionToDelete(deleteId, authentication)) {
+        if (!hasPermissionToDelete(deleteId)) {
             log.error(String.format("User doesn't have permission to edit user with id %s", deleteId));
             throw new RestaurantException("Sorry, you don't have access to edit this user");
         }
 
-        if (isTheSameUser(deleteId, authentication)) { // User wants to delete itself ---> first need to logout
+        if (isTheSameUser(deleteId)) { // User wants to delete itself ---> first need to logout
             logoutCurrentUser(request, response, authentication);
         }
 
@@ -123,8 +123,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String findRedirectPageAfterEdit(Long id, Authentication authentication) { //suggests that user don't edit himself on /users page
-        if (isTheSameUser(id, authentication)) {
+    public String findRedirectPageAfterEdit(Long id) { //suggests that user don't edit himself on /users page
+        if (isTheSameUser(id)) {
             return String.format("redirect:/users/%d/personal-account", id);
         } else {
             return "redirect:/users";
@@ -132,8 +132,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String findRedirectPageAfterDelete(Long id, Authentication authentication) { //suggests that user don't delete himself on /users page
-        if (isTheSameUser(id, authentication)) {
+    public String findRedirectPageAfterDelete(Long id) { //suggests that user don't delete himself on /users page
+        if (isTheSameUser(id)) {
             return "redirect:/";
         } else {
             return "redirect:/users";
@@ -141,7 +141,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto findAuthenticatedUser(Authentication authentication) {
+    public UserDto findAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if ((authentication != null) && (authentication.isAuthenticated())) {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             return findByUsername(userDetails.getUsername());
@@ -167,24 +168,24 @@ public class UserServiceImpl implements UserService {
         userDto.setPassword(encodedPassword);
     }
 
-    private boolean isAuthenticatedUserAdmin(Authentication authentication) {
-        UserDto authenticatedUser = findAuthenticatedUser(authentication);
+    private boolean isAuthenticatedUserAdmin() {
+        UserDto authenticatedUser = findAuthenticatedUser();
         boolean isAdmin = authenticatedUser.getRole().getName().equals(ROLE_ADMIN);
         log.info(String.format("isAuthenticatedUserAdmin: %s", isAdmin));
         return isAdmin;
     }
 
-    private boolean isTheSameUser(Long editId, Authentication authentication) {
-        UserDto authenticatedUser = findAuthenticatedUser(authentication);
+    private boolean isTheSameUser(Long editId) {
+        UserDto authenticatedUser = findAuthenticatedUser();
         Long loggedId = authenticatedUser.getId();
         return Objects.equals(editId, loggedId);
     }
 
-    private boolean hasPermissionToDelete(Long deleteId, Authentication authentication) {
+    private boolean hasPermissionToDelete(Long deleteId) {
         if (deleteId.equals(1L)) {
             return false;
         }
-        return isAuthenticatedUserAdmin(authentication) || isTheSameUser(deleteId, authentication);
+        return isAuthenticatedUserAdmin() || isTheSameUser(deleteId);
     }
 
     private void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

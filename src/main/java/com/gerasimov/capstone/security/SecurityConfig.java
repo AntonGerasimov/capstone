@@ -39,18 +39,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/users").hasRole(ROLE_ADMIN)
                     .antMatchers("/users/edit/**").hasRole(ROLE_ADMIN)
                     .antMatchers("/users/delete/**").hasRole(ROLE_ADMIN)
+                    .antMatchers("/checkout").authenticated()
 //                    .antMatchers("/menu/**").permitAll() // Publicly accessible URLs
 //                    .antMatchers("/**").permitAll()
 //                    .anyRequest().authenticated() // All other URLs require authentication
                     .anyRequest().permitAll()
                     .and()
                 .formLogin() // Enable form-based authentication
-//                    .loginPage("/login") // Custom login page URL
-//                    .loginProcessingUrl("/login")
-//                    .defaultSuccessUrl("/users/success-login")
-//                    .permitAll() // Allow access to the login page
-                    .disable()
-//                    .and()
+                    .loginPage("/login") // Custom login page URL
+                    .loginProcessingUrl("/login")
+                    .permitAll() // Allow access to the login page
+                    .and()
+                //                    .disable()
                 .logout() // Enable logout
                     .logoutUrl("/logout")
                     .logoutSuccessUrl("/")

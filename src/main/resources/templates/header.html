@@ -26,13 +26,13 @@
 
             <div class="collapse navbar-collapse">
                 <div class="navbar-nav ms-auto">
-                    <a class="nav-link ms-1" sec:authorize="isAuthenticated()" href="/cart" role="menuitem"> Cart</a>
+                    <a class="nav-link ms-1" href="/cart" role="menuitem"> Cart</a>
                     <a class="nav-link ms-1" sec:authorize="isAuthenticated()" href="javascript: document.logoutForm.submit()" role="menuitem"> Logout</a>
                     <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
                         <input hidden type="submit" value="Sign Out"/>
                     </form>
                     <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/users/{id}/personal-account(id=${#authentication.principal.userDto.id})}"><span sec:authentication="name"></span></a>
-                    <a class="nav-link" sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
+                    <a class="nav-link" sec:authorize="!isAuthenticated()" th:href="@{/login-default}">Log in</a>
                     <a class="nav-link me-1" sec:authorize="!isAuthenticated()" th:href="@{/users/registration}">Register</a>
                 </div>
             </div>

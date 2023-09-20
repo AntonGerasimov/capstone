@@ -30,7 +30,7 @@
                     <p th:text="${error}"></p>
                 </div>
                 <br>
-                <form th:action="@{/login}" th:object="${newUser}" method="post">
+                <form th:action="@{/login-default}" th:object="${newUser}" method="post">
                     <div class="form-group">
                         <label class="form-label" for="username">Username</label>
                         <input type="text" id="username" th:field="*{username}" class="form-control" />

@@ -1,7 +1,9 @@
 package com.gerasimov.capstone.controller;
 
+import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Role;
+import com.gerasimov.capstone.service.OrderService;
 import com.gerasimov.capstone.service.RoleService;
 import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
@@ -24,6 +26,7 @@ import java.util.List;
 public class UserController {
     private UserService userService;
     private RoleService roleService;
+    private OrderService orderService;
 
 
     @GetMapping
@@ -50,18 +53,20 @@ public class UserController {
     }
 
     @GetMapping("/{id}/personal-account")
-    public String viewPersonalAccount(@PathVariable Long id, Authentication authentication, Model model){
+    public String viewPersonalAccount(@PathVariable Long id, Model model){
         try{
-            UserDto authenticatedUser = userService.findAuthenticatedUser(authentication);
+            UserDto authenticatedUser = userService.findAuthenticatedUser();
             model.addAttribute("user", authenticatedUser);
+            List<OrderDto> orders = orderService.findByCustomer(authenticatedUser);
+            model.addAttribute("orders", orders);
             return "users/personal-account";
         } catch (RestaurantException e){
             return "users/registration";
         }
     }
     @GetMapping("/{id}/edit")
-    public String editUser(@PathVariable Long id, Authentication authentication, Model model) {
-        UserDto userDto = userService.prepareEdit(id, authentication);
+    public String editUser(@PathVariable Long id, Model model) {
+        UserDto userDto = userService.prepareEdit(id);
         List<Role> roles = roleService.findAll();
         model.addAttribute("user", userDto);
         model.addAttribute("roles", roles);
@@ -71,13 +76,13 @@ public class UserController {
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         userService.delete(id, request, response, authentication);
-        return userService.findRedirectPageAfterDelete(id, authentication);
+        return userService.findRedirectPageAfterDelete(id);
     }
 
     @PutMapping("/{id}/edit")
     public String updateUser(@PathVariable Long id, @ModelAttribute UserDto user, Authentication authentication) {
         userService.update(user);
-        return userService.findRedirectPageAfterEdit(id, authentication);
+        return userService.findRedirectPageAfterEdit(id);
     }
 
     @PostMapping("/registration")

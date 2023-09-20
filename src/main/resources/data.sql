@@ -21,6 +21,8 @@ INSERT INTO users (first_name, last_name, email, username, password, role_id, is
 
 INSERT INTO addresses (user_id, street, house, apartment, is_active) VALUES
     (2, 'elm', '12', '23', TRUE),
+    (2, 'pine', '21', '1A', TRUE),
+    (2, 'oak', '415', '58', TRUE),
     (1, 'pine', '43', '1', TRUE),
     (3, 'oak', '1', '2', TRUE),
     (4, 'palm', '5', '415', TRUE),
@@ -37,6 +39,9 @@ INSERT INTO orders (customer_id, created, status, delivery_address_id, is_active
     (5, '2023-08-09 16:30:00', 'active', 5, TRUE);
 
 INSERT INTO dishes (name, description, category, price, is_available) VALUES
+    ('Shwarma',
+    'A tantalizing Middle Eastern delight, our shawarma is a savory masterpiece of marinated and spit-roasted meat, thinly sliced to perfection. ',
+    'Shwarma','5.5', TRUE),
     ('Pizza Pepperoni',
     'Made of pizza crust, pizza sauce, cheese, and pepperoni. Pepperoni is basically an American version of salami. Pepperoni is a meat mixture of beef and pork that has been cured and seasoned with paprika and chili powder.Pepperoni is characteristically soft, slightly smoky, and bright red in color.',
     'Pizza','10.5', TRUE),

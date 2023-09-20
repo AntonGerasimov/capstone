@@ -15,4 +15,8 @@ public class AddressDto {
     private String house;
     private String apartment;
     private boolean isActive = true;
+
+    public String toCartString(){
+        return String.format("Street: %s. House: %s. Apartment: %s", street, house, apartment);
+    }
 }

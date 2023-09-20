@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity">
 <head>
-    <title>Testing JavaScript</title>
+    <title>Personal account</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
 </head>
 <body>
@@ -49,7 +49,7 @@
                     <td th:text="${order.status}"></td>
                     <td th:text="${order.deliveryAddress.street}"></td>
                     <td>
-                        <a class="btn btn-primary" th:href="@{/users}">More info</a>
+                        <a class="btn btn-primary" th:href="@{/orders/{id}(id=${order.id})}">More info</a>
                     </td>
                 </tr>
 

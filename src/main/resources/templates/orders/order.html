@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity">
+<head>
+    <title>Order</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+</head>
+<body>
+
+<div th:replace="~{header :: header}"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10 col-md-9 mt-5">
+            <h2>Your order</h2>
+            <div class="order-info">
+                <p><strong>Order created:</strong> <span th:text="${order.created}"></span></p>
+                <p><strong>Status:</strong> <span th:text="${order.status}"></span></p>
+                <p><strong>Order items:</strong></p>
+                <ul>
+                    <li th:each="item : ${items}">
+                        <span th:text="${item.dish.name}"></span> - <span th:text="${item.quantity}"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<br>
+
+
+
+
+
+
+
+</body>
+</html>
