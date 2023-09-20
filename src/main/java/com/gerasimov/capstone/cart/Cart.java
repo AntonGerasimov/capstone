@@ -2,58 +2,36 @@ package com.gerasimov.capstone.cart;
 
 import com.gerasimov.capstone.domain.DishDto;
 import com.gerasimov.capstone.domain.OrderItemDto;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class Cart {
-    private List<OrderItemDto> items = new ArrayList<>();
+    private List<OrderItemDto> cart;
 
-    public void addItem(OrderItemDto itemDto) {
-        items.add(itemDto);
-    }
-    public void removeItem(OrderItemDto itemDto) {
-        items.remove(itemDto);
-    }
-    public List<OrderItemDto> getItems() {
-        return items;
-    }
-    public boolean isContainsDish(DishDto dishDto){
-        return items.stream()
-                .anyMatch(orderItem -> orderItem.getDish().equals(dishDto));
+    public Cart() {
+        this.cart = new ArrayList<>();
     }
 
-    public void addDish(DishDto dishDto){
-        boolean found = false;
-        for (OrderItemDto orderItem : items){
-            if (orderItem.getDish().equals(dishDto)){
-                orderItem.setQuantity(orderItem.getQuantity() + 1);
-                found = true;
-                break;
-            }
-        }
-        if (!found){ //this dish adds for the first time
-            OrderItemDto orderItemDto = new OrderItemDto();
-            orderItemDto.setDish(dishDto);
-            orderItemDto.setQuantity(1);
-        }
+    public List<OrderItemDto> getCart() {
+        return cart;
     }
 
-    public void removeDish(DishDto dishDto){
-        boolean found = false;
-        for (OrderItemDto orderItem : items){
-            if (orderItem.getDish().equals(dishDto)){
-                orderItem.setQuantity(orderItem.getQuantity() - 1);
-                if (orderItem.getQuantity() == 0){
-                    items.remove(orderItem);
-                }
-                found = true;
-                break;
-            }
-        }
-        if (!found){ //attempt to remove dish that is not in the cart yet
+    public void addItem(OrderItemDto item) {
+        cart.add(item);
+    }
 
-        }
+    public void removeItem(OrderItemDto item) {
+        cart.remove(item);
+    }
+
+    public void removeAllItems() {
+        cart.clear();
+    }
+
+    public void removeItemById(int id) {
+        cart.removeIf(item -> item.getId()==id);
     }
 }
-

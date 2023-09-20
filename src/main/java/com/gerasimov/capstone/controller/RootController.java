@@ -5,12 +5,11 @@ import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +20,13 @@ import javax.servlet.http.HttpServletRequest;
 public class RootController {
 
     private UserService userService;
+
+    @PostMapping("/test")
+    public ResponseEntity<String> addItemToCartDupl(){
+        log.info("Post request for test");
+//        return "Test request successfully";
+        return ResponseEntity.ok("Item added to cart successfully.");
+    }
 
     @GetMapping("/")
     public String showMainPage() {

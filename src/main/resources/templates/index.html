@@ -3,6 +3,8 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity">
 <head>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+<!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+    <script   src="https://code.jquery.com/jquery-2.2.4.js"   integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="   crossorigin="anonymous"></script>
 </head>
 
 
@@ -13,7 +15,62 @@
 <h1 class="position-absolute start-50">Welcome to Our Restaurant</h1>
 
 
+<button class="btn btn-primary" id="btnAddToCart" onclick="addToCart()">Add to cart</button>
+<div id="quantityControls" style="display: none;">
+    <button class="minus-button" onclick="removeFromCart()">-</button>
+    <span id="testId">0</span>
+    <button class="plus-button" onclick="addToCart()">+</button>
+</div>
 
+
+
+<script>
+function toggleContent() {
+  const buttonAddToCart = document.getElementById('btnAddToCart');
+  const quantityControls = document.getElementById('quantityControls');
+
+  if (quantityControls.style.display === 'none') {
+    quantityControls.style.display = 'block';
+    buttonAddToCart.style.display = 'none'; // Hide the "Add to cart" button
+  } else {
+    quantityControls.style.display = 'none';
+    buttonAddToCart.style.display = 'inline-block'; // Show the "Add to cart" button
+  }
+}
+
+function addToCart(){
+        console.log('addToCart');
+        increaseQuantity();
+
+    }
+
+    function removeFromCart(button){
+        console.log('Remove from cart');
+        decreaseQuantity();
+    }
+
+
+    function increaseQuantity(){
+        var element = document.getElementById("testId");
+        var currentValue = parseInt(element.textContent, 10);
+        var newValue = currentValue + 1;
+        element.textContent = newValue;
+        if (currentValue == 0){
+            toggleContent();
+        }
+    }
+
+    function decreaseQuantity(){
+        var element = document.getElementById("testId");
+        var currentValue = parseInt(element.textContent, 10);
+        var newValue = currentValue - 1;
+        element.textContent = newValue;
+        if (newValue == 0){
+            toggleContent();
+        }
+    }
+
+</script>
 
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Cart</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
@@ -19,6 +20,7 @@
     <table class="table" th:if="${not #lists.isEmpty(cartItems)}">
         <thead>
         <tr>
+            <th scope="col">Id</th>
             <th scope="col">Item</th>
             <th scope="col">Quantity</th>
             <th scope="col">Price</th>
@@ -28,10 +30,17 @@
         </thead>
         <tbody>
         <tr th:each="item : ${cartItems}">
+            <td th:text="${item.id}"> </td>>
             <td th:text="${item.dish.name}"></td>
-            <td th:text="${item.quantity}"></td>
             <td>
-                <button class="plus-button" th:attr="data-dish-id=${item.dish.id}">+</button>
+                <button class="btn btn-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="removeFromCart(this)">-</button>
+                <span  th:id="@{quantityId-{dishId}(dishId=${item.dish.id})}" class="ms-1 me-1" th:text="${item.quantity}"></span>
+<!--                th:id="@{quantity-${item.dish.id}}"-->
+                <button class="btn btn-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="addToCart(this)">+</button>
+            </td>
+
+            <td>
+
             </td>
             <td th:text="${item.dishPrice}"></td>
             <!--        <td th:text="${item.quantity * item.dishPrice}"></td>-->
@@ -46,36 +55,58 @@
 
 <p>Total Price: $<span th:text="${totalPrice}"></span></p>
 
+
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const plusButtons = document.querySelectorAll('.plus-button');
-
-        plusButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const dishId = button.getAttribute('data-dish-id');
-                addToCart(dishId);
-            });
+    function addToCart(button){
+        console.log('addToCart');
+        var id = $(button).data('dish-id');
+        $.ajax({
+            url: '/cart/' + id + '/add',
+            type: 'post',
+            success: function() {
+                increaseQuantity(id);
+<!--                alert("Item added to cart successfully.");-->
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
+                alert("An error occurred while adding the item to the cart.");
+            }
         });
+    }
 
-        function addToCart(dishId) {
-            // Send a POST request to the server
-            fetch('/cart/add?itemId=' + dishId, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Handle the response, e.g., show a success message
-                    alert(data);
-                })
-                .catch(error => {
-                    // Handle errors
-                    console.error('Error:', error);
-                });
-        }
-    });
+    function removeFromCart(button){
+        console.log('Remove from cart');
+        var id = $(button).data('dish-id');
+        $.ajax({
+            url: '/cart/' + id + '/remove',
+            type: 'post',
+            success: function() {
+                decreaseQuantity(id);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
+                alert("An error occurred while adding the item to the cart.");
+            }
+        });
+    }
+
+    function increaseQuantity(dishId){
+        var elementId = 'quantityId-' + dishId;
+        var element = document.getElementById(elementId);
+        var currentValue = parseInt(element.textContent, 10);
+        var newValue = currentValue + 1;
+        element.textContent = newValue;
+    }
+
+    function decreaseQuantity(dishId){
+        var elementId = 'quantityId-' + dishId;
+        var element = document.getElementById(elementId);
+        var currentValue = parseInt(element.textContent, 10);
+        var newValue = currentValue - 1;
+        element.textContent = newValue;
+    }
+
 </script>
 
 

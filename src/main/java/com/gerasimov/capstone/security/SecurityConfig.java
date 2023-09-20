@@ -39,9 +39,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/users").hasRole(ROLE_ADMIN)
                     .antMatchers("/users/edit/**").hasRole(ROLE_ADMIN)
                     .antMatchers("/users/delete/**").hasRole(ROLE_ADMIN)
-                    .antMatchers("/menu/**").permitAll() // Publicly accessible URLs
-                    .antMatchers("/cart").authenticated()
-                    .anyRequest().permitAll() // All other URLs require authentication
+//                    .antMatchers("/menu/**").permitAll() // Publicly accessible URLs
+//                    .antMatchers("/**").permitAll()
+//                    .anyRequest().authenticated() // All other URLs require authentication
+                    .anyRequest().permitAll()
                     .and()
                 .formLogin() // Enable form-based authentication
 //                    .loginPage("/login") // Custom login page URL
@@ -54,7 +55,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .logoutUrl("/logout")
                     .logoutSuccessUrl("/")
                     .invalidateHttpSession(true)
-                    .permitAll(); // Allow access to the logout page
+                    .permitAll() // Allow access to the logout page
+                    .and()
+                .csrf().disable().cors();
+
     }
 
 }

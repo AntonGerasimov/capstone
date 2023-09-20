@@ -3,6 +3,8 @@
 <head>
     <title>Addresses</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+<!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+    <script   src="https://code.jquery.com/jquery-3.6.0.js"   integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="   crossorigin="anonymous"></script>
     <style>
         .menu-truncate {
             overflow: hidden;
@@ -34,16 +36,34 @@
             <div th:each="menuItem : ${category.value}" class="col-md-4 mb-4">
                 <div class="card" style="width: 22rem;">
                     <!-- Replace 'src="#"' with your actual image source -->
-                    <img src="#" class="card-img-top" alt="...">
+                    <img
+                            th:src="@{/images/{id}.jpeg(id=${menuItem.id})}"
+                            class="card-img-top"
+                            width="300"
+                            height="300"
+                            onerror="this.src='/images/default.jpeg';"
+                    />
                     <div class="card-body menu-card-body">
                         <h5 class="card-title" th:text="${menuItem.name}"></h5>
                         <p class="card-text menu-truncate" th:text="${menuItem.description}"></p>
-                        <form th:action="@{/cart/add}" th:method="post">
-                            <input type="hidden" name="itemId" th:value="${menuItem.id}" />
-                            <button type="submit" class="btn btn-primary">Add to cart</button>
-                        </form>
-<!--                        <a href="#" class="btn btn-primary">Add to cart</a>-->
-                        <a href="#" class="btn btn-primary">Show more</a>
+
+                        <div id="cartButtonContainer">
+                            <div th:id="@{btnAddToCart-{dishId}(dishId=${menuItem.id})}">
+                                <button class="btn btn-primary" th:data-dish-id="${menuItem.id}" onclick="addToCart(this)">Add to cart</button>
+                                <a href="#" class="btn btn-primary">Show more</a>
+                            </div>
+
+                            <div th:id="@{quantityElement-{dishId}(dishId=${menuItem.id})}" style="display: none;">
+                                <button class="btn btn-outline-primary" th:data-dish-id="${menuItem.id}" onclick="removeFromCart(this)">-</button>
+                                <span th:id="@{quantityId-{dishId}(dishId=${menuItem.id})}"  class="ms-1 me-1">0</span>
+                                <button class="btn btn-outline-primary" th:data-dish-id="${menuItem.id}" onclick="addToCart(this)">+</button>
+                                <a href="#" class="btn btn-primary">Show more</a>
+                            </div>
+
+                        </div>
+
+
+
                     </div>
                 </div>
             </div>
@@ -52,23 +72,99 @@
 </div>
 
 
-<!--<div class="container">-->
-<!--    <div class="row">-->
-<!--        <div th:each="menuItem : ${menuItems}" class="col-md-4 mb-4">-->
-<!--            <div class="card" style="width: 22rem;">-->
-<!--&lt;!&ndash;                <img th:src="${menuItem.imagePath}" class="card-img-top" alt="...">&ndash;&gt;-->
-<!--                <img src="#" class="card-img-top" alt="...">-->
-<!--                <div class="card-body menu-card-body">-->
-<!--                    <h5 class="card-title" th:text="${menuItem.name}"></h5>-->
-<!--                    <p class="card-text menu-truncate" th:text="${menuItem.description}"></p>-->
-<!--                    <a href="#" class="btn btn-primary">Add to cart</a>-->
-<!--                    <a href="#" class="btn btn-primary">Show more</a>-->
-<!--&lt;!&ndash;                    <a sec:authorize="hasRole('admin')" href="#" class="btn btn-primary">Edit</a>&ndash;&gt;-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
+<script>
+    function addToCart(button){
+        var id = $(button).data('dish-id');
+        $.ajax({
+            url: '/cart/' + id + '/add',
+            type: 'post',
+            success: function() {
+                console.log('Add to cart successfully');
+                increaseQuantity(id);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
+                alert("An error occurred while adding the item to the cart.");
+            }
+        });
+    }
+
+    function removeFromCart(button){
+        console.log('Remove from cart');
+        var id = $(button).data('dish-id');
+        $.ajax({
+            url: '/cart/' + id + '/remove',
+            type: 'post',
+            success: function() {
+                console.log('Remove from cart successfully');
+                decreaseQuantity(id);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
+                alert("An error occurred while adding the item to the cart.");
+            }
+        });
+    }
+
+    function toggleContent(dishId) {
+        const buttonAddToCart = document.getElementById('btnAddToCart-' + dishId);
+        const quantityControls = document.getElementById('quantityElement-' + dishId);
+        if (quantityControls.style.display === 'none') {
+            quantityControls.style.display = 'block';
+            buttonAddToCart.style.display = 'none'; // Hide the "Add to cart" button
+        }     else {
+        quantityControls.style.display = 'none';
+        buttonAddToCart.style.display = 'inline-block'; // Show the "Add to cart" button
+        }
+    }
+
+    function increaseQuantity(dishId){
+        var elementId = 'quantityId-' + dishId;
+        var element = document.getElementById(elementId);
+        var currentValue = parseInt(element.textContent, 10);
+        var newValue = currentValue + 1;
+        element.textContent = newValue;
+        if (currentValue == 0){
+            toggleContent(dishId);
+        }
+    }
+
+    function decreaseQuantity(dishId){
+        var elementId = 'quantityId-' + dishId;
+        var element = document.getElementById(elementId);
+        var currentValue = parseInt(element.textContent, 10);
+        var newValue = currentValue - 1;
+        element.textContent = newValue;
+        if (newValue == 0){
+            toggleContent(dishId);
+        }
+    }
+
+
+</script>
+
+<!--            data: { id: id },-->
+<!--            contentType: 'application/json; charset=utf-8',-->
+
+
+
+<!--<script>-->
+<!--            function addToCart(button) {-->
+<!--                var id = $(button).data('АТТРИБУТ');-->
+<!--                console.log(consol);-->
+<!--                $.ajax({-->
+<!--                    url: '/МЕТОД/' + id,-->
+<!--                    type: 'POST',-->
+<!--                    success: function(data) {-->
+<!--                        alert(data.message);-->
+<!--                    },-->
+<!--                    error: function(xhr, status, error) {-->
+<!--                        alert('Error adding product to cart: ' + error);-->
+<!--                    }-->
+<!--                });-->
+<!--                return false;-->
+<!--            }-->
+<!--</script>-->
 
 
 </body>
