@@ -37,6 +37,18 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
+    public List<DishDto> findHotSale(){
+        List<DishDto> hotSale = new ArrayList<>();
+        DishDto dishDto1 = findById(1L);
+        hotSale.add(dishDto1);
+
+        DishDto dishDto2 = findById(2L);
+        hotSale.add(dishDto2);
+
+        return hotSale;
+    }
+
+    @Override
     public DishDto findById(Long id){
         Dish dish = dishRepository.findById(id).orElseThrow(()->new RestaurantException(String.format("Can't find dish with id %d in database", id)));
         return dishMapper.toDto(dish);

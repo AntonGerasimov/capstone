@@ -15,5 +15,5 @@ public class OrderItemDto {
     private OrderDto order;
     private DishDto dish;
     private Double dishPrice;
-    private int quantity;
+    private int quantity = 0;
 }

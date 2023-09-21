@@ -1,5 +1,6 @@
 package com.gerasimov.capstone.controller;
 
+import com.gerasimov.capstone.cart.Cart;
 import com.gerasimov.capstone.domain.DishDto;
 import com.gerasimov.capstone.service.DishService;
 import lombok.AllArgsConstructor;
@@ -19,17 +20,9 @@ public class DishController {
     private final DishService dishService;
 
 
-    @GetMapping("/menu")
-    public String getAllDishes(Model model){
-        List<DishDto> menuItems = dishService.findAvailable();
 
-        // Group the menu items by category
-        Map<String, List<DishDto>> menuItemsByCategory = menuItems.stream()
-                .collect(Collectors.groupingBy(DishDto::getCategory));
 
-        model.addAttribute("menuItemsByCategory", menuItemsByCategory);
-        return "menu";
-    }
+
 
     @GetMapping("/dishes/{id}")
     public String viewDish(@PathVariable Long id, Model model){

@@ -21,11 +21,6 @@ public class RootController {
 
     private UserService userService;
 
-    @GetMapping("/")
-    public String showMainPage() {
-        return "index";
-    }
-
     @GetMapping("/login")
     public String loginNotDefault(Model model) {
         model.addAttribute("newUser", new UserDto());

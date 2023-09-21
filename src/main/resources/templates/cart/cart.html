@@ -10,27 +10,31 @@
 
 <div th:replace="~{header :: header}"></div>
 
-<h1>Your Shopping Cart</h1>
+<div class="row mb-4">
+    <div class="col text-center">
+        <h1 class="mt-4">Shopping Cart</h1>
+    </div>
+</div>
 
-<div th:if="${#lists.isEmpty(cartItems)}">
-    <p>Your cart is empty.</p>
+<div th:if="${#lists.isEmpty(cartItems)}" class="d-flex justify-content-center align-items-center" style="height: 50vh;">
+    <div>
+        <p>Your cart is empty.</p>
+    </div>
 </div>
 
 <div class="container">
     <table class="table" th:if="${not #lists.isEmpty(cartItems)}">
         <thead>
         <tr>
-            <th scope="col">Id</th>
             <th scope="col">Item</th>
             <th scope="col">Quantity</th>
             <th scope="col">Price</th>
             <th scope="col">Total</th>
-            <th scope="col">Action</th>
+            <th scope="col"></th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="item : ${cartItems}">
-            <td th:text="${item.id}"> </td>>
+        <tr th:each="item : ${cartItems}" th:if="${item.quantity > 0}">
             <td th:text="${item.dish.name}"></td>
             <td>
                 <button class="btn btn-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="removeFromCart(this)">-</button>
@@ -39,24 +43,25 @@
                 <button class="btn btn-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="addToCart(this)">+</button>
             </td>
 
-            <td>
+            <td th:text="'$' + ${item.dishPrice}"></td>
+            <td th:text="'$' + ${#numbers.formatDecimal(item.quantity * item.dishPrice,1,2)}"></td>
 
+            <td>
+                <button class="btn btn-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="removeItem(this)">Remove</button>
             </td>
-            <td th:text="${item.dishPrice}"></td>
-            <!--        <td th:text="${item.quantity * item.dishPrice}"></td>-->
-            <!--        <td>-->
-            <!--            <button th:onclick="'removeItem(\'' + ${cartStatus.index} + '\')'">Remove</button>-->
-            <!--        </td>-->
+
         </tr>
         </tbody>
     </table>
 </div>
 
 
-<p>Total Price: $<span th:text="${totalPrice}"></span></p>
 
-<a class="btn btn-primary" th:href="@{/checkout}">Proceed to Checkout</a>
-
+<!--th:if="${not #lists.isEmpty(cartItems)}"-->
+<div id="totalPriceAndCheckout">
+    <p> Total Price: $<span id="totalPrice"></span></p>
+    <a class="btn btn-primary" th:href="@{/checkout}">Proceed to Checkout</a>
+</div>
 
 <script>
     function addToCart(button){
@@ -67,6 +72,7 @@
             type: 'post',
             success: function() {
                 increaseQuantity(id);
+                updateTotalPrice();
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
@@ -83,6 +89,7 @@
             type: 'post',
             success: function() {
                 decreaseQuantity(id);
+                updateTotalPrice();
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
@@ -104,8 +111,74 @@
         var element = document.getElementById(elementId);
         var currentValue = parseInt(element.textContent, 10);
         var newValue = currentValue - 1;
-        element.textContent = newValue;
+        if (newValue > 0){
+            element.textContent = newValue;
+        } else{
+            deleteItem(dishId);
+            var row = element.closest('tr');
+            row.remove();
+        }
+
     }
+
+    function removeItem(button){
+        console.log('Delete from cart');
+        var id = $(button).data('dish-id');
+        var elementId = 'quantityId-' + id;
+        var element = document.getElementById(elementId);
+        deleteItem(id);
+        $(button).closest('tr').remove();
+    }
+
+    function deleteItem(id){
+        $.ajax({
+            url: '/cart/' + id + '/deleteItem',
+            type: 'delete',
+            success: function() {
+                console.log('Success delete of item with id ' + id);
+                updateTotalPrice();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
+                alert("An error occurred while adding the item to the cart.");
+            }
+        });
+    }
+
+function calculateTotalPrice() {
+    var total = 0;
+    var itemRows = document.querySelectorAll('table tbody tr');
+
+    itemRows.forEach(function (itemRow) {
+        var quantity = parseInt(itemRow.querySelector('span').textContent, 10);
+        var priceText = itemRow.querySelector('td:nth-child(3)').textContent.trim();
+        var price = parseFloat(priceText.substring(1)); // Remove the '$' and parse as float
+        var itemTotal = quantity * price;
+        total += itemTotal;
+    });
+
+    return total;
+}
+
+function updateTotalPrice() {
+    var totalPriceElement = document.getElementById('totalPrice');
+    var totalPrice = calculateTotalPrice();
+    var divTotalPriceAndCheckout = document.getElementById('totalPriceAndCheckout');
+    if (totalPrice == 0){
+        divTotalPriceAndCheckout.style.display = 'none';
+    } else{
+        divTotalPriceAndCheckout.style.display = 'inline-block';
+    }
+    totalPriceElement.textContent = totalPrice.toFixed(2); // Format the total to two decimal places
+}
+
+// Calc totalPrice before to show cart page
+window.onload = function() {
+    updateTotalPrice();
+};
+
+
+
 
 </script>
 

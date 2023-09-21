@@ -5,8 +5,8 @@ import com.gerasimov.capstone.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -18,6 +18,24 @@ public class CartService {
     private UserService userService;
     private AddressService addressService;
     private OrderService orderService;
+
+    public List<OrderItemDto> getCart(){
+        return cart.getCart();
+    }
+
+    public Map<String, Integer> createDishQuantityMap() {
+        Map<String, Integer> dishQuantityMap = new HashMap<>();
+
+        for (OrderItemDto orderItemDto : cart.getCart()) {
+            String dishName = orderItemDto.getDish().getName();
+            int quantity = orderItemDto.getQuantity();
+
+            dishQuantityMap.put(dishName, quantity);
+        }
+
+        return dishQuantityMap;
+    }
+
     public void addToCart(Long dishId) {
         DishDto dishDto = dishService.findById(dishId);
         Optional<OrderItemDto> existingItem = findExistingItemInCart(dishDto);
@@ -34,9 +52,7 @@ public class CartService {
         Optional<OrderItemDto> existingItem = findExistingItemInCart(dishDto);
 
         if (existingItem.isPresent()) {
-            decreaseQuantityOfExistingCartItem(existingItem.get());
-        } else {
-
+            cart.removeItem(existingItem.get());
         }
     }
 
@@ -65,6 +81,17 @@ public class CartService {
         return String.format("redirect:/users/%d/personal-account", userId);
     }
 
+    public void resetQuantity(Long id){
+        DishDto dishDto = dishService.findById(id);
+        Optional<OrderItemDto> existingItem = findExistingItemInCart(dishDto);
+
+        if (existingItem.isPresent()) {
+            increaseQuantityOfExistingCartItem(existingItem.get());
+        } else {
+            addNewCartItem(dishDto);
+        }
+    }
+
     private Optional<OrderItemDto> findExistingItemInCart(DishDto dishDto) {
         return cart.getCart().stream()
                 .filter(orderItem -> orderItem.getDish().equals(dishDto))
@@ -79,6 +106,7 @@ public class CartService {
         OrderItemDto orderItemDto = new OrderItemDto();
         orderItemDto.setDish(dishDto);
         orderItemDto.setQuantity(1);
+        orderItemDto.setDishPrice(dishDto.getPrice());
         cart.addItem(orderItemDto);
     }
 
