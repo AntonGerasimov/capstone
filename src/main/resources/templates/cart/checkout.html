@@ -10,14 +10,13 @@
 
 <div th:replace="~{header :: header}"></div>
 
-<h1>Your Order</h1>
 
-<div th:if="${#lists.isEmpty(cartItems)}">
-    <p>Your cart is empty.</p>
-</div>
 
-<div class="container">
-    <table class="table" th:if="${not #lists.isEmpty(cartItems)}">
+<div class="container mt-5">
+
+    <h1 class="mt-5">Your Order</h1>
+
+    <table class="table">
         <thead>
         <tr>
             <th scope="col">Id</th>
@@ -42,18 +41,22 @@
 
             </td>
             <td th:text="${item.dishPrice}"></td>
-            <!--        <td th:text="${item.quantity * item.dishPrice}"></td>-->
-            <!--        <td>-->
-            <!--            <button th:onclick="'removeItem(\'' + ${cartStatus.index} + '\')'">Remove</button>-->
-            <!--        </td>-->
         </tr>
         </tbody>
     </table>
 </div>
 
-<select id="addresses" name="addresses" th:field="*{addresses}" required>
-    <option th:each="address : ${addresses}" th:value="${address.id}" th:text="${address.toCartString()}"></option>
-</select>
+<div class="container">
+    <select th:if="${not #lists.isEmpty(addresses)}" id="addresses" name="addresses" th:field="*{addresses}" required>
+        <option th:each="address : ${addresses}" th:value="${address.id}" th:text="${address.toCartString()}"></option>
+    </select>
+
+    <div>
+        <a class="btn" th:href="@{/users/{id}/addresses/add(id=${#authentication.principal.userDto.id})}">Add new address</a>
+    </div>
+</div>
+
+
 
 
 

@@ -17,7 +17,7 @@ public class ErrorController {
         log.error("Restaurant error", e);
         model.addAttribute("error", e.getMessage());
         ModelAndView modelAndView = new ModelAndView("error");
-        modelAndView.addObject("exception", "Oops. Something went wrong: " +e.getMessage());
+        modelAndView.addObject("exception", "Oops. Something went wrong: " + e.getMessage());
         return modelAndView;
     }
 

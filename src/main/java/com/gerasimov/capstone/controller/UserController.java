@@ -3,7 +3,6 @@ package com.gerasimov.capstone.controller;
 import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Role;
-import com.gerasimov.capstone.service.OrderService;
 import com.gerasimov.capstone.service.RoleService;
 import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
@@ -26,8 +25,6 @@ import java.util.List;
 public class UserController {
     private UserService userService;
     private RoleService roleService;
-    private OrderService orderService;
-
 
     @GetMapping
     public String listUsers(Model model) {
@@ -43,27 +40,28 @@ public class UserController {
     }
 
     @GetMapping("/success-registration")
-    public String viewSuccessRegistrationPage(){
+    public String viewSuccessRegistrationPage() {
         return "users/success-registration";
     }
 
     @GetMapping("/success-login")
-    public String viewSuccessLoginPage(){
+    public String viewSuccessLoginPage() {
         return "users/success-login";
     }
 
     @GetMapping("/{id}/personal-account")
-    public String viewPersonalAccount(@PathVariable Long id, Model model){
-        try{
+    public String viewPersonalAccount(@PathVariable Long id, Model model) {
+        try {
             UserDto authenticatedUser = userService.findAuthenticatedUser();
             model.addAttribute("user", authenticatedUser);
-            List<OrderDto> orders = orderService.findByCustomer(authenticatedUser);
+            List<OrderDto> orders = userService.findOrdersForAuthenticatedUser();
             model.addAttribute("orders", orders);
             return "users/personal-account";
-        } catch (RestaurantException e){
+        } catch (RestaurantException e) {
             return "users/registration";
         }
     }
+
     @GetMapping("/{id}/edit")
     public String editUser(@PathVariable Long id, Model model) {
         UserDto userDto = userService.prepareEdit(id);
@@ -87,17 +85,16 @@ public class UserController {
 
     @PostMapping("/registration")
     public String createUser(@ModelAttribute("user") UserDto userDto, Model model, RedirectAttributes redirectAttributes) {
-        try{
+        try {
             UserDto newUser = userService.save(userDto);
             model.addAttribute("newUsername", newUser.getUsername());
             return "redirect:/users/success-registration";
-        } catch (RestaurantException e){
+        } catch (RestaurantException e) {
             // Email already exists, return an error message
             redirectAttributes.addFlashAttribute("restaurantException", e.getMessage());
             return "redirect:/users/registration"; // Return to the registration form with the error message
         }
     }
-
 
 
 }

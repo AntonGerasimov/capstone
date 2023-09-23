@@ -1,19 +1,16 @@
 package com.gerasimov.capstone.cart;
 
-import com.gerasimov.capstone.domain.AddressDto;
 import com.gerasimov.capstone.domain.DishDto;
-import com.gerasimov.capstone.entity.Address;
-import com.gerasimov.capstone.service.AddressService;
-import com.gerasimov.capstone.service.DishService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,14 +21,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CartController {
     private CartService cartService;
-    private DishService dishService;
 
     @GetMapping("/")
     public String showMainPage(Model model) {
 
-        List<DishDto> menuItems = dishService.findAvailable();
-
-        List<DishDto> hotSales = dishService.findHotSale();
+        List<DishDto> menuItems = cartService.getMenu();
+        List<DishDto> hotSales = cartService.getHotSales();
 
         // Group the menu items by category
         Map<String, List<DishDto>> menuItemsByCategory = menuItems.stream()
@@ -45,8 +40,8 @@ public class CartController {
     }
 
     @GetMapping("/menu")
-    public String getAllDishes(Model model){
-        List<DishDto> menuItems = dishService.findAvailable();
+    public String getAllDishes(Model model) {
+        List<DishDto> menuItems = cartService.getMenu();
 
         // Group the menu items by category
         Map<String, List<DishDto>> menuItemsByCategory = menuItems.stream()
@@ -75,15 +70,23 @@ public class CartController {
     }
 
     @GetMapping("/checkout")
-    public String viewCheckout(Model model){
+    public String viewCheckout(Model model) {
         model.addAttribute("cartItems", cartService.getCart());
-        model.addAttribute("addresses", cartService.findAddressesForUser() );
+        model.addAttribute("addresses", cartService.findAddressesForUser());
         return "cart/checkout";
     }
 
     @PostMapping("/cart/{id}/add")
+    @PreAuthorize("hasAnyRole('*')")
     @ResponseBody
-    public String addItemToCart(@PathVariable Long id){
+    public String addItemToCart(@PathVariable Long id, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if ((authentication == null) || (!authentication.isAuthenticated())) {
+            // User is not authenticated, so set a 403 status code and return an error message.
+            log.info("Not authenticated user");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Set the status code to 403
+            return "You do not have permission to perform this action.";
+        }
         log.info("Post request for adding item to cart");
         cartService.addToCart(id);
         return "Dish added to cart successfully";
@@ -91,7 +94,7 @@ public class CartController {
 
     @PostMapping("/cart/{id}/remove")
     @ResponseBody
-    public String removeItemFromCart(@PathVariable Long id){
+    public String removeItemFromCart(@PathVariable Long id) {
         log.info("Post request for adding item to cart");
         cartService.removeFromCart(id);
         return "Dish added to cart successfully";
@@ -99,7 +102,7 @@ public class CartController {
 
     @PostMapping("/cart/make-order")
     @ResponseBody
-    public String makeOrder(@RequestParam("selectedAddressId") Long selectedAddressId){
+    public String makeOrder(@RequestParam("selectedAddressId") Long selectedAddressId) {
         log.info("Begin making order");
         cartService.makeOrder(selectedAddressId);
         return "Order was created successfully";
@@ -107,7 +110,7 @@ public class CartController {
 
     @DeleteMapping("/cart/{id}/deleteItem")
     @ResponseBody
-    public String deleteItem(@PathVariable Long id){
+    public String deleteItem(@PathVariable Long id) {
         log.info("Put request for resetting quantity");
         cartService.removeFromCart(id);
         return "Item was deleted successfully";

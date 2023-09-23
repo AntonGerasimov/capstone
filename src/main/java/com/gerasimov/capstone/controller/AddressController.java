@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -21,40 +23,47 @@ public class AddressController {
     private final AddressService addressService;
 
     @GetMapping("/addresses")
-    public ModelAndView getAllAddresses(Model model){
+    public ModelAndView getAllAddresses(Model model) {
         List<AddressDto> addresses = addressService.findAll();
         model.addAttribute("addresses", addresses);
         return new ModelAndView("addresses");
     }
 
     @GetMapping("/users/{id}/addresses")
-    public String viewUserAddresses(@PathVariable Long id, Model model, Authentication authentication){
+    public String viewUserAddresses(@PathVariable Long id, Model model, Authentication authentication) {
         List<AddressDto> addresses = addressService.findAvailableForAuthenticatedUser(authentication);
         model.addAttribute("addresses", addresses);
         return "users/addresses";
     }
 
     @GetMapping("/users/{id}/addresses/add")
-    public String viewNewAddressForm(@PathVariable Long id, Model model){
+    public String viewNewAddressForm(@PathVariable Long id, Model model) {
         model.addAttribute("address", new AddressDto());
         return "users/new-address";
     }
 
     @GetMapping("/users/{userId}/addresses/{addressId}/edit")
-    public String viewAddressEditForm(@PathVariable Long userId, @PathVariable Long addressId, Model model){
+    public String viewAddressEditForm(@PathVariable Long userId, @PathVariable Long addressId, Model model) {
         AddressDtoLight addressDtoLight = addressService.findLightById(addressId);
         model.addAttribute("address", addressDtoLight);
         return "addresses/edit-address";
     }
 
     @PostMapping("/users/{id}/addresses/add")
-    public String addNewAddress(@PathVariable Long id, @ModelAttribute("address") AddressDto addressDto, Model model, RedirectAttributes redirectAttributes){
-        try{
+    public String addNewAddress(
+            @PathVariable Long id,
+            @ModelAttribute("address") AddressDto addressDto,
+            @RequestParam("previousPage") String previousPage,
+            Model model,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request
+    ) {
+        try {
             AddressDto newAddress = addressService.save(addressDto);
             log.info(String.format("New address was created: %s", newAddress.toString()));
             redirectAttributes.addAttribute("id", id);
             return "redirect:/users/{id}/addresses";
-        } catch (RestaurantException restaurantException){
+        } catch (RestaurantException restaurantException) {
             model.addAttribute("Restaurant exception", "Error!");
             redirectAttributes.addAttribute("id", id);
             return "redirect:/users/{id}/addresses/new"; // Return to the registration form with the error message

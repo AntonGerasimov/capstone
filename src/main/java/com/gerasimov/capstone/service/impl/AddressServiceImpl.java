@@ -31,7 +31,7 @@ public class AddressServiceImpl implements AddressService {
 
 
     @Override
-    public List<AddressDto> findAll(){
+    public List<AddressDto> findAll() {
         List<Address> addressesEntities = addressRepository.findAll();
         return addressesEntities.stream()
                 .map(addressMapper::toDto)
@@ -39,19 +39,19 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public AddressDto findById(Long id){
+    public AddressDto findById(Long id) {
         Address address = addressRepository.findById(id)
                 .orElseThrow(() -> new RestaurantException(String.format("Can't find address with id %d", id)));
         return addressMapper.toDto(address);
     }
 
     @Override
-    public AddressDtoLight findLightById(Long addressId){
+    public AddressDtoLight findLightById(Long addressId) {
         return addressLightMapper.toLight(findById(addressId));
     }
 
     @Override
-    public AddressDto save(AddressDto addressDto){
+    public AddressDto save(AddressDto addressDto) {
         UserDto userDto = userService.findAuthenticatedUser();
         addressDto.setUser(userDto);
         addressDto.setActive(true);
@@ -61,7 +61,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
-    public void update(AddressDtoLight addressDtoLight){
+    public void update(AddressDtoLight addressDtoLight) {
         log.info(String.format("Updating address %s", addressDtoLight.toString()));
         AddressDto addressDto = addressLightMapper.toDto(addressDtoLight);
         addressRepository.save(addressMapper.toEntity(addressDto));
@@ -69,7 +69,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
-    public void delete(Long addressId){
+    public void delete(Long addressId) {
         AddressDto addressDto = findById(addressId);
         addressDto.setActive(false);
         addressRepository.save(addressMapper.toEntity(addressDto));
@@ -77,7 +77,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<AddressDto> findAvailableForUser(UserDto userDto){
+    public List<AddressDto> findAvailableForUser(UserDto userDto) {
         List<Address> addressesEntities = addressRepository.findByUser(userMapper.toEntity(userDto));
         return addressesEntities.stream()
                 .filter(Address::isActive)
@@ -86,7 +86,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<AddressDto> findAvailableForAuthenticatedUser(Authentication authentication){
+    public List<AddressDto> findAvailableForAuthenticatedUser(Authentication authentication) {
         UserDto authenticatedUser = userService.findByUsername(authentication.getName());
         return findAvailableForUser(authenticatedUser);
     }

@@ -1,7 +1,5 @@
 package com.gerasimov.capstone.domain;
 
-import com.gerasimov.capstone.entity.Dish;
-import com.gerasimov.capstone.entity.Order;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

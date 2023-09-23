@@ -2,7 +2,6 @@ package com.gerasimov.capstone.service.impl;
 
 import com.gerasimov.capstone.domain.DishDto;
 import com.gerasimov.capstone.entity.Dish;
-import com.gerasimov.capstone.entity.User;
 import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.mapper.DishMapper;
 import com.gerasimov.capstone.repository.DishRepository;
@@ -28,8 +27,9 @@ public class DishServiceImpl implements DishService {
                 .map(dishMapper::toDto)
                 .toList();
     }
+
     @Override
-    public List<DishDto> findAvailable(){
+    public List<DishDto> findAvailable() {
         List<Dish> dishEntities = dishRepository.findByIsAvailableTrue();
         return dishEntities.stream()
                 .map(dishMapper::toDto)
@@ -37,7 +37,7 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public List<DishDto> findHotSale(){
+    public List<DishDto> findHotSale() {
         List<DishDto> hotSale = new ArrayList<>();
         DishDto dishDto1 = findById(1L);
         hotSale.add(dishDto1);
@@ -49,8 +49,8 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public DishDto findById(Long id){
-        Dish dish = dishRepository.findById(id).orElseThrow(()->new RestaurantException(String.format("Can't find dish with id %d in database", id)));
+    public DishDto findById(Long id) {
+        Dish dish = dishRepository.findById(id).orElseThrow(() -> new RestaurantException(String.format("Can't find dish with id %d in database", id)));
         return dishMapper.toDto(dish);
     }
 
@@ -67,7 +67,7 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public void addToCart(){
+    public void addToCart() {
 
     }
 

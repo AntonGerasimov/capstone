@@ -19,7 +19,16 @@ public class CartService {
     private AddressService addressService;
     private OrderService orderService;
 
-    public List<OrderItemDto> getCart(){
+
+    public List<DishDto> getMenu() {
+        return dishService.findAvailable();
+    }
+
+    public List<DishDto> getHotSales() {
+        return dishService.findHotSale();
+    }
+
+    public List<OrderItemDto> getCart() {
         return cart.getCart();
     }
 
@@ -56,12 +65,12 @@ public class CartService {
         }
     }
 
-    public List<AddressDto> findAddressesForUser(){
+    public List<AddressDto> findAddressesForUser() {
         UserDto authenticatedUser = userService.findAuthenticatedUser();
         return addressService.findAvailableForUser(authenticatedUser);
     }
 
-    public void makeOrder(Long selectedAddressId){
+    public void makeOrder(Long selectedAddressId) {
         OrderDto orderDto = new OrderDto();
         AddressDto deliveryAddress = addressService.findById(selectedAddressId);
         orderDto.setDeliveryAddress(deliveryAddress);
@@ -69,19 +78,19 @@ public class CartService {
         saveCartItems(savedOrderDto);
     }
 
-    public void saveCartItems(OrderDto savedOrderDto){
+    public void saveCartItems(OrderDto savedOrderDto) {
         cart.getCart().forEach(orderItem -> {
             orderItem.setOrder(savedOrderDto);
             orderItemService.save(orderItem);
         });
     }
 
-    public String makeRedirectAfterSuccessOrder(){
+    public String makeRedirectAfterSuccessOrder() {
         Long userId = userService.findAuthenticatedUser().getId();
         return String.format("redirect:/users/%d/personal-account", userId);
     }
 
-    public void resetQuantity(Long id){
+    public void resetQuantity(Long id) {
         DishDto dishDto = dishService.findById(id);
         Optional<OrderItemDto> existingItem = findExistingItemInCart(dishDto);
 
@@ -111,11 +120,10 @@ public class CartService {
     }
 
     private void decreaseQuantityOfExistingCartItem(OrderItemDto existingItem) {
-        if (existingItem.getQuantity() > 0){
+        if (existingItem.getQuantity() > 0) {
             existingItem.setQuantity(existingItem.getQuantity() - 1);
         }
     }
-
 
 
 }

@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 @Configuration
@@ -32,23 +34,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new HiddenHttpMethodFilter();
     }
 
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        // Redirect to the login page when authentication fails
+        return new LoginUrlAuthenticationEntryPoint("/login");
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
                     .antMatchers("/users").hasRole(ROLE_ADMIN)
-                    .antMatchers("/users/edit/**").hasRole(ROLE_ADMIN)
-                    .antMatchers("/users/delete/**").hasRole(ROLE_ADMIN)
-                    .antMatchers("/checkout").authenticated()
+                    .antMatchers("/cart/**").authenticated()
 //                    .antMatchers("/menu/**").permitAll() // Publicly accessible URLs
 //                    .antMatchers("/**").permitAll()
 //                    .anyRequest().authenticated() // All other URLs require authentication
                     .anyRequest().permitAll()
                     .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint())
+                .and()
                 .formLogin() // Enable form-based authentication
                     .loginPage("/login") // Custom login page URL
                     .loginProcessingUrl("/login")
                     .permitAll() // Allow access to the login page
+//                    .successHandler(savedRequestAwareAuthenticationSuccessHandler())
+                    .successHandler(new RefererRedirectionAuthenticationSuccessHandler())
                     .and()
                 //                    .disable()
                 .logout() // Enable logout
@@ -60,5 +71,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable().cors();
 
     }
+
+//    public SavedRequestAwareAuthenticationSuccessHandler savedRequestAwareAuthenticationSuccessHandler() {
+//        SavedRequestAwareAuthenticationSuccessHandler handler = new SavedRequestAwareAuthenticationSuccessHandler();
+//        handler.setDefaultTargetUrl("/"); // Set the default target URL after successful login
+//        handler.setAlwaysUseDefaultTargetUrl(false);
+//        return handler;
+//    }
 
 }

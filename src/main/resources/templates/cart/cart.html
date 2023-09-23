@@ -10,20 +10,23 @@
 
 <div th:replace="~{header :: header}"></div>
 
-<div class="row mb-4">
-    <div class="col text-center">
-        <h1 class="mt-4">Shopping Cart</h1>
-    </div>
-</div>
 
-<div th:if="${#lists.isEmpty(cartItems)}" class="d-flex justify-content-center align-items-center" style="height: 50vh;">
-    <div>
-        <p>Your cart is empty.</p>
-    </div>
-</div>
 
-<div class="container">
-    <table class="table" th:if="${not #lists.isEmpty(cartItems)}">
+<div class="container mt-2">
+
+    <div class="row mb-4">
+        <div class="col text-center">
+            <h1 class="mt-5">Shopping Cart</h1>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(cartItems)}" class="d-flex justify-content-center align-items-center" style="height: 50vh;">
+        <div>
+            <p>Your cart is empty.</p>
+        </div>
+    </div>
+
+    <table th:if="${not #lists.isEmpty(cartItems)}" class="table">
         <thead>
         <tr>
             <th scope="col">Item</th>
@@ -47,7 +50,7 @@
             <td th:text="'$' + ${#numbers.formatDecimal(item.quantity * item.dishPrice,1,2)}"></td>
 
             <td>
-                <button class="btn btn-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="removeItem(this)">Remove</button>
+                <button class="btn" type="button" th:data-dish-id="${item.dish.id}" onclick="removeItem(this)"><span class="bi bi-trash"></span></button>
             </td>
 
         </tr>

@@ -1,7 +1,6 @@
 package com.gerasimov.capstone.service;
 
 import com.gerasimov.capstone.domain.DishDto;
-import com.gerasimov.capstone.entity.Dish;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;

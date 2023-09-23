@@ -2,7 +2,6 @@ package com.gerasimov.capstone.mapper;
 
 import com.gerasimov.capstone.domain.AddressDto;
 import com.gerasimov.capstone.domain.AddressDtoLight;
-import com.gerasimov.capstone.entity.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

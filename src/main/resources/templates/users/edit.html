@@ -15,7 +15,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <br>
-            <a class="btn btn-light" href="javascript:history.back();"><span class="bi bi-chevron-left"></span></a>
+            <a class="btn btn-light mt-5" href="javascript:history.back();"><span class="bi bi-chevron-left"></span></a>
             <br>
             <h1>Edit user account</h1>
             <form th:action="@{/users/{id}/edit/(id=${user.id})}" th:method="PUT" th:object="${user}">
@@ -53,9 +53,18 @@
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
 
-
-
             </form>
+
+            <div class="container">
+                <div class="row justify-content-center mt-1">
+                    <div class="col-md-6 d-flex justify-content-center align-items-center">
+                        <form th:if="${#authentication.principal.userDto.id != 1}" th:action="@{/users/{id}(id=${#authentication.principal.userDto.id})}" th:method="delete" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                            <button type="submit" class="btn btn-link">Delete account</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

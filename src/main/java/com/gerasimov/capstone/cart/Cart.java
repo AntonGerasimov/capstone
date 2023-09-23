@@ -36,23 +36,23 @@ public class Cart {
         cart.removeIf(item -> item.getId() == id);
     }
 
-    public boolean containsDish(DishDto dishDto){
+    public boolean containsDish(DishDto dishDto) {
         Optional<OrderItemDto> orderItemDtoOptional = getCart().stream()
-                .filter(orderItem -> orderItem.getDish() != null && orderItem.getDish().equals(dishDto) )
+                .filter(orderItem -> orderItem.getDish() != null && orderItem.getDish().equals(dishDto))
                 .findFirst();
-        if (orderItemDtoOptional.isPresent()){
+        if (orderItemDtoOptional.isPresent()) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public int getQuantity(DishDto dishDto){
+    public int getQuantity(DishDto dishDto) {
         if (dishDto != null && cart != null && !getCart().isEmpty()) {
             Optional<OrderItemDto> orderItemDtoOptional = getCart().stream()
-                    .filter(orderItem -> orderItem.getDish() != null && orderItem.getDish().equals(dishDto) )
+                    .filter(orderItem -> orderItem.getDish() != null && orderItem.getDish().equals(dishDto))
                     .findFirst();
-            if (orderItemDtoOptional.isPresent()){
+            if (orderItemDtoOptional.isPresent()) {
                 return orderItemDtoOptional.get().getQuantity();
             }
         }

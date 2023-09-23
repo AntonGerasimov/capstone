@@ -26,19 +26,19 @@ public class OrderItemServiceImpl implements OrderItemService {
     private OrderMapper orderMapper;
 
     @Override
-    public OrderItemDto findById(Long id){
-        OrderItem orderItem = orderItemRepository.findById(id).orElseThrow(()->new RestaurantException(String.format("Can't find order item with id %d in database", id)));
+    public OrderItemDto findById(Long id) {
+        OrderItem orderItem = orderItemRepository.findById(id).orElseThrow(() -> new RestaurantException(String.format("Can't find order item with id %d in database", id)));
         return orderItemMapper.toDto(orderItem);
     }
 
     @Override
-    public OrderItemDto findByDish(DishDto dishDto){
-        OrderItem orderItem = orderItemRepository.findByDish(dishMapper.toEntity(dishDto)).orElseThrow(()->new RestaurantException(String.format("Can't find order item with dish %s in database", dishDto.toString())));
+    public OrderItemDto findByDish(DishDto dishDto) {
+        OrderItem orderItem = orderItemRepository.findByDish(dishMapper.toEntity(dishDto)).orElseThrow(() -> new RestaurantException(String.format("Can't find order item with dish %s in database", dishDto.toString())));
         return orderItemMapper.toDto(orderItem);
     }
 
     @Override
-    public List<OrderItemDto> findByOrder(OrderDto orderDto){
+    public List<OrderItemDto> findByOrder(OrderDto orderDto) {
         List<OrderItem> orderItems = orderItemRepository.findByOrder(orderMapper.toEntity(orderDto));
         return orderItems.stream()
                 .map(orderItemMapper::toDto)
@@ -46,7 +46,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
-    public void save(OrderItemDto orderItemDto){
+    public void save(OrderItemDto orderItemDto) {
         OrderItem orderItem = orderItemMapper.toEntity(orderItemDto);
         orderItemRepository.save(orderItem);
     }

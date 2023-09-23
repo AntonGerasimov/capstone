@@ -8,31 +8,24 @@
 
 <div th:replace="~{header :: header}"></div>
 
-<div class="container-fluid">
+<div class="container-fluid mt-5">
     <div class="row">
-        <!-- Column for the navigation menu -->
         <div class="col-lg-2 col-md-3 mt-5">
-            <ul class="nav flex-column">
+            <ul class="nav flex-column nav-pills me-3">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" th:href="@{/users/{id}/personal-account(id=${#authentication.principal.userDto.id})}">My orders</a>
                 </li>
                 <li class="nav-item">
                     <form th:object="${user}">
-                        <a class="nav-link" th:href="@{/users/{id}/edit(id=${#authentication.principal.userDto.id})}">Edit personal data</a>
+                        <a class="nav-link" th:href="@{/users/{id}/edit(id=${#authentication.principal.userDto.id})}">Account</a>
                     </form>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/users/{id}/addresses(id=${#authentication.principal.userDto.id})}">My addresses</a>
                 </li>
-                <li class="nav-item">
-                    <form th:if="${#authentication.principal.userDto.id != 1}" th:action="@{/users/{id}(id=${#authentication.principal.userDto.id})}" th:method="delete" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                        <button type="submit" class="btn btn-danger">Delete account</button>
-                    </form>
-                </li>
             </ul>
         </div>
 
-        <!-- Column for the table -->
         <div class="col-lg-10 col-md-9 mt-5">
             <h2>Your orders</h2>
             <table class="table">

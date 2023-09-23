@@ -1,11 +1,13 @@
 package com.gerasimov.capstone.service.impl;
 
+import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Role;
 import com.gerasimov.capstone.entity.User;
 import com.gerasimov.capstone.mapper.UserMapper;
 import com.gerasimov.capstone.repository.UserRepository;
 import com.gerasimov.capstone.security.UserDetailsImpl;
+import com.gerasimov.capstone.service.OrderService;
 import com.gerasimov.capstone.service.RoleService;
 import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
@@ -32,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private static final String ERROR_NO_LOGGED_USER = "Can't find authenticated user. Please, sign in";
     private UserRepository userRepository;
     private RoleService roleService;
+    private OrderService orderService;
     private UserMapper userMapper;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
@@ -42,6 +45,21 @@ public class UserServiceImpl implements UserService {
         return users.stream()
                 .map(userMapper::toDto)
                 .toList();
+    }
+    @Override
+    public UserDto findAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if ((authentication != null) && (authentication.isAuthenticated())) {
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            return findByUsername(userDetails.getUsername());
+        } else {
+            throw new RestaurantException(ERROR_NO_LOGGED_USER);
+        }
+    }
+
+    @Override
+    public List<OrderDto> findOrdersForAuthenticatedUser(){
+        return orderService.findByCustomer(findAuthenticatedUser());
     }
 
     @Override
@@ -140,16 +158,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public UserDto findAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if ((authentication != null) && (authentication.isAuthenticated())) {
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            return findByUsername(userDetails.getUsername());
-        } else {
-            throw new RestaurantException(ERROR_NO_LOGGED_USER);
-        }
-    }
+
 
     private void validateEmail(UserDto userDto){
         if (emailExists(userDto.getEmail())) {

@@ -2,7 +2,6 @@ package com.gerasimov.capstone.security;
 
 import com.gerasimov.capstone.entity.User;
 import com.gerasimov.capstone.mapper.UserMapper;
-import com.gerasimov.capstone.repository.RoleRepository;
 import com.gerasimov.capstone.repository.UserRepository;
 import com.gerasimov.capstone.exception.RestaurantException;
 import lombok.AllArgsConstructor;

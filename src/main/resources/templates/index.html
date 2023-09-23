@@ -24,56 +24,55 @@
 <div th:replace="~{header :: header}"></div>
 
 
-<div class="container">
+<div class="container mt-2">
+
+<!--    <div class="row mb-4">-->
+<!--        <div class="col text-center">-->
+<!--            <h1 class="mt-5">Hot Sales</h1>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    <div class="row">-->
+<!--        <div class="col">-->
+<!--            <div class="row">-->
+<!--                <div th:each="hotSale : ${hotSales}" class="col-md-4 mb-4">-->
+<!--                    <div class="card" style="width: 22rem; height: 36rem;">-->
+<!--                        <img-->
+<!--                                th:src="@{/images/{id}.jpeg(id=${hotSale.id})}"-->
+<!--                                class="card-img-top"-->
+<!--                                width="300"-->
+<!--                                height="300"-->
+<!--                                onerror="this.src='/images/default.jpeg';"-->
+<!--                        />-->
+<!--                        <div class="card-body menu-card-body">-->
+<!--                            <h5 class="card-title" th:text="${hotSale.name}"></h5>-->
+<!--                            <p class="card-text menu-truncate" th:text="${hotSale.description}"></p>-->
+<!--                            <p class="card-text menu-truncate" th:text="'$' + ${hotSale.price}"></p>-->
+
+<!--                            <div id="cartButtonContainer-{dishId}(dishId=${hotSale.id})}">-->
+
+<!--                                <div th:id="@{btnAddToCart-{dishId}(dishId=${hotSale.id})}" th:style="${dishQuantityMap.containsKey(hotSale.name)  ? 'display: none;' : 'display: block;'}">-->
+<!--                                    <button class="btn btn-primary" th:data-dish-id="${hotSale.id}" onclick="initialAddToCart(this)">Add to cart</button>-->
+<!--                                    <a th:href="@{/dishes/{id}(id=${hotSale.id})}" class="btn btn-primary">Show more</a>-->
+<!--                                </div>-->
+
+<!--                                <div th:id="@{quantityElement-{dishId}(dishId=${hotSale.id})}" th:style="${dishQuantityMap.containsKey(hotSale.name)  ? 'display: block;' : 'display: none;'}">-->
+<!--                                    <button class="btn btn-outline-primary" th:data-dish-id="${hotSale.id}" onclick="removeFromCart(this)">-</button>-->
+<!--                                    <span th:id="'quantityId-' + ${hotSale.id}" class="ms-1 me-1" th:text="${dishQuantityMap[hotSale.name]}"></span>-->
+<!--                                    <button class="btn btn-outline-primary" th:data-dish-id="${hotSale.id}" onclick="addToCart(this)">+</button>-->
+<!--                                    <a th:href="@{/dishes/{id}(id=${hotSale.id})}" class="btn btn-primary">Show more</a>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 
     <div class="row mb-4">
         <div class="col text-center">
-            <h1 class="mt-4">Hot Sales</h1>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col">
-            <div class="row">
-                <!-- Iterate over hotSales and create cards -->
-                <div th:each="hotSale : ${hotSales}" class="col-md-4 mb-4">
-                    <div class="card" style="width: 22rem; height: 36rem;">
-                        <img
-                                th:src="@{/images/{id}.jpeg(id=${hotSale.id})}"
-                                class="card-img-top"
-                                width="300"
-                                height="300"
-                                onerror="this.src='/images/default.jpeg';"
-                        />
-                        <div class="card-body menu-card-body">
-                            <h5 class="card-title" th:text="${hotSale.name}"></h5>
-                            <p class="card-text menu-truncate" th:text="${hotSale.description}"></p>
-                            <p class="card-text menu-truncate" th:text="'$' + ${hotSale.price}"></p>
-
-                            <div id="cartButtonContainer-{dishId}(dishId=${hotSale.id})}">
-
-                                <div th:id="@{btnAddToCart-{dishId}(dishId=${hotSale.id})}" th:style="${dishQuantityMap.containsKey(hotSale.name)  ? 'display: none;' : 'display: block;'}">
-                                    <button class="btn btn-primary" th:data-dish-id="${hotSale.id}" onclick="initialAddToCart(this)">Add to cart</button>
-                                    <a th:href="@{/dishes/{id}(id=${hotSale.id})}" class="btn btn-primary">Show more</a>
-                                </div>
-
-                                <div th:id="@{quantityElement-{dishId}(dishId=${hotSale.id})}" th:style="${dishQuantityMap.containsKey(hotSale.name)  ? 'display: block;' : 'display: none;'}">
-                                    <button class="btn btn-outline-primary" th:data-dish-id="${hotSale.id}" onclick="removeFromCart(this)">-</button>
-                                    <span th:id="'quantityId-' + ${hotSale.id}" class="ms-1 me-1" th:text="${dishQuantityMap[hotSale.name]}"></span>
-                                    <button class="btn btn-outline-primary" th:data-dish-id="${hotSale.id}" onclick="addToCart(this)">+</button>
-                                    <a th:href="@{/dishes/{id}(id=${hotSale.id})}" class="btn btn-primary">Show more</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col text-center">
-            <h1 class="mt-4">Menu</h1>
+            <h1 class="mt-5">Menu</h1>
         </div>
     </div>
 
@@ -136,6 +135,15 @@
                 var element = document.getElementById(elementId);
                 element.textContent = 1;
             },
+            error: function(jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status === 403) {
+                // User is not authenticated, redirect to the login page
+                window.location.href = '/login';
+            } else {
+                console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
+                alert("An error occurred while adding the item to the cart.");
+            }
+        }
         });
     }
 

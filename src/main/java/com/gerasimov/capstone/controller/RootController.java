@@ -5,7 +5,6 @@ import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,22 +33,26 @@ public class RootController {
     }
 
     @GetMapping("/logout")
-    public String logout(){
+    public String logout() {
         log.info("Logout");
         return "redirect:/";
     }
 
     @PostMapping("/login-default")
-    public String viewAfterLogin(@ModelAttribute UserDto newUser, RedirectAttributes redirectAttributes, HttpServletRequest request){
+    public String viewAfterLogin(
+            @ModelAttribute UserDto newUser,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request
+    ) {
         log.info("Post request for logging");
-        try{
+        try {
             userService.login(newUser, request);
             return "redirect:/";
-        } catch (BadCredentialsException e){
+        } catch (BadCredentialsException e) {
             log.error(e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Invalid password");
             return "redirect:/login";
-        } catch (RestaurantException e){
+        } catch (RestaurantException e) {
             log.error(e.getMessage());
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/login";
