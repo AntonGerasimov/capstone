@@ -3,6 +3,7 @@ package com.gerasimov.capstone.controller;
 import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Role;
+import com.gerasimov.capstone.service.OrderService;
 import com.gerasimov.capstone.service.RoleService;
 import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
@@ -25,6 +26,7 @@ import java.util.List;
 public class UserController {
     private UserService userService;
     private RoleService roleService;
+    private OrderService orderService;
 
     @GetMapping
     public String listUsers(Model model) {
@@ -54,8 +56,8 @@ public class UserController {
         try {
             UserDto authenticatedUser = userService.findAuthenticatedUser();
             model.addAttribute("user", authenticatedUser);
-            List<OrderDto> orders = userService.findOrdersForAuthenticatedUser();
-            model.addAttribute("orders", orders);
+            List<OrderDto> orders = orderService.findByCustomer(authenticatedUser);
+            model.addAttribute("groupedOrders", userService.getGroupedOrders(orders));
             return "users/personal-account";
         } catch (RestaurantException e) {
             return "users/registration";
@@ -69,6 +71,11 @@ public class UserController {
         model.addAttribute("user", userDto);
         model.addAttribute("roles", roles);
         return "users/edit";
+    }
+
+    @GetMapping("/users/{id}/orders")
+    public String viewUserOrders(@PathVariable Long id) {
+        return "users/orders";
     }
 
     @DeleteMapping("/{id}")
@@ -88,7 +95,7 @@ public class UserController {
         try {
             UserDto newUser = userService.save(userDto);
             model.addAttribute("newUsername", newUser.getUsername());
-            return "redirect:/users/success-registration";
+            return "redirect:/login";
         } catch (RestaurantException e) {
             // Email already exists, return an error message
             redirectAttributes.addFlashAttribute("restaurantException", e.getMessage());

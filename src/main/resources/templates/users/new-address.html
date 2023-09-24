@@ -3,43 +3,90 @@
 <head>
     <title>Add new address</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}"/>
-    <style>
-        /* CSS style for red colored field in case of bad input */
-        .error-field {
-            border: 1px solid red;
-        }~
-    </style>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
 
 <div th:replace="~{header :: header}"></div>
 
-<div class="container">
-    <h1>Add new address</h1>
-    <form th:action="@{/users/{id}/addresses/add(id=${#authentication.principal.userDto.id})}" th:object="${address}" method="post">
-        <div class="form-group">
-            <label for="street">Street:</label>
-            <input type="text" class="form-control" id="street" th:field="*{street}" maxlength="20" required>
-            <p id="streetError" style="color: red;"></p>
-            <br>
-            <label for="house">House:</label>
-            <input type="text" class="form-control" id="house" th:field="*{house}" maxlength="10" required>
-            <p id="houseError" style="color: red;"></p>
-            <br>
-            <label for="apartment">Apartment:</label>
-            <input type="text" class="form-control" id="apartment" th:field="*{apartment}" maxlength="10" required>
-            <br>
-            <p id="apartmentError" style="color: red;"></p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="mt-3">Add new address</h1>
+            <form id="newAddressForm" th:object="${address}">
+                <div class="form-group">
+                    <label for="street">Street:</label>
+                    <input type="text" class="form-control" id="street" th:field="*{street}" maxlength="20" required>
+                    <p id="streetError" style="color: red;"></p>
+                    <br>
+                    <label for="house">House:</label>
+                    <input type="text" class="form-control" id="house" th:field="*{house}" maxlength="10" required>
+                    <p id="houseError" style="color: red;"></p>
+                    <br>
+                    <label for="apartment">Apartment:</label>
+                    <input type="text" class="form-control" id="apartment" th:field="*{apartment}" maxlength="10" required>
+                    <br>
+                    <p id="apartmentError" style="color: red;"></p>
+                </div>
+            </form>
+
+            <div class="d-grid gap-2">
+                <button id="addButton" class="btn btn-primary mt-2" th:data-referrer="${referrer}" th:data-user-id="${#authentication.principal.userDto.id}" onclick="addAddress(this)" disabled>Add</button>
+                <a class="btn btn-primary" href="javascript:history.back();">Cancel</a>
+            </div>
+
         </div>
+    </div>
 
-        <br>
-        <button type="submit" class="btn btn-primary">Add</button>
-        <a class="btn btn-primary" href="/users/{id}/addresses(id=${#authentication.principal.userDto.id})">Cancel</a>
-
-    </form>
 </div>
+
+<script>
+    function addAddress(button){
+        var referrer = $(button).data('referrer');
+        var userId = $(button).data('user-id');
+
+        console.log(referrer);
+        console.log(userId);
+
+        var formData = $('#newAddressForm').serialize();
+
+        $.ajax({
+            url: '/users/' + userId + '/addresses/add',
+            type: 'post',
+            data: formData,
+            success: function(data) {
+                console.log("Success order");
+                window.location.replace(referrer);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
+                alert(textStatus);
+            }
+        });
+    }
+
+
+    function updateAddButtonState() {
+        var street = document.getElementById("street").value;
+        var house = document.getElementById("house").value;
+        var apartment = document.getElementById("apartment").value;
+        var addButton = document.getElementById("addButton");
+
+        if (street && house && apartment) {
+            addButton.removeAttribute("disabled");
+        } else {
+            addButton.setAttribute("disabled", "disabled");
+        }
+    }
+
+    document.getElementById("street").addEventListener("input", updateAddButtonState);
+    document.getElementById("house").addEventListener("input", updateAddButtonState);
+    document.getElementById("apartment").addEventListener("input", updateAddButtonState);
+
+
+
+</script>
 
 
 </body>

@@ -1,7 +1,9 @@
 package com.gerasimov.capstone.controller;
 
+import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.exception.RestaurantException;
+import com.gerasimov.capstone.service.OrderService;
 import com.gerasimov.capstone.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,9 +11,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -19,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 public class RootController {
 
     private UserService userService;
+    private OrderService orderService;
 
     @GetMapping("/login")
     public String loginNotDefault(Model model) {
@@ -59,5 +64,11 @@ public class RootController {
         }
     }
 
+    @GetMapping("/orders")
+    public ModelAndView getAllOrders(Model model){
+        List<OrderDto> orders = orderService.findAll();
+        model.addAttribute("orders", orders);
+        return new ModelAndView("orders");
+    }
 
 }

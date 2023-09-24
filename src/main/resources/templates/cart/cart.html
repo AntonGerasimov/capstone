@@ -40,10 +40,10 @@
         <tr th:each="item : ${cartItems}" th:if="${item.quantity > 0}">
             <td th:text="${item.dish.name}"></td>
             <td>
-                <button class="btn btn-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="removeFromCart(this)">-</button>
+                <button class="btn btn-outline-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="removeFromCart(this)">-</button>
                 <span  th:id="@{quantityId-{dishId}(dishId=${item.dish.id})}" class="ms-1 me-1" th:text="${item.quantity}"></span>
-<!--                th:id="@{quantity-${item.dish.id}}"-->
-                <button class="btn btn-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="addToCart(this)">+</button>
+                <!--                th:id="@{quantity-${item.dish.id}}"-->
+                <button class="btn btn-outline-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="addToCart(this)">+</button>
             </td>
 
             <td th:text="'$' + ${item.dishPrice}"></td>
@@ -56,15 +56,18 @@
         </tr>
         </tbody>
     </table>
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+            <div id="totalPriceAndCheckout" th:if="${not #lists.isEmpty(cartItems)}">
+                <p th:text="'Total Price: $' + ${#numbers.formatDecimal(totalPrice, 1, 2)}"></p>
+                <a class="btn btn-primary" th:href="@{/checkout}">Proceed to Checkout</a>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-
-<!--th:if="${not #lists.isEmpty(cartItems)}"-->
-<div id="totalPriceAndCheckout">
-    <p> Total Price: $<span id="totalPrice"></span></p>
-    <a class="btn btn-primary" th:href="@{/checkout}">Proceed to Checkout</a>
-</div>
 
 <script>
     function addToCart(button){

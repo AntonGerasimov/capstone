@@ -30,15 +30,29 @@ public class AddressController {
     }
 
     @GetMapping("/users/{id}/addresses")
-    public String viewUserAddresses(@PathVariable Long id, Model model, Authentication authentication) {
+    public String viewUserAddresses(
+            @PathVariable Long id,
+            Model model,
+            Authentication authentication
+    ) {
         List<AddressDto> addresses = addressService.findAvailableForAuthenticatedUser(authentication);
         model.addAttribute("addresses", addresses);
+
+
         return "users/addresses";
     }
 
-    @GetMapping("/users/{id}/addresses/add")
-    public String viewNewAddressForm(@PathVariable Long id, Model model) {
+    @GetMapping("/users/{userId}/addresses/add")
+    public String viewNewAddressForm(
+            @PathVariable Long userId,
+            Model model,
+            HttpServletRequest request
+    ) {
         model.addAttribute("address", new AddressDto());
+
+
+        String referrer = request.getHeader("referer");
+        model.addAttribute("referrer", referrer);
         return "users/new-address";
     }
 
@@ -49,11 +63,11 @@ public class AddressController {
         return "addresses/edit-address";
     }
 
-    @PostMapping("/users/{id}/addresses/add")
+    @PostMapping("/users/{userId}/addresses/add")
+    @ResponseBody
     public String addNewAddress(
-            @PathVariable Long id,
+            @PathVariable Long userId,
             @ModelAttribute("address") AddressDto addressDto,
-            @RequestParam("previousPage") String previousPage,
             Model model,
             RedirectAttributes redirectAttributes,
             HttpServletRequest request
@@ -61,12 +75,12 @@ public class AddressController {
         try {
             AddressDto newAddress = addressService.save(addressDto);
             log.info(String.format("New address was created: %s", newAddress.toString()));
-            redirectAttributes.addAttribute("id", id);
-            return "redirect:/users/{id}/addresses";
+            redirectAttributes.addAttribute("userId", userId);
+            return "New address added successfully";
         } catch (RestaurantException restaurantException) {
             model.addAttribute("Restaurant exception", "Error!");
-            redirectAttributes.addAttribute("id", id);
-            return "redirect:/users/{id}/addresses/new"; // Return to the registration form with the error message
+            redirectAttributes.addAttribute("userId", userId);
+            return "An error occured during adding new address";
         }
     }
 

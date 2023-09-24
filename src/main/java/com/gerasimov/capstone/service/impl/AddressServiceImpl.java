@@ -52,8 +52,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public AddressDto save(AddressDto addressDto) {
-        UserDto userDto = userService.findAuthenticatedUser();
-        addressDto.setUser(userDto);
+        setUser(addressDto);
         addressDto.setActive(true);
         addressRepository.save(addressMapper.toEntity(addressDto));
         return addressDto;
@@ -90,4 +89,10 @@ public class AddressServiceImpl implements AddressService {
         UserDto authenticatedUser = userService.findByUsername(authentication.getName());
         return findAvailableForUser(authenticatedUser);
     }
+
+    private void setUser(AddressDto addressDto){
+        UserDto userDto = userService.findAuthenticatedUser();
+        addressDto.setUser(userDto);
+    }
+
 }

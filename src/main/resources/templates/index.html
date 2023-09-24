@@ -3,21 +3,7 @@
 <head>
     <title>Addresses</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
-    <!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
-    <script   src="https://code.jquery.com/jquery-3.6.0.js"   integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="   crossorigin="anonymous"></script>
-    <style>
-        .menu-truncate {
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 5;
-            -webkit-box-orient: vertical;
-        }
-        .menu-card-body {
-            height: 15em; /* Adjust to your desired height */
-            overflow: hidden;
-        }
-    </style>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
@@ -82,7 +68,6 @@
         <div class="row">
             <div th:each="menuItem : ${category.value}" class="col-md-4 mb-4">
                 <div class="card" style="width: 22rem; height: 36rem;">
-                    <!-- Replace 'src="#"' with your actual image source -->
                     <img
                             th:src="@{/images/{id}.jpeg(id=${menuItem.id})}"
                             class="card-img-top"
@@ -92,8 +77,8 @@
                     />
                     <div class="card-body menu-card-body">
                         <h5 class="card-title" th:text="${menuItem.name}"></h5>
-                        <p class="card-text menu-truncate" th:text="${menuItem.description}"></p>
-                        <p class="card-text menu-truncate" th:text="'$' + ${menuItem.price}"></p>
+                        <p class="card-text" style="max-height: 8em; overflow: hidden;" th:text="${menuItem.description}"></p>
+                        <p class="card-text" th:text="'$' + ${menuItem.price}"></p>
 
                         <div id="cartButtonContainer-{dishId}(dishId=${menuItem.id})}">
                             <div th:id="@{btnAddToCart-{dishId}(dishId=${menuItem.id})}" th:style="${dishQuantityMap.containsKey(menuItem.name)  ? 'display: none;' : 'display: block;'}">
@@ -101,11 +86,11 @@
                                 <a th:href="@{/dishes/{id}(id=${menuItem.id})}" class="btn btn-primary">Show more</a>
                             </div>
 
-                            <div th:id="@{quantityElement-{dishId}(dishId=${menuItem.id})}" th:style="${dishQuantityMap.containsKey(menuItem.name)  ? 'display: block;' : 'display: none;'}">
+                            <div th:id="'quantityElement-' + ${menuItem.id}" th:style="${dishQuantityMap.containsKey(menuItem.name)  ? 'display: block;' : 'display: none;'}">
                                 <button class="btn btn-outline-primary" th:data-dish-id="${menuItem.id}" onclick="removeFromCart(this)">-</button>
-                                <span th:id="@{quantityId-{dishId}(dishId=${menuItem.id})}"  class="ms-1 me-1">0</span>
+                                <span th:id="'quantityId-' + ${menuItem.id}" class="ms-1 me-1" th:text="${dishQuantityMap[menuItem.name]}"></span>
                                 <button class="btn btn-outline-primary" th:data-dish-id="${menuItem.id}" onclick="addToCart(this)">+</button>
-                                <a th:href="@{/dishes/{id}(id=${menuItem.id})}" class="btn btn-primary">Show more</a>
+                                <a href="/cart" class="btn btn-primary">Go to cart</a>
                             </div>
 
                         </div>

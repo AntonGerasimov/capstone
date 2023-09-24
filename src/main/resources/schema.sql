@@ -46,7 +46,7 @@ CREATE TABLE orders
     id                  INT AUTO_INCREMENT PRIMARY KEY,
     customer_id         INT,
     created             DATETIME,
-    status              VARCHAR(14),
+    status              VARCHAR(20),
     delivery_address_id INT,
     is_active       BOOLEAN,
     CONSTRAINT fk_order_customer FOREIGN KEY (customer_id) REFERENCES users (id),

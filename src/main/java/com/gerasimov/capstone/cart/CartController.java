@@ -1,6 +1,9 @@
 package com.gerasimov.capstone.cart;
 
 import com.gerasimov.capstone.domain.DishDto;
+import com.gerasimov.capstone.domain.OrderDto;
+import com.gerasimov.capstone.domain.OrderItemDto;
+import com.gerasimov.capstone.service.OrderService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,50 +24,31 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CartController {
     private CartService cartService;
+    private OrderService orderService;
 
     @GetMapping("/")
     public String showMainPage(Model model) {
 
-        List<DishDto> menuItems = cartService.getMenu();
-        List<DishDto> hotSales = cartService.getHotSales();
+        model.addAttribute("hotSales", cartService.getHotSales());
+        model.addAttribute("menuItemsByCategory", cartService.getMenu());
+        model.addAttribute("dishQuantityMap", cartService.createDishQuantityMap());
 
-        // Group the menu items by category
-        Map<String, List<DishDto>> menuItemsByCategory = menuItems.stream()
-                .collect(Collectors.groupingBy(DishDto::getCategory));
-
-        Map<String, Integer> dishQuantityMap = cartService.createDishQuantityMap();
-        model.addAttribute("dishQuantityMap", dishQuantityMap);
-        model.addAttribute("menuItemsByCategory", menuItemsByCategory);
-        model.addAttribute("hotSales", hotSales);
         return "index";
     }
 
     @GetMapping("/menu")
-    public String getAllDishes(Model model) {
-        List<DishDto> menuItems = cartService.getMenu();
+    public String getMenu(Model model) {
 
-        // Group the menu items by category
-        Map<String, List<DishDto>> menuItemsByCategory = menuItems.stream()
-                .collect(Collectors.groupingBy(DishDto::getCategory));
-
-        model.addAttribute("menuItemsByCategory", menuItemsByCategory);
-        Map<String, Integer> dishQuantityMap = cartService.createDishQuantityMap();
-        model.addAttribute("dishQuantityMap", dishQuantityMap);
+        model.addAttribute("menuItemsByCategory", cartService.getMenu());
+        model.addAttribute("dishQuantityMap", cartService.createDishQuantityMap());
         return "menu";
     }
 
     @GetMapping("/cart")
     public String viewCart(Model model) {
-//        List<DishDto> cartItems = dishService.getCartItems(httpSession); // Retrieve cart items from your service
-
-        List<DishDto> cartItems = new ArrayList<>();
-        // Calculate the total price of items in the cart
-        double totalPrice = cartItems.stream()
-                .mapToDouble(DishDto::getPrice)
-                .sum();
 
         model.addAttribute("cartItems", cartService.getCart());
-        model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("totalPrice", cartService.calculateTotalPrice());
 
         return "cart/cart"; // Return the Thymeleaf template name
     }
@@ -73,22 +57,30 @@ public class CartController {
     public String viewCheckout(Model model) {
         model.addAttribute("cartItems", cartService.getCart());
         model.addAttribute("addresses", cartService.findAddressesForUser());
+        model.addAttribute("totalPrice", cartService.calculateTotalPrice());
         return "cart/checkout";
     }
 
-    @PostMapping("/cart/{id}/add")
-    @PreAuthorize("hasAnyRole('*')")
+    @GetMapping("/orders/{id}")
+    public String viewOrder(@PathVariable Long id, Model model) {
+        OrderDto orderDto = orderService.findById(id);
+        model.addAttribute("order", orderDto);
+        model.addAttribute("items", orderService.findOrderItems(orderDto));
+        return "orders/order";
+    }
+
+    @PostMapping("/cart/{dishId}/add")
     @ResponseBody
-    public String addItemToCart(@PathVariable Long id, HttpServletResponse response) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public String addItemToCart(@PathVariable Long dishId, HttpServletResponse response, Authentication authentication) {
         if ((authentication == null) || (!authentication.isAuthenticated())) {
             // User is not authenticated, so set a 403 status code and return an error message.
             log.info("Not authenticated user");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Set the status code to 403
             return "You do not have permission to perform this action.";
         }
+        log.info("Authenticated user");
         log.info("Post request for adding item to cart");
-        cartService.addToCart(id);
+        cartService.addToCart(dishId);
         return "Dish added to cart successfully";
     }
 
@@ -105,6 +97,7 @@ public class CartController {
     public String makeOrder(@RequestParam("selectedAddressId") Long selectedAddressId) {
         log.info("Begin making order");
         cartService.makeOrder(selectedAddressId);
+        cartService.clearCart();
         return "Order was created successfully";
     }
 
@@ -115,5 +108,6 @@ public class CartController {
         cartService.removeFromCart(id);
         return "Item was deleted successfully";
     }
+
 
 }

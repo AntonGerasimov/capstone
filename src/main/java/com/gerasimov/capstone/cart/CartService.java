@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -20,12 +21,23 @@ public class CartService {
     private OrderService orderService;
 
 
-    public List<DishDto> getMenu() {
-        return dishService.findAvailable();
+    public Map<String, List<DishDto>> getMenu() {
+        return dishService.findAvailable().stream()
+                .collect(Collectors.groupingBy(DishDto::getCategory));
     }
 
     public List<DishDto> getHotSales() {
         return dishService.findHotSale();
+    }
+
+    public double calculateTotalPrice() {
+        double totalPrice = 0.0;
+
+        for (OrderItemDto orderItem : cart.getCart()) {
+            totalPrice += orderItem.getDishPrice() * orderItem.getQuantity();
+        }
+
+        return totalPrice;
     }
 
     public List<OrderItemDto> getCart() {
@@ -85,20 +97,8 @@ public class CartService {
         });
     }
 
-    public String makeRedirectAfterSuccessOrder() {
-        Long userId = userService.findAuthenticatedUser().getId();
-        return String.format("redirect:/users/%d/personal-account", userId);
-    }
-
-    public void resetQuantity(Long id) {
-        DishDto dishDto = dishService.findById(id);
-        Optional<OrderItemDto> existingItem = findExistingItemInCart(dishDto);
-
-        if (existingItem.isPresent()) {
-            increaseQuantityOfExistingCartItem(existingItem.get());
-        } else {
-            addNewCartItem(dishDto);
-        }
+    public void clearCart() {
+        cart = new Cart();
     }
 
     private Optional<OrderItemDto> findExistingItemInCart(DishDto dishDto) {
@@ -118,12 +118,5 @@ public class CartService {
         orderItemDto.setDishPrice(dishDto.getPrice());
         cart.addItem(orderItemDto);
     }
-
-    private void decreaseQuantityOfExistingCartItem(OrderItemDto existingItem) {
-        if (existingItem.getQuantity() > 0) {
-            existingItem.setQuantity(existingItem.getQuantity() - 1);
-        }
-    }
-
 
 }

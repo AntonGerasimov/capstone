@@ -40,11 +40,8 @@ public class Cart {
         Optional<OrderItemDto> orderItemDtoOptional = getCart().stream()
                 .filter(orderItem -> orderItem.getDish() != null && orderItem.getDish().equals(dishDto))
                 .findFirst();
-        if (orderItemDtoOptional.isPresent()) {
-            return true;
-        } else {
-            return false;
-        }
+        return orderItemDtoOptional.isPresent();
+
     }
 
     public int getQuantity(DishDto dishDto) {

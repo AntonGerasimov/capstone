@@ -23,8 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -34,7 +34,6 @@ public class UserServiceImpl implements UserService {
     private static final String ERROR_NO_LOGGED_USER = "Can't find authenticated user. Please, sign in";
     private UserRepository userRepository;
     private RoleService roleService;
-    private OrderService orderService;
     private UserMapper userMapper;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
@@ -58,8 +57,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<OrderDto> findOrdersForAuthenticatedUser(){
-        return orderService.findByCustomer(findAuthenticatedUser());
+    public Map<String, List<OrderDto>> getGroupedOrders(List<OrderDto> orders){
+        Map<String, List<OrderDto>> groupedOrders = orders.stream()
+                .collect(Collectors.groupingBy(OrderDto::getStatus, Collectors.collectingAndThen(
+                        Collectors.toList(),
+                        orderList -> {
+                            orderList.sort(Comparator.comparing(OrderDto::getCreated).reversed());
+                            return orderList;
+                        }
+                )));
+        List<String> orderStatusList = Arrays.asList("Preparing", "Cooking", "Out for Delivery", "Delivered");
+        Map<String, List<OrderDto>> orderedGroupedOrders = new LinkedHashMap<>();
+        for (String status : orderStatusList) {
+            if (groupedOrders.containsKey(status)) {
+                orderedGroupedOrders.put(status, groupedOrders.get(status));
+            }
+        }
+        return orderedGroupedOrders;
     }
 
     @Override
@@ -191,10 +205,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean hasPermissionToDelete(Long deleteId) {
-        if (deleteId.equals(1L)) {
-            return false;
-        }
-        return isAuthenticatedUserAdmin() || isTheSameUser(deleteId);
+        return !deleteId.equals(1L) && (isAuthenticatedUserAdmin() || isTheSameUser(deleteId));
     }
 
     private void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

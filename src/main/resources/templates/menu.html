@@ -4,20 +4,6 @@
     <title>Addresses</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!--    <script   src="https://code.jquery.com/jquery-3.6.0.js"   integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="   crossorigin="anonymous"></script>-->
-    <style>
-        .menu-truncate {
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 5;
-            -webkit-box-orient: vertical;
-        }
-        .menu-card-body {
-            height: 15em; /* Adjust to your desired height */
-            overflow: hidden;
-        }
-    </style>
-
 </head>
 <body>
 
@@ -43,8 +29,8 @@
                     />
                     <div class="card-body menu-card-body">
                         <h5 class="card-title" th:text="${menuItem.name}"></h5>
-                        <p class="card-text menu-truncate" th:text="${menuItem.description}"></p>
-                        <p class="card-text menu-truncate" th:text="'$' + ${menuItem.price}"></p>
+                        <p class="card-text" style="max-height: 8em; overflow: hidden;" th:text="${menuItem.description}"></p>
+                        <p class="card-text" th:text="'$' + ${menuItem.price}"></p>
 
                         <div id="cartButtonContainer" class="mt-auto">
 
@@ -57,7 +43,7 @@
                                 <button class="btn btn-outline-primary" th:data-dish-id="${menuItem.id}" onclick="removeFromCart(this)">-</button>
                                 <span th:id="'quantityId-' + ${menuItem.id}" class="ms-1 me-1" th:text="${dishQuantityMap[menuItem.name]}"></span>
                                 <button class="btn btn-outline-primary" th:data-dish-id="${menuItem.id}" onclick="addToCart(this)">+</button>
-                                <a th:href="@{/dishes/{id}(id=${menuItem.id})}" class="btn btn-primary">Show more</a>
+                                <a href="/cart" class="btn btn-primary">Go to cart</a>
                             </div>
 
 
@@ -87,6 +73,15 @@
                 var element = document.getElementById(elementId);
                 element.textContent = 1;
             },
+            error: function(jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status === 403) {
+                // User is not authenticated, redirect to the login page
+                window.location.href = '/login';
+            } else {
+                console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
+                alert("An error occurred while adding the item to the cart.");
+            }
+        }
         });
     }
 

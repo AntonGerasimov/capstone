@@ -25,6 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
@@ -45,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                     .antMatchers("/users").hasRole(ROLE_ADMIN)
-                    .antMatchers("/cart/**").authenticated()
+//                    .antMatchers("/cart/**").authenticated()
 //                    .antMatchers("/menu/**").permitAll() // Publicly accessible URLs
 //                    .antMatchers("/**").permitAll()
 //                    .anyRequest().authenticated() // All other URLs require authentication

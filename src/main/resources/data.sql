@@ -30,13 +30,18 @@ INSERT INTO addresses (user_id, street, house, apartment, is_active) VALUES
     (6, 'mango', '26', '2B', TRUE);
 
 INSERT INTO orders (customer_id, created, status, delivery_address_id, is_active) VALUES
-    (2, '2023-08-28 14:30:00', 'active', 1, TRUE),
-    (2, '2023-08-29 14:30:00', 'active', 1, TRUE),
-    (2, '2023-08-30 14:30:00', 'active', 1, TRUE),
-    (2, '2023-08-31 14:30:00', 'active', 1, TRUE),
-    (3, '2023-08-07 16:30:00', 'active', 3, TRUE),
-    (4, '2023-08-08 16:30:00', 'active', 4, TRUE),
-    (5, '2023-08-09 16:30:00', 'active', 5, TRUE);
+    (2, '2023-08-28 14:30:00', 'Preparing', 1, TRUE),
+    (2, '2023-08-29 14:30:00', 'Cooking', 1, TRUE),
+    (2, '2023-08-30 14:30:00', 'Out for Delivery', 1, TRUE),
+    (2, '2023-08-31 18:30:00', 'Delivered', 1, TRUE),
+    (2, '2023-08-31 17:30:00', 'Delivered', 1, TRUE),
+    (2, '2023-08-31 16:30:00', 'Delivered', 1, TRUE),
+    (2, '2023-08-31 15:30:00', 'Delivered', 1, TRUE),
+    (2, '2023-08-31 14:30:00', 'Delivered', 1, TRUE),
+    (2, '2023-08-31 14:30:00', 'Delivered', 1, TRUE),
+    (3, '2023-08-07 16:30:00', 'Finished', 3, TRUE),
+    (4, '2023-08-08 16:30:00', 'Finished', 4, TRUE),
+    (5, '2023-08-09 16:30:00', 'Finished', 5, TRUE);
 
 INSERT INTO dishes (name, description, category, price, is_available) VALUES
     ('Shwarma',

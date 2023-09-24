@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -92,11 +93,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void setCurrentTime(OrderDto orderDto){
-        LocalDateTime created = LocalDateTime.now();
-        orderDto.setCreated(created);
+        orderDto.setCreated(LocalDateTime.now());
     }
     private void setDefaultStatus(OrderDto orderDto){
-        orderDto.setStatus("Created");
+        orderDto.setStatus("Preparing");
     }
 
     private void setActive(OrderDto orderDto){
