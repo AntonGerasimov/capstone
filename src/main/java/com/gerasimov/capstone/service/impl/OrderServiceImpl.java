@@ -18,7 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -86,6 +87,57 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(orderMapper.toEntity(orderDto));
         log.info("Delete order with id " + orderDto.getId());
     }
+
+    @Override
+    public Map<String, List<OrderDto>> getGroupedOrdersForAuthenticatedUser(){
+
+        UserDto authenticatedUser = userService.findAuthenticatedUser();
+
+        List<OrderDto> orders = findByCustomer(authenticatedUser);
+
+        Map<String, List<OrderDto>> groupedOrders = orders.stream()
+                .collect(Collectors.groupingBy(OrderDto::getStatus, Collectors.collectingAndThen(
+                        Collectors.toList(),
+                        orderList -> {
+                            orderList.sort(Comparator.comparing(OrderDto::getCreated).reversed());
+                            return orderList;
+                        }
+                )));
+        List<String> orderStatusList = Arrays.asList("Preparing", "Cooking", "Out for Delivery", "Delivered");
+        Map<String, List<OrderDto>> orderedGroupedOrders = new LinkedHashMap<>();
+        for (String status : orderStatusList) {
+            if (groupedOrders.containsKey(status)) {
+                orderedGroupedOrders.put(status, groupedOrders.get(status));
+            }
+        }
+        return orderedGroupedOrders;
+    }
+
+    @Override
+    public Map<Long, Double> getTotalPrices() {
+
+        UserDto authenticatedUser = userService.findAuthenticatedUser();
+
+        List<OrderDto> orders = findByCustomer(authenticatedUser);
+        Map<Long, Double> totalPriceMap = new HashMap<>();
+
+        for (OrderDto orderDto : orders) {
+            double totalPrice = calcTotalPrice(orderDto);
+            totalPriceMap.put(orderDto.getId(), totalPrice);
+        }
+
+        return totalPriceMap;
+    }
+
+
+    @Override
+    public double calcTotalPrice(OrderDto orderDto){
+        List<OrderItemDto> orderItemDtos = findOrderItems(orderDto);
+        return orderItemDtos.stream()
+                .mapToDouble(orderItemDto -> orderItemDto.getDishPrice() * orderItemDto.getQuantity())
+                .sum();
+    }
+
 
     private void setAuthenticatedUser(OrderDto orderDto){
         UserDto customer = userService.findAuthenticatedUser();

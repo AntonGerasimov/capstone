@@ -66,6 +66,7 @@ public class CartController {
         OrderDto orderDto = orderService.findById(id);
         model.addAttribute("order", orderDto);
         model.addAttribute("items", orderService.findOrderItems(orderDto));
+        model.addAttribute("totalPrice", orderService.calcTotalPrice(orderDto));
         return "orders/order";
     }
 

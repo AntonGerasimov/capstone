@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -45,6 +46,7 @@ public class UserServiceImpl implements UserService {
                 .map(userMapper::toDto)
                 .toList();
     }
+
     @Override
     public UserDto findAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -57,34 +59,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, List<OrderDto>> getGroupedOrders(List<OrderDto> orders){
-        Map<String, List<OrderDto>> groupedOrders = orders.stream()
-                .collect(Collectors.groupingBy(OrderDto::getStatus, Collectors.collectingAndThen(
-                        Collectors.toList(),
-                        orderList -> {
-                            orderList.sort(Comparator.comparing(OrderDto::getCreated).reversed());
-                            return orderList;
-                        }
-                )));
-        List<String> orderStatusList = Arrays.asList("Preparing", "Cooking", "Out for Delivery", "Delivered");
-        Map<String, List<OrderDto>> orderedGroupedOrders = new LinkedHashMap<>();
-        for (String status : orderStatusList) {
-            if (groupedOrders.containsKey(status)) {
-                orderedGroupedOrders.put(status, groupedOrders.get(status));
-            }
-        }
-        return orderedGroupedOrders;
-    }
-
-    @Override
     public UserDto findById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(()->new RestaurantException(String.format("Can't find user with id %d in database", id)));
+        User user = userRepository.findById(id).orElseThrow(() -> new RestaurantException(String.format("Can't find user with id %d in database", id)));
         return userMapper.toDto(user);
     }
 
     @Override
     public UserDto findByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(()->new RestaurantException(String.format("Can't find user with username %s in database", username)));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RestaurantException(String.format("Can't find user with username %s in database", username)));
         return userMapper.toDto(user);
     }
 
@@ -173,20 +155,19 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-    private void validateEmail(UserDto userDto){
+    private void validateEmail(UserDto userDto) {
         if (emailExists(userDto.getEmail())) {
             log.error(String.format("User with email %s already exists", userDto.getEmail()));
             throw new RestaurantException(String.format("User with email %s already exists", userDto.getEmail()));
         }
     }
 
-    private void setDefaultRole(UserDto userDto){
+    private void setDefaultRole(UserDto userDto) {
         Role commonRole = roleService.findCommonRole();
         userDto.setRole(commonRole); // set role to default --- common
     }
 
-    private void encodeUserPassword(UserDto userDto){
+    private void encodeUserPassword(UserDto userDto) {
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
         userDto.setPassword(encodedPassword);
     }

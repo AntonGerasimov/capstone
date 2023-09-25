@@ -14,8 +14,6 @@ public interface UserService {
 
     UserDto findAuthenticatedUser();
 
-    Map<String, List<OrderDto>> getGroupedOrders(List<OrderDto> orders);
-
     UserDto findById(Long id);
 
     UserDto findByUsername(String username);

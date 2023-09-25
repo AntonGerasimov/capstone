@@ -30,18 +30,15 @@ INSERT INTO addresses (user_id, street, house, apartment, is_active) VALUES
     (6, 'mango', '26', '2B', TRUE);
 
 INSERT INTO orders (customer_id, created, status, delivery_address_id, is_active) VALUES
-    (2, '2023-08-28 14:30:00', 'Preparing', 1, TRUE),
-    (2, '2023-08-29 14:30:00', 'Cooking', 1, TRUE),
-    (2, '2023-08-30 14:30:00', 'Out for Delivery', 1, TRUE),
+    (2, '2023-08-30 14:30:00', 'Preparing', 1, TRUE),
+    (2, '2023-08-30 14:03:09', 'Cooking', 1, TRUE),
+    (2, '2023-08-30 13:30:48', 'Out for Delivery', 1, TRUE),
     (2, '2023-08-31 18:30:00', 'Delivered', 1, TRUE),
     (2, '2023-08-31 17:30:00', 'Delivered', 1, TRUE),
     (2, '2023-08-31 16:30:00', 'Delivered', 1, TRUE),
-    (2, '2023-08-31 15:30:00', 'Delivered', 1, TRUE),
-    (2, '2023-08-31 14:30:00', 'Delivered', 1, TRUE),
-    (2, '2023-08-31 14:30:00', 'Delivered', 1, TRUE),
-    (3, '2023-08-07 16:30:00', 'Finished', 3, TRUE),
-    (4, '2023-08-08 16:30:00', 'Finished', 4, TRUE),
-    (5, '2023-08-09 16:30:00', 'Finished', 5, TRUE);
+    (3, '2023-08-07 16:30:00', 'Delivered', 3, TRUE),
+    (4, '2023-08-08 16:30:00', 'Delivered', 4, TRUE),
+    (5, '2023-08-09 16:30:00', 'Delivered', 5, TRUE);
 
 INSERT INTO dishes (name, description, category, price, is_available) VALUES
     ('Shwarma',
@@ -74,5 +71,26 @@ INSERT INTO dishes (name, description, category, price, is_available) VALUES
     ('Mango Tango Smoothie',
         'Indulge in the sweet and exotic taste of ripe mangoes, blended to perfection.',
         'Bevarages','3.99', TRUE);
+
+
+INSERT INTO order_items (order_id, dish_id, dish_price, quantity) VALUES
+    (1, 1, 12.99, 2),
+    (2, 2, 14.99, 2),
+    (3, 3, 15.99, 2),
+    (4, 1, 12.99, 1),
+    (4, 2, 14.99, 2),
+    (4, 3, 15.99, 3),
+    (4, 4, 13.99, 4),
+    (4, 5, 16.99, 5),
+    (5, 1, 12.99, 1),
+    (5, 2, 14.99, 2),
+    (5, 3, 15.99, 3),
+    (5, 4, 13.99, 4),
+    (5, 5, 16.99, 5),
+    (6, 1, 12.99, 1),
+    (6, 2, 14.99, 2),
+    (6, 3, 15.99, 3),
+    (6, 4, 13.99, 4),
+    (6, 5, 16.99, 5);
 
 COMMIT;

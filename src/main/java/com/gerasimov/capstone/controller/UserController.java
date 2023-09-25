@@ -56,8 +56,8 @@ public class UserController {
         try {
             UserDto authenticatedUser = userService.findAuthenticatedUser();
             model.addAttribute("user", authenticatedUser);
-            List<OrderDto> orders = orderService.findByCustomer(authenticatedUser);
-            model.addAttribute("groupedOrders", userService.getGroupedOrders(orders));
+            model.addAttribute("groupedOrders", orderService.getGroupedOrdersForAuthenticatedUser());
+            model.addAttribute("totalPricesMap", orderService.getTotalPrices());
             return "users/personal-account";
         } catch (RestaurantException e) {
             return "users/registration";
