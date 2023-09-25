@@ -1,5 +1,7 @@
 package com.gerasimov.capstone.service.impl;
 
+import com.gerasimov.capstone.domain.AddressDto;
+import com.gerasimov.capstone.domain.AddressDtoLight;
 import com.gerasimov.capstone.domain.DishDto;
 import com.gerasimov.capstone.entity.Dish;
 import com.gerasimov.capstone.exception.RestaurantException;
@@ -7,13 +9,16 @@ import com.gerasimov.capstone.mapper.DishMapper;
 import com.gerasimov.capstone.repository.DishRepository;
 import com.gerasimov.capstone.service.DishService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class DishServiceImpl implements DishService {
 
@@ -67,8 +72,33 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public void addToCart() {
-
+    public DishDto save(DishDto dishDto){
+        setAvailable(dishDto);
+        Dish savedDish = dishRepository.save(dishMapper.toEntity(dishDto));
+        return dishMapper.toDto(savedDish);
     }
+
+    @Override
+    @Transactional
+    public void update(DishDto dishDto) {
+        log.info(String.format("Updating dish %s", dishDto.toString()));
+        setAvailable(dishDto);
+        dishRepository.save(dishMapper.toEntity(dishDto));
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long dishId){
+        DishDto dishDto = findById(dishId);
+        dishDto.setAvailable(false);
+        dishRepository.save(dishMapper.toEntity(dishDto));
+        log.info(String.format("Delete dish with id %s", dishId));
+    }
+
+    private void setAvailable(DishDto dishDto){
+        dishDto.setAvailable(true);
+    }
+
+
 
 }

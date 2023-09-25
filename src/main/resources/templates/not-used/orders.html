@@ -8,13 +8,7 @@
 
 <div th:replace="~{header :: header}"></div>
 
-<br>
-<br>
-<br>
-<br>
-<br>
-
-<ul class="nav flex-column">
+<ul class="nav flex-column mt-5">
     <li class="nav-item">
         <a class="nav-link" aria-current="page" th:href="@{/users/{id}/orders(id=${#authentication.principal.userDto.id})}">My orders</a>
     </li>

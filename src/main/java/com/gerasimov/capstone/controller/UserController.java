@@ -9,6 +9,7 @@ import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +53,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/personal-account")
-    public String viewPersonalAccount(@PathVariable Long id, Model model) {
+    public String viewPersonalAccount(@PathVariable Long id, Model model, Pageable pageable) {
         try {
             UserDto authenticatedUser = userService.findAuthenticatedUser();
             model.addAttribute("user", authenticatedUser);
@@ -71,11 +72,6 @@ public class UserController {
         model.addAttribute("user", userDto);
         model.addAttribute("roles", roles);
         return "users/edit";
-    }
-
-    @GetMapping("/users/{id}/orders")
-    public String viewUserOrders(@PathVariable Long id) {
-        return "users/orders";
     }
 
     @DeleteMapping("/{id}")
