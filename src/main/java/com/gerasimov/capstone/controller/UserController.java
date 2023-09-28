@@ -9,7 +9,8 @@ import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -29,10 +32,30 @@ public class UserController {
     private RoleService roleService;
     private OrderService orderService;
 
+    private static final int PAGE_SIZE = 2;
+
     @GetMapping
-    public String listUsers(Model model) {
-        List<UserDto> users = userService.findAll();
-        model.addAttribute("users", users);
+    public String listUsers(
+            Model model,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size
+    ) {
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(PAGE_SIZE);
+
+        Page<UserDto> usersPage = userService.findAll(PageRequest.of(currentPage - 1, pageSize));
+
+        model.addAttribute("usersPage", usersPage);
+
+        int totalPages = usersPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = new ArrayList<>();
+            for (int i = 1; i <= totalPages; i++) {
+                pageNumbers.add(i);
+            }
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
         return "users/list";
     }
 
@@ -53,16 +76,32 @@ public class UserController {
     }
 
     @GetMapping("/{id}/personal-account")
-    public String viewPersonalAccount(@PathVariable Long id, Model model, Pageable pageable) {
-        try {
-            UserDto authenticatedUser = userService.findAuthenticatedUser();
-            model.addAttribute("user", authenticatedUser);
-            model.addAttribute("groupedOrders", orderService.getGroupedOrdersForAuthenticatedUser());
-            model.addAttribute("totalPricesMap", orderService.getTotalPrices());
-            return "users/personal-account";
-        } catch (RestaurantException e) {
-            return "users/registration";
+    public String viewPersonalAccount(
+            @PathVariable Long id,
+            Model model,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size
+    ) {
+
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(PAGE_SIZE);
+
+        Page<OrderDto> ordersPage = orderService.getOrdersForAuthenticatedUserPageable(PageRequest.of(currentPage - 1, pageSize));
+
+        model.addAttribute("user", userService.findAuthenticatedUser());
+        model.addAttribute("ordersPage", ordersPage);
+        model.addAttribute("totalPricesMap", orderService.getTotalPrices());
+
+        int totalPages = ordersPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = new ArrayList<>();
+            for (int i = 1; i <= totalPages; i++) {
+                pageNumbers.add(i);
+            }
+            model.addAttribute("pageNumbers", pageNumbers);
         }
+
+        return "users/personal-account";
     }
 
     @GetMapping("/{id}/edit")

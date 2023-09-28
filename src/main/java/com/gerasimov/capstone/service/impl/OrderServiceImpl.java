@@ -1,5 +1,6 @@
 package com.gerasimov.capstone.service.impl;
 
+import com.gerasimov.capstone.domain.DishDto;
 import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.OrderItemDto;
 import com.gerasimov.capstone.domain.UserDto;
@@ -13,6 +14,10 @@ import com.gerasimov.capstone.service.OrderService;
 import com.gerasimov.capstone.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,28 +94,26 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Map<String, List<OrderDto>> getGroupedOrdersForAuthenticatedUser(){
+    public Page<OrderDto> getOrdersForAuthenticatedUserPageable(Pageable pageable){
+
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<OrderDto> listToView;
 
         UserDto authenticatedUser = userService.findAuthenticatedUser();
+        List<OrderDto> ordersImmutable = findByCustomer(authenticatedUser);
+        List<OrderDto> orders = new ArrayList<>(ordersImmutable);
+        orders.sort(new OrderComparator());
 
-        List<OrderDto> orders = findByCustomer(authenticatedUser);
-
-        Map<String, List<OrderDto>> groupedOrders = orders.stream()
-                .collect(Collectors.groupingBy(OrderDto::getStatus, Collectors.collectingAndThen(
-                        Collectors.toList(),
-                        orderList -> {
-                            orderList.sort(Comparator.comparing(OrderDto::getCreated).reversed());
-                            return orderList;
-                        }
-                )));
-        List<String> orderStatusList = Arrays.asList("Preparing", "Cooking", "Out for Delivery", "Delivered");
-        Map<String, List<OrderDto>> orderedGroupedOrders = new LinkedHashMap<>();
-        for (String status : orderStatusList) {
-            if (groupedOrders.containsKey(status)) {
-                orderedGroupedOrders.put(status, groupedOrders.get(status));
-            }
+        if (orders.size() < startItem) {
+            listToView = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, orders.size());
+            listToView = orders.subList(startItem, toIndex);
         }
-        return orderedGroupedOrders;
+
+        return new PageImpl<OrderDto>(listToView, PageRequest.of(currentPage, pageSize), orders.size());
     }
 
     @Override
@@ -155,6 +158,12 @@ public class OrderServiceImpl implements OrderService {
         orderDto.setActive(true);
     }
 
+    private void sortOrders(List<OrderDto> orders){
+//        OrderComparator orderComparator = new OrderComparator();
+        Collections.sort(orders, new OrderComparator());
+//        Collections.sort(orders, orderComparator);
+//        orders.sort(orderComparator);
+    }
 
 
 }

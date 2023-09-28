@@ -13,6 +13,10 @@ import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,18 +44,33 @@ public class UserServiceImpl implements UserService {
     private AuthenticationManager authenticationManager;
 
     @Override
-    public List<UserDto> findAll() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
+    public Page<UserDto> findAll(Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<UserDto> listToView;
+
+        List<UserDto> users = userRepository.findAll().stream()
                 .map(userMapper::toDto)
-                .toList();
+                .filter(userDto -> userDto.isActive())
+                .toList();;
+
+        if (users.size() < startItem) {
+            listToView = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, users.size());
+            listToView = users.subList(startItem, toIndex);
+        }
+
+        return new PageImpl<UserDto>(listToView, PageRequest.of(currentPage, pageSize), users.size());
+
     }
 
     @Override
     public UserDto findAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if ((authentication != null) && (authentication.isAuthenticated())) {
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            UserDetailsImpl userDetails = ( UserDetailsImpl) authentication.getPrincipal();
             return findByUsername(userDetails.getUsername());
         } else {
             throw new RestaurantException(ERROR_NO_LOGGED_USER);

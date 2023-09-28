@@ -25,7 +25,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="user : ${users}" th:if="${user.isActive()}">
+        <tr th:each="user : ${usersPage}">
             <td th:text="${user.id}"></td>
             <td th:text="${user.firstName}"></td>
             <td th:text="${user.lastName}"></td>
@@ -47,6 +47,36 @@
 
 </div>
 
+
+<nav th:if="${usersPage.totalPages > 0}" aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:class="${usersPage.first} ? disabled">
+            <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=1)}" aria-label="First">
+                <span aria-hidden="true">&laquo;&laquo;</span>
+            </a>
+        </li>
+        <li class="page-item" th:class="${usersPage.hasPrevious} ? '' : 'disabled'">
+            <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${usersPage.number})}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <th:block th:each="pageNumber : ${pageNumbers}">
+            <li class="page-item" th:class="${pageNumber==(usersPage.number + 1)} ? 'active' : ''">
+                <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${pageNumber})}" th:text="${pageNumber}"></a>
+            </li>
+        </th:block>
+        <li class="page-item" th:class="${usersPage.hasNext} ? '' : 'disabled'">
+            <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${usersPage.number + 2})}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        <li class="page-item" th:class="${usersPage.last} ? disabled">
+            <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${usersPage.totalPages})}" aria-label="Last">
+                <span aria-hidden="true">&raquo;&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
 
 
 </body>

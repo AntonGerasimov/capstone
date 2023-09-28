@@ -168,6 +168,7 @@
             <artifactId>thymeleaf-extras-springsecurity5</artifactId>
             <version>${thymeleaf-extra.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>

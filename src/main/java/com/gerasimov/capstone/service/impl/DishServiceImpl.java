@@ -73,18 +73,8 @@ public class DishServiceImpl implements DishService {
             list = menuItems.subList(startItem, toIndex);
         }
 
-        Page<DishDto> menuPage
-                = new PageImpl<DishDto>(list, PageRequest.of(currentPage, pageSize), menuItems.size());
-
-        return menuPage;
+        return new PageImpl<DishDto>(list, PageRequest.of(currentPage, pageSize), menuItems.size());
     }
-
-//    @Override
-//    public Page<DishDto> findPage(int pageNumber){
-//        Pageable pageable = PageRequest.of(pageNumber - 1,5);
-//        return dishRepository.findByIsAvailableTrue(pageable)
-//                .map(dishMapper::toDto);
-//    }
 
     @Override
     public List<DishDto> findAvailable() {

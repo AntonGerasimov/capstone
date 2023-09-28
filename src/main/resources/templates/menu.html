@@ -13,8 +13,17 @@
 <div class="container mt-5 text-center">
     <th:block th:each="menuItem, iStat : ${menuPage.content}">
         <div class="row">
-            <a th:href="@{/menu/{menuItem}(menuItem=${menuItem})}" class="col-md-4 mx-auto my-4">
-                <div class="card">
+            <a th:href="@{/menu/{menuItem}(menuItem=${menuItem})}" class="col-md-4 mx-auto my-4 text-decoration-none">
+                <div class="card mb-3">
+                    <div class="image-container">
+                        <img
+                                th:src="@{'/images/' + ${menuItem} + '.jpeg'}"
+                                class="card-img-top"
+                                width="300"
+                                height="200"
+                                onerror="this.src='/images/default.jpeg';"
+                        />
+                    </div>
                     <div class="card-body">
                         <h5 class="card-title" th:text="${menuItem}"></h5>
                     </div>
@@ -27,6 +36,7 @@
 
 
 
+
 <nav th:if="${menuPage.totalPages > 0}" aria-label="Page navigation">
     <ul class="pagination justify-content-center">
         <li class="page-item" th:class="${menuPage.first} ? disabled">
@@ -35,7 +45,7 @@
             </a>
         </li>
         <li class="page-item" th:class="${menuPage.hasPrevious} ? '' : 'disabled'">
-            <a class="page-link" th:href="@{/menu(size=${menuPage.size}, page=${menuPage.number - 1})}" aria-label="Previous">
+            <a class="page-link" th:href="@{/menu(size=${menuPage.size}, page=${menuPage.number})}" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
@@ -45,7 +55,7 @@
             </li>
         </th:block>
         <li class="page-item" th:class="${menuPage.hasNext} ? '' : 'disabled'">
-            <a class="page-link" th:href="@{/menu(size=${menuPage.size}, page=${menuPage.number + 1})}" aria-label="Next">
+            <a class="page-link" th:href="@{/menu(size=${menuPage.size}, page=${menuPage.number + 2})}" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>

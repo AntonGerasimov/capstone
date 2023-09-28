@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CartController {
 
-    private static final int PAGE_SIZE = 5;
+    private static final int PAGE_SIZE = 2;
 
     private CartService cartService;
     private OrderService orderService;
@@ -53,7 +53,7 @@ public class CartController {
             @RequestParam("size") Optional<Integer> size) {
 
         int currentPage = page.orElse(1);
-        int pageSize = size.orElse(5);
+        int pageSize = size.orElse(PAGE_SIZE);
 
         Page<String> menuPage = dishService.findPaginatedMenuCategories(PageRequest.of(currentPage - 1, pageSize));
 
@@ -80,7 +80,7 @@ public class CartController {
             @RequestParam("size") Optional<Integer> size) {
 
         int currentPage = page.orElse(1);
-        int pageSize = size.orElse(2);
+        int pageSize = size.orElse(PAGE_SIZE);
 
         Page<DishDto> menuPage = dishService.findPaginatedCategoryItems(
                 PageRequest.of(currentPage - 1, pageSize),
