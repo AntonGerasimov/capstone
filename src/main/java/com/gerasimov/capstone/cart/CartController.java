@@ -3,9 +3,13 @@ package com.gerasimov.capstone.cart;
 import com.gerasimov.capstone.domain.DishDto;
 import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.OrderItemDto;
+import com.gerasimov.capstone.service.DishService;
 import com.gerasimov.capstone.service.OrderService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,32 +21,89 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
 @AllArgsConstructor
 public class CartController {
+
+    private static final int PAGE_SIZE = 5;
+
     private CartService cartService;
     private OrderService orderService;
+    private DishService dishService;
+
+
 
     @GetMapping("/")
     public String showMainPage(Model model) {
 
         model.addAttribute("hotSales", cartService.getHotSales());
-        model.addAttribute("menuItemsByCategory", cartService.getMenu());
+//        model.addAttribute("menuItemsByCategory", cartService.getMenu());
         model.addAttribute("dishQuantityMap", cartService.createDishQuantityMap());
 
         return "index";
     }
-
     @GetMapping("/menu")
-    public String getMenu(Model model) {
+    public String viewMenu(
+            Model model,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size) {
 
-        model.addAttribute("menuItemsByCategory", cartService.getMenu());
-        model.addAttribute("dishQuantityMap", cartService.createDishQuantityMap());
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(5);
+
+        Page<String> menuPage = dishService.findPaginatedMenuCategories(PageRequest.of(currentPage - 1, pageSize));
+
+
+        model.addAttribute("menuPage", menuPage);
+
+        int totalPages = menuPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = new ArrayList<>();
+            for (int i = 1; i <= totalPages; i++) {
+                pageNumbers.add(i);
+            }
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
         return "menu";
     }
+
+    @GetMapping("/menu/{category}")
+    public String viewCategory(
+            @PathVariable String category,
+            Model model,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size) {
+
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(2);
+
+        Page<DishDto> menuPage = dishService.findPaginatedCategoryItems(
+                PageRequest.of(currentPage - 1, pageSize),
+                category
+        );
+
+        model.addAttribute("menuPage", menuPage);
+        model.addAttribute("dishQuantityMap", cartService.createDishQuantityMap());
+        model.addAttribute("category", category);
+
+
+        int totalPages = menuPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = new ArrayList<>();
+            for (int i = 1; i <= totalPages; i++) {
+                pageNumbers.add(i);
+            }
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        return "dishes/menu-category";
+    }
+
 
     @GetMapping("/cart")
     public String viewCart(Model model) {

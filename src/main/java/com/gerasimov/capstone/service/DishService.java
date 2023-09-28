@@ -1,16 +1,25 @@
 package com.gerasimov.capstone.service;
 
-import com.gerasimov.capstone.domain.AddressDtoLight;
 import com.gerasimov.capstone.domain.DishDto;
-import com.gerasimov.capstone.entity.Dish;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Map;
 
 public interface DishService {
     List<DishDto> findAll();
 
+//    Page<DishDto> findPage(int pageNumber);
+
+    Page<String> findPaginatedMenuCategories(Pageable pageable);
+
+    Page<DishDto> findPaginatedCategoryItems(Pageable pageable, String category);
+
     List<DishDto> findAvailable();
+
+    Map<String, List<DishDto>> groupDishesByCategory(List<DishDto> dishDtos);
 
     List<DishDto> findHotSale();
 

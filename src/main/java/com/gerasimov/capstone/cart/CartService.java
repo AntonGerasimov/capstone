@@ -4,6 +4,10 @@ import com.gerasimov.capstone.domain.*;
 import com.gerasimov.capstone.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,10 +25,18 @@ public class CartService {
     private OrderService orderService;
 
 
-    public Map<String, List<DishDto>> getMenu() {
-        return dishService.findAvailable().stream()
-                .collect(Collectors.groupingBy(DishDto::getCategory));
-    }
+//    public Page<Map.Entry<String, List<DishDto>>> getMenu(int page, int size) {
+//        // Group menu items by category and paginate the result
+//        Page<DishDto> dishesPage = dishService.findAvailable(PageRequest.of(page, size));
+//        Map<String, List<DishDto>> menuItemsByCategory = dishesPage.stream()
+//                .collect(Collectors.groupingBy(DishDto::getCategory));
+//        return menuItemsByCategory.entrySet().stream()
+//                .collect(Collectors.collectingAndThen(
+//                        Collectors.toList(),
+//                        list -> Page.<Map.Entry<String, List<DishDto>>>empty()
+//                                .map(menuItemsByCategoryPage -> list, dishesPage.getPageable(), list.size())
+//                ));
+//    }
 
     public List<DishDto> getHotSales() {
         return dishService.findHotSale();

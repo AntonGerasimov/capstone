@@ -10,12 +10,16 @@ import com.gerasimov.capstone.repository.DishRepository;
 import com.gerasimov.capstone.service.DishService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -34,11 +38,64 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
+    public Page<String> findPaginatedMenuCategories(Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+
+        List<String> listToView;
+
+        List<String> menuCategories = getCategories();
+
+        if (menuCategories.size() < startItem) {
+            listToView = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, menuCategories.size());
+            listToView = menuCategories.subList(startItem, toIndex);
+        }
+
+        return new PageImpl<String>(listToView, PageRequest.of(currentPage, pageSize), menuCategories.size());
+    }
+
+    @Override
+    public Page<DishDto> findPaginatedCategoryItems(Pageable pageable, String category) {
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<DishDto> list;
+
+        List<DishDto> menuItems = findDishByCategory(category);
+
+        if (menuItems.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, menuItems.size());
+            list = menuItems.subList(startItem, toIndex);
+        }
+
+        Page<DishDto> menuPage
+                = new PageImpl<DishDto>(list, PageRequest.of(currentPage, pageSize), menuItems.size());
+
+        return menuPage;
+    }
+
+//    @Override
+//    public Page<DishDto> findPage(int pageNumber){
+//        Pageable pageable = PageRequest.of(pageNumber - 1,5);
+//        return dishRepository.findByIsAvailableTrue(pageable)
+//                .map(dishMapper::toDto);
+//    }
+
+    @Override
     public List<DishDto> findAvailable() {
-        List<Dish> dishEntities = dishRepository.findByIsAvailableTrue();
-        return dishEntities.stream()
-                .map(dishMapper::toDto)
-                .toList();
+        return dishRepository.findByIsAvailableTrue().stream()
+                .map(dishMapper::toDto).toList();
+    }
+
+    @Override
+    public Map<String, List<DishDto>> groupDishesByCategory(List<DishDto> dishDtos) {
+        return dishDtos.stream()
+                .collect(Collectors.groupingBy(DishDto::getCategory));
     }
 
     @Override
@@ -93,6 +150,24 @@ public class DishServiceImpl implements DishService {
         dishDto.setAvailable(false);
         dishRepository.save(dishMapper.toEntity(dishDto));
         log.info(String.format("Delete dish with id %s", dishId));
+    }
+
+    private List<String> getCategories() {
+        List<DishDto> menuItems = findAvailable();
+        Set<String> uniqueCategories = new HashSet<>();
+
+        for (DishDto menuItem : menuItems) {
+            String category = menuItem.getCategory();
+            uniqueCategories.add(category);
+        }
+        return new ArrayList<>(uniqueCategories);
+    }
+
+    private List<DishDto> findDishByCategory(String category){
+        List<DishDto> menuItems = findAvailable();
+        return menuItems.stream()
+                .filter(dish -> category.equals(dish.getCategory()))
+                .toList();
     }
 
     private void setAvailable(DishDto dishDto){

@@ -1,16 +1,14 @@
 package com.gerasimov.capstone.controller;
 
-import com.gerasimov.capstone.domain.AddressDtoLight;
 import com.gerasimov.capstone.domain.DishDto;
-import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.DishService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -19,6 +17,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @AllArgsConstructor

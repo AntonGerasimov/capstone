@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity">
+<head>
+    <title>Menu</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div th:replace="~{header :: header}"></div>
+
+<div class="container mt-5 text-center">
+    <div class="mt-5">
+        <div style="margin-top: 100px;" class="mb-5">
+            <h2 th:text="${category}" class="text-primary" ></h2>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-4 offset-md-4">
+                <button id="togglePriceFilter" class="btn btn-primary mt-2" onclick="togglePriceFilter()">Filter by Price</button>
+                <label for="priceFilter" class="form-label mt-2" id="priceLabel" style="display: none;">Enter max price</label>
+                <input type="number" id="priceFilter" class="form-control mt-2" placeholder="Enter max price" style="display: none;" />
+                <button class="btn btn-primary mt-4 mx-auto" id="applyFilter" onclick="applyPriceFilter()" style="display: none;">Apply Filter</button>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div th:each="menuItem, iStat : ${menuPage.content}" class="col-md-4 mb-4 menu-item" th:data-price="${menuItem.price}">
+                <div class="card" style="width: 22rem; height: 36rem;">
+                    <div class="image-container">
+                        <img
+                                th:src="@{'/images/' + ${menuItem.id} + '.jpeg'}"
+                                class="card-img-top"
+                                width="300"
+                                height="300"
+                                onerror="this.src='/images/default.jpeg';"
+                        />
+                        <a class="image-button" style="position: absolute; top: 5%; left: 75%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; cursor: pointer;" th:href="@{/dishes/{dishId}/edit(dishId=${menuItem.id})}"><span class="bi bi-pen"></span></a>
+                        <form th:action="@{/dishes/{dishId}(dishId=${menuItem.id})}" th:method="delete" onsubmit="return confirm('Are you sure you want to delete this dish?');">
+                            <button class="image-button" style="position: absolute; top: 5%; left: 90%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; cursor: pointer;" type="submit"><span class="bi bi-trash"></span></button>
+                        </form>
+
+                    </div>
+
+                    <div class="card-body menu-card-body">
+                        <h5 class="card-title" th:text="${menuItem.name}"></h5>
+                        <p class="card-text" style="max-height: 8em; overflow: hidden;" th:text="${menuItem.description}"></p>
+                        <p class="card-text" th:text="'$' + ${menuItem.price}"></p>
+
+                        <div id="cartButtonContainer" class="mt-auto">
+
+                            <div th:id="'btnAddToCart-' + ${menuItem.id}" th:style="${dishQuantityMap.containsKey(menuItem.name)  ? 'display: none;' : 'display: block;'}">
+                                <button class="btn btn-primary" th:data-dish-id="${menuItem.id}" onclick="initialAddToCart(this)">Add to cart</button>
+                                <a th:href="@{/dishes/{id}(id=${menuItem.id})}" class="btn btn-primary">Show more</a>
+                            </div>
+
+                            <div th:id="'quantityElement-' + ${menuItem.id}" th:style="${dishQuantityMap.containsKey(menuItem.name)  ? 'display: block;' : 'display: none;'}">
+                                <button class="btn btn-outline-primary" th:data-dish-id="${menuItem.id}" onclick="removeFromCart(this)">-</button>
+                                <span th:id="'quantityId-' + ${menuItem.id}" class="ms-1 me-1" th:text="${dishQuantityMap[menuItem.name]}"></span>
+                                <button class="btn btn-outline-primary" th:data-dish-id="${menuItem.id}" onclick="addToCart(this)">+</button>
+                                <a href="/cart" class="btn btn-primary">Go to cart</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<nav th:if="${menuPage.totalPages > 0}" aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:class="${menuPage.first} ? disabled">
+            <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=1)}" aria-label="First">
+                <span aria-hidden="true">&laquo;&laquo;</span>
+            </a>
+        </li>
+        <li class="page-item" th:class="${menuPage.hasPrevious} ? '' : 'disabled'">
+            <a class="page-link"
+               th:href="@{/menu/{category}(
+                    category=${category},
+                    size=${menuPage.size},
+                    page=${menuPage.number}
+                    )}"
+               aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <th:block th:each="pageNumber : ${pageNumbers}">
+            <li class="page-item" th:class="${pageNumber==(menuPage.number + 1)} ? 'active' : ''">
+                <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=${pageNumber})}" th:text="${pageNumber}"></a>
+            </li>
+        </th:block>
+        <li class="page-item" th:class="${menuPage.hasNext} ? '' : 'disabled'">
+            <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=${menuPage.number + 2})}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        <li class="page-item" th:class="${menuPage.last} ? disabled">
+            <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=${menuPage.totalPages})}" aria-label="Last">
+                <span aria-hidden="true">&raquo;&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+
+<script>
+
+    function initialAddToCart(button){
+        var dishId = $(button).data('dish-id');
+        $.ajax({
+            url: '/cart/' + dishId + '/add',
+            type: 'post',
+            success: function() {
+                console.log('Initial Add to cart successfully');
+                toggleContent(button, true);
+                var elementId = 'quantityId-' + dishId;
+                console.log('script' + elementId);
+                var element = document.getElementById(elementId);
+                element.textContent = 1;
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status === 403) {
+                // User is not authenticated, redirect to the login page
+                window.location.href = '/login';
+            } else {
+                console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
+                alert("An error occurred while adding the item to the cart.");
+            }
+        }
+        });
+    }
+
+    function addToCart(button){
+        console.log('Add to cart');
+        var id = $(button).data('dish-id');
+        $.ajax({
+            url: '/cart/' + id + '/add',
+            type: 'post',
+            success: function() {
+                console.log('Add to cart successfully');
+                increaseQuantity(button);
+            },
+        });
+    }
+
+    function removeFromCart(button){
+        console.log('Remove from cart');
+        var id = $(button).data('dish-id');
+        $.ajax({
+            url: '/cart/' + id + '/remove',
+            type: 'post',
+            success: function() {
+                console.log('Remove from cart successfully');
+                decreaseQuantity(button);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
+                alert("An error occurred while removing the item from the cart.");
+            }
+        });
+    }
+
+    function increaseQuantity(button){
+        var dishId = $(button).data('dish-id');
+        var elementId = 'quantityId-' + dishId;
+        var element = document.getElementById(elementId);
+        var currentValue = parseInt(element.textContent, 10);
+        var newValue = currentValue + 1;
+        element.textContent = newValue;
+    }
+
+    function decreaseQuantity(button){
+        var dishId = $(button).data('dish-id');
+        var elementId = 'quantityId-' + dishId;
+        var element = document.getElementById(elementId);
+        var currentValue = parseInt(element.textContent, 10);
+        var newValue = currentValue - 1;
+        element.textContent = newValue;
+        if (newValue == 0){
+            toggleContent(button, false);
+        }
+    }
+
+
+    function toggleContent(button, show) {
+        var dishId = $(button).data('dish-id');
+        console.log('toggle ' + dishId);
+        var btnAddToCart = document.getElementById("btnAddToCart-" + dishId);
+        var quantityElement = document.getElementById("quantityElement-" + dishId);
+
+        if (show) {
+            btnAddToCart.style.display = "none";
+            quantityElement.style.display = "block";
+        } else {
+            btnAddToCart.style.display = "block";
+            quantityElement.style.display = "none";
+        }
+    }
+
+    function togglePriceFilter() {
+        var priceLabel = document.getElementById('priceLabel');
+        var priceFilter = document.getElementById('priceFilter');
+        var applyFilterButton = document.getElementById('applyFilter');
+
+        if (priceLabel.style.display === 'none') {
+            priceLabel.style.display = 'block';
+            priceFilter.style.display = 'block';
+            applyFilterButton.style.display = 'block';
+        } else {
+            priceLabel.style.display = 'none';
+            priceFilter.style.display = 'none';
+            applyFilterButton.style.display = 'none';
+        }
+    }
+
+    function applyPriceFilter() {
+        var selectedPrice = parseFloat(document.getElementById('priceFilter').value);
+        console.log('selected price is ' + selectedPrice);
+        filterMenuItems(selectedPrice);
+    }
+
+    function filterMenuItems(selectedPrice) {
+        document.querySelectorAll('.menu-item').forEach(function(item) {
+            var itemPrice = parseFloat(item.getAttribute('data-price'));
+            console.log('item price ' + itemPrice);
+            if (isNaN(selectedPrice) || itemPrice <= selectedPrice) {
+                item.style.display = 'block'; // Show the item
+            } else {
+                item.style.display = 'none'; // Hide the item
+            }
+        });
+    }
+
+
+
+</script>
+
+</body>
+</html>
