@@ -41,14 +41,31 @@ public class UserController {
     public String listUsers(
             Model model,
             @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size
-    ) {
+            @RequestParam("size") Optional<Integer> size,
+            @RequestParam(name = "isShowCommon") Optional<Boolean> isShowCommonOptional,
+            @RequestParam(name = "isShowManager", defaultValue = "false") String isShowManagerStr,
+            @RequestParam(name = "isShowAdmin", defaultValue = "false") boolean isShowAdmin
+            ) {
+
+        log.info("optional " + isShowCommonOptional);
+        log.info("optional " + isShowManagerStr);
+        log.info("optional " + isShowAdmin);
+        boolean isShowCommon = isShowCommonOptional.orElse(false);
+        boolean isShowManager = Boolean.parseBoolean(isShowManagerStr);
+        log.info("isShowCommon " + isShowCommon);
+        log.info("isShowCommon " + isShowManager);
+        log.info("isShowCommon " + isShowAdmin);
+
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(PAGE_SIZE);
 
-        Page<UserDto> usersPage = userService.findAll(PageRequest.of(currentPage - 1, pageSize));
+        Page<UserDto> usersPage = userService.findAll(PageRequest.of(currentPage - 1, pageSize), isShowCommon, isShowManager, isShowAdmin);
 
         model.addAttribute("usersPage", usersPage);
+        model.addAttribute("isShowCommon", isShowCommon);
+        model.addAttribute("isShowManager", isShowManager);
+        model.addAttribute("isShowAdmin", isShowAdmin);
+
 
         int totalPages = usersPage.getTotalPages();
         if (totalPages > 0) {

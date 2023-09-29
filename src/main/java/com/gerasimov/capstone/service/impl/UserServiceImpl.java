@@ -43,8 +43,9 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
 
+
     @Override
-    public Page<UserDto> findAll(Pageable pageable) {
+    public Page<UserDto> findAll(Pageable pageable, boolean commonRole, boolean managerRole, boolean adminRole) {
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
@@ -52,8 +53,9 @@ public class UserServiceImpl implements UserService {
 
         List<UserDto> users = userRepository.findAll().stream()
                 .map(userMapper::toDto)
-                .filter(userDto -> userDto.isActive())
-                .toList();;
+                .filter(UserDto::isActive)
+                .filter(userDto -> filterUserByRoles(userDto, commonRole, managerRole, adminRole))
+                .toList();
 
         if (users.size() < startItem) {
             listToView = Collections.emptyList();
@@ -172,6 +174,15 @@ public class UserServiceImpl implements UserService {
             return "redirect:/users";
         }
     }
+
+
+    private boolean filterUserByRoles(UserDto userDto, boolean commonRole, boolean managerRole, boolean adminRole){
+        String roleName = userDto.getRole().getName();
+        return  (commonRole && roleName.equals("ROLE_common")) ||
+                (managerRole && roleName.equals("ROLE_manager")) ||
+                (adminRole && roleName.equals("ROLE_admin"));
+    }
+
 
 
     private void validateEmail(UserDto userDto) {

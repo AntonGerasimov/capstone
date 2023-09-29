@@ -11,7 +11,32 @@
 
 <div class="container">
     <div th:if="${updateSuccess}" class="alert alert-success">Success</div>
-    <h1>Manage users</h1>
+    <h1 class="mt-5">Manage users</h1>
+    <div class="mt-5">
+        <form id="filterRoles" th:action="@{/users}" method="get">
+            <div class="input-group mb-3">
+                <div class="input-group-text">
+                    <input class="form-check-input mt-0" type="checkbox" id="isShowCommon" name="isShowCommon" value="true">
+                    <label class="form-check-label ms-1" for="isShowManager">Common</label>
+                </div>
+
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-text">
+                    <input class="form-check-input mt-0" type="checkbox" id="isShowManager" name="isShowManager" value="true">
+                    <label class="form-check-label ms-1" for="isShowManager">Manager</label>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-text">
+                    <input class="form-check-input mt-0" type="checkbox" id="isShowAdmin" name="isShowAdmin" value="true">
+                    <label class="form-check-label ms-1" for="isShowManager">Admin</label>
+                </div>
+            </div>
+
+            <input type="submit" class="btn btn-primary" value="Show">
+        </form>
+    </div>
     <table class="table">
         <thead>
         <tr>
@@ -41,13 +66,6 @@
                 </form>
             </td>
 
-
-
-
-
-
-
-
         </tr>
 
         </tbody>
@@ -59,33 +77,45 @@
 <nav th:if="${usersPage.totalPages > 0}" aria-label="Page navigation">
     <ul class="pagination justify-content-center">
         <li class="page-item" th:class="${usersPage.first} ? disabled">
-            <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=1)}" aria-label="First">
+            <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=1, isShowCommon=${isShowCommon}, isShowManager=${isShowManager}, isShowAdmin=${isShowAdmin})}" aria-label="First">
                 <span aria-hidden="true">&laquo;&laquo;</span>
             </a>
         </li>
         <li class="page-item" th:class="${usersPage.hasPrevious} ? '' : 'disabled'">
-            <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${usersPage.number})}" aria-label="Previous">
+            <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${usersPage.number}, isShowCommon=${isShowCommon}, isShowManager=${isShowManager}, isShowAdmin=${isShowAdmin})}" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
         <th:block th:each="pageNumber : ${pageNumbers}">
             <li class="page-item" th:class="${pageNumber==(usersPage.number + 1)} ? 'active' : ''">
-                <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${pageNumber})}" th:text="${pageNumber}"></a>
+                <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${pageNumber}, isShowCommon=${isShowCommon}, isShowManager=${isShowManager}, isShowAdmin=${isShowAdmin})}" th:text="${pageNumber}"></a>
             </li>
         </th:block>
         <li class="page-item" th:class="${usersPage.hasNext} ? '' : 'disabled'">
-            <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${usersPage.number + 2})}" aria-label="Next">
+            <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${usersPage.number + 2}, isShowCommon=${isShowCommon}, isShowManager=${isShowManager}, isShowAdmin=${isShowAdmin})}" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
         <li class="page-item" th:class="${usersPage.last} ? disabled">
-            <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${usersPage.totalPages})}" aria-label="Last">
+            <a class="page-link" th:href="@{/users(size=${usersPage.size}, page=${usersPage.totalPages}, isShowCommon=${isShowCommon}, isShowManager=${isShowManager}, isShowAdmin=${isShowAdmin})}" aria-label="Last">
                 <span aria-hidden="true">&raquo;&raquo;</span>
             </a>
         </li>
     </ul>
 </nav>
 
+<script>
+
+  const isShowCommonCheckbox = document.getElementById("isShowCommon");
+  isShowCommonCheckbox.checked = [[${isShowCommon}]];
+
+  const isShowManagerCheckbox = document.getElementById("isShowManager");
+  isShowManagerCheckbox.checked = [[${isShowManager}]];
+
+  const isShowAdminCheckbox = document.getElementById("isShowAdmin");
+  isShowAdminCheckbox.checked = [[${isShowAdmin}]];
+
+</script>
 
 </body>
 </html>
