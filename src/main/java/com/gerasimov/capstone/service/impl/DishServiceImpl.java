@@ -3,6 +3,7 @@ package com.gerasimov.capstone.service.impl;
 import com.gerasimov.capstone.domain.AddressDto;
 import com.gerasimov.capstone.domain.AddressDtoLight;
 import com.gerasimov.capstone.domain.DishDto;
+import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.entity.Dish;
 import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.mapper.DishMapper;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,13 +65,17 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public Page<DishDto> findPaginatedCategoryItems(Pageable pageable, String category) {
+    public Page<DishDto> findPaginatedCategoryItems(Pageable pageable, String category, Double minPrice, Double maxPrice) {
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
         List<DishDto> list;
 
-        List<DishDto> menuItems = findDishByCategory(category);
+        List<DishDto> menuItems = findDishByCategory(category)
+                .stream()
+                .filter(dish -> dish.getPrice() >= minPrice && dish.getPrice() <= maxPrice)
+                .toList();
+
 
         if (menuItems.size() < startItem) {
             list = Collections.emptyList();
@@ -214,7 +220,6 @@ public class DishServiceImpl implements DishService {
     private void setAvailable(DishDto dishDto){
         dishDto.setAvailable(true);
     }
-
 
 
 }

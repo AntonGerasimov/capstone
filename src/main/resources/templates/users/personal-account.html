@@ -8,6 +8,7 @@
 
 <div th:replace="~{header :: header}"></div>
 
+
 <div class="container-fluid mt-5">
     <div class="row">
         <div class="col-lg-2 col-md-3 mt-5">
@@ -29,6 +30,24 @@
 
         <div class="col-lg-10 col-md-9 mt-5">
             <h2>Your orders</h2>
+            <div>
+                <button id="toggleDateFilter" class="btn btn-primary mt-2" onclick="toggleDateFilter()">Filter by Date</button>
+                <form id="dateFilter" style="display: none;" th:action="@{/users/{id}/personal-account(id=${user.id})}" method="get">
+                    <div class="form-row mt-1">
+                        <div class="form-group col-md-3">
+                            <label for="startDate">Start Date:</label>
+                            <input type="date" class="form-control" id="startDate" name="startDate" th:value="${startDate}" />
+                        </div>
+                        <div class="form-group col-md-3 mt-1">
+                            <label for="endDate">End Date:</label>
+                            <input type="date" class="form-control" id="endDate" name="endDate" th:value="${endDate}" />
+                        </div>
+                        <div class="form-group col-md-2 mt-3">
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
             <div class="mt-5">
                 <div th:each="order, iStat : ${ordersPage.content}">
                     <div class="col-md-12 mb-4">
@@ -74,34 +93,46 @@
 <nav th:if="${ordersPage.totalPages > 0}" aria-label="Page navigation">
     <ul class="pagination justify-content-center">
         <li class="page-item" th:class="${ordersPage.first} ? disabled">
-            <a class="page-link" th:href="@{/users/{id}/personal-account(id=${user.id}, size=${ordersPage.size}, page=1)}" aria-label="First">
+            <a class="page-link" th:href="@{/users/{id}/personal-account(id=${user.id}, size=${ordersPage.size}, page=1, startDate=${startDate}, endDate=${endDate})}" aria-label="First">
                 <span aria-hidden="true">&laquo;&laquo;</span>
             </a>
         </li>
         <li class="page-item" th:class="${ordersPage.hasPrevious} ? '' : 'disabled'">
             <a class="page-link"
-               th:href="@{/users/{id}/personal-account(id=${user.id}, size=${ordersPage.size},page=${ordersPage.number})}"
+               th:href="@{/users/{id}/personal-account(id=${user.id}, size=${ordersPage.size},page=${ordersPage.number}, startDate=${startDate}, endDate=${endDate})}"
                aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
         <th:block th:each="pageNumber : ${pageNumbers}">
             <li class="page-item" th:class="${pageNumber==(ordersPage.number + 1)} ? 'active' : ''">
-                <a class="page-link" th:href="@{/users/{id}/personal-account(id=${user.id}, size=${ordersPage.size}, page=${pageNumber})}" th:text="${pageNumber}"></a>
+                <a class="page-link" th:href="@{/users/{id}/personal-account(id=${user.id}, size=${ordersPage.size}, page=${pageNumber}, startDate=${startDate}, endDate=${endDate})}" th:text="${pageNumber}"></a>
             </li>
         </th:block>
         <li class="page-item" th:class="${ordersPage.hasNext} ? '' : 'disabled'">
-            <a class="page-link" th:href="@{/users/{id}/personal-account(id=${user.id}, size=${ordersPage.size}, page=${ordersPage.number + 2})}" aria-label="Next">
+            <a class="page-link" th:href="@{/users/{id}/personal-account(id=${user.id}, size=${ordersPage.size}, page=${ordersPage.number + 2}, startDate=${startDate}, endDate=${endDate})}" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
         <li class="page-item" th:class="${ordersPage.last} ? disabled">
-            <a class="page-link" th:href="@{/users/{id}/personal-account(id=${user.id}, size=${ordersPage.size}, page=${ordersPage.totalPages})}" aria-label="Last">
+            <a class="page-link" th:href="@{/users/{id}/personal-account(id=${user.id}, size=${ordersPage.size}, page=${ordersPage.totalPages}, startDate=${startDate}, endDate=${endDate})}" aria-label="Last">
                 <span aria-hidden="true">&raquo;&raquo;</span>
             </a>
         </li>
     </ul>
 </nav>
+
+<script>
+    function toggleDateFilter() {
+        var dateFilterForm = document.getElementById('dateFilter');
+
+        if (dateFilterForm.style.display === 'none') {
+            dateFilterForm.style.display = 'block';
+        } else {
+            dateFilterForm.style.display = 'none';
+        }
+    }
+</script>
 
 </body>
 </html>

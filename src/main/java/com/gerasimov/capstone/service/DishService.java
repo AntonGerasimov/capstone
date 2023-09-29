@@ -16,7 +16,7 @@ public interface DishService {
 
     Map<String, Integer> findCategoryImageMap();
 
-    Page<DishDto> findPaginatedCategoryItems(Pageable pageable, String category);
+    Page<DishDto> findPaginatedCategoryItems(Pageable pageable, String category, Double minPrice, Double maxPrice);
 
     List<DishDto> findAvailable();
 

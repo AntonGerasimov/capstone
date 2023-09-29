@@ -7,8 +7,10 @@ import com.gerasimov.capstone.entity.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface OrderService {
     List<OrderDto> findAll();
@@ -25,7 +27,7 @@ public interface OrderService {
 
     void delete(Long orderId);
 
-    Page<OrderDto> getOrdersForAuthenticatedUserPageable(Pageable pageable);
+    Page<OrderDto> getOrdersForAuthenticatedUserPageable(Pageable pageable, LocalDate startDate, LocalDate endDate);
 
     Map<Long, Double> getTotalPrices();
     double calcTotalPrice(OrderDto orderDto);

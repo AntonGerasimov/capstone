@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -77,19 +79,28 @@ public class CartController {
             @PathVariable String category,
             Model model,
             @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size) {
+            @RequestParam("size") Optional<Integer> size,
+            @RequestParam(value = "minPrice", required = false) Optional<Double> minPriceOptional,
+            @RequestParam(value = "maxPrice", required = false) Optional<Double> maxPriceOptional
+
+    ) {
 
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(PAGE_SIZE);
 
+        Double minPrice = minPriceOptional.orElse(0.0);
+        Double maxPrice = maxPriceOptional.orElse(1000.0);
+
         Page<DishDto> menuPage = dishService.findPaginatedCategoryItems(
                 PageRequest.of(currentPage - 1, pageSize),
-                category
+                category, minPrice, maxPrice
         );
 
         model.addAttribute("menuPage", menuPage);
         model.addAttribute("dishQuantityMap", cartService.createDishQuantityMap());
         model.addAttribute("category", category);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
 
 
         int totalPages = menuPage.getTotalPages();

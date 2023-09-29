@@ -19,9 +19,21 @@
         <div class="row mb-5">
             <div class="col-md-4 offset-md-4">
                 <button id="togglePriceFilter" class="btn btn-primary mt-2" onclick="togglePriceFilter()">Filter by Price</button>
-                <label for="priceFilter" class="form-label mt-2" id="priceLabel" style="display: none;">Enter max price</label>
-                <input type="number" id="priceFilter" class="form-control mt-2" placeholder="Enter max price" style="display: none;" />
-                <button class="btn btn-primary mt-4 mx-auto" id="applyFilter" onclick="applyPriceFilter()" style="display: none;">Apply Filter</button>
+                <form id="priceFilter" style="display: none;" th:action="@{/menu/{category}(category=${category})}" method="get">
+                    <div class="form-row mt-1">
+                        <div class="form-group col-md-3">
+                            <label for="minPrice">Min price:</label>
+                            <input type="number" class="form-control" id="minPrice" name="minPrice" th:value="${minPrice}" />
+                        </div>
+                        <div class="form-group col-md-3 mt-1">
+                            <label for="maxPrice">Max price:</label>
+                            <input type="number" class="form-control" id="maxPrice" name="maxPrice" th:value="${maxPrice}" />
+                        </div>
+                        <div class="form-group col-md-2 mt-3">
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -75,7 +87,7 @@
 <nav th:if="${menuPage.totalPages > 0}" aria-label="Page navigation">
     <ul class="pagination justify-content-center">
         <li class="page-item" th:class="${menuPage.first} ? disabled">
-            <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=1)}" aria-label="First">
+            <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=1, minPrice=${minPrice}, maxPrice=${maxPrice})}" aria-label="First">
                 <span aria-hidden="true">&laquo;&laquo;</span>
             </a>
         </li>
@@ -84,7 +96,7 @@
                th:href="@{/menu/{category}(
                     category=${category},
                     size=${menuPage.size},
-                    page=${menuPage.number}
+                    page=${menuPage.number}, minPrice=${minPrice}, maxPrice=${maxPrice}
                     )}"
                aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
@@ -92,16 +104,16 @@
         </li>
         <th:block th:each="pageNumber : ${pageNumbers}">
             <li class="page-item" th:class="${pageNumber==(menuPage.number + 1)} ? 'active' : ''">
-                <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=${pageNumber})}" th:text="${pageNumber}"></a>
+                <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=${pageNumber}, minPrice=${minPrice}, maxPrice=${maxPrice})}" th:text="${pageNumber}"></a>
             </li>
         </th:block>
         <li class="page-item" th:class="${menuPage.hasNext} ? '' : 'disabled'">
-            <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=${menuPage.number + 2})}" aria-label="Next">
+            <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=${menuPage.number + 2}, minPrice=${minPrice}, maxPrice=${maxPrice})}" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
         <li class="page-item" th:class="${menuPage.last} ? disabled">
-            <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=${menuPage.totalPages})}" aria-label="Last">
+            <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=${menuPage.totalPages}, minPrice=${minPrice}, maxPrice=${maxPrice})}" aria-label="Last">
                 <span aria-hidden="true">&raquo;&raquo;</span>
             </a>
         </li>
@@ -204,40 +216,14 @@
     }
 
     function togglePriceFilter() {
-        var priceLabel = document.getElementById('priceLabel');
         var priceFilter = document.getElementById('priceFilter');
-        var applyFilterButton = document.getElementById('applyFilter');
 
-        if (priceLabel.style.display === 'none') {
-            priceLabel.style.display = 'block';
+        if (priceFilter.style.display === 'none') {
             priceFilter.style.display = 'block';
-            applyFilterButton.style.display = 'block';
         } else {
-            priceLabel.style.display = 'none';
             priceFilter.style.display = 'none';
-            applyFilterButton.style.display = 'none';
         }
     }
-
-    function applyPriceFilter() {
-        var selectedPrice = parseFloat(document.getElementById('priceFilter').value);
-        console.log('selected price is ' + selectedPrice);
-        filterMenuItems(selectedPrice);
-    }
-
-    function filterMenuItems(selectedPrice) {
-        document.querySelectorAll('.menu-item').forEach(function(item) {
-            var itemPrice = parseFloat(item.getAttribute('data-price'));
-            console.log('item price ' + itemPrice);
-            if (isNaN(selectedPrice) || itemPrice <= selectedPrice) {
-                item.style.display = 'block'; // Show the item
-            } else {
-                item.style.display = 'none'; // Hide the item
-            }
-        });
-    }
-
-
 
 </script>
 

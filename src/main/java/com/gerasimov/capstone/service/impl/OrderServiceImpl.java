@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -38,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderItemService orderItemService;
 
     @Override
-    public List<OrderDto> findAll(){
+    public List<OrderDto> findAll() {
         List<Order> orderEntities = orderRepository.findAll();
         return orderEntities.stream()
                 .map(orderMapper::toDto)
@@ -46,32 +47,32 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto findById(Long id){
+    public OrderDto findById(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RestaurantException(String.format("Can't find order with id %d in database", id)));
         return orderMapper.toDto(order);
     }
 
     @Override
-    public List<Order> findByDeliveryAddressId(Long addressId){
+    public List<Order> findByDeliveryAddressId(Long addressId) {
         return orderRepository.findByDeliveryAddressId(addressId);
     }
 
     @Override
-    public List<OrderDto> findByCustomer(UserDto userDto){
-        List<Order> orders = orderRepository.findByCustomer(userMapper.toEntity(userDto) );
+    public List<OrderDto> findByCustomer(UserDto userDto) {
+        List<Order> orders = orderRepository.findByCustomer(userMapper.toEntity(userDto));
         return orders.stream()
                 .map(orderMapper::toDto)
                 .toList();
     }
 
     @Override
-    public List<OrderItemDto> findOrderItems(OrderDto orderDto){
+    public List<OrderItemDto> findOrderItems(OrderDto orderDto) {
         return orderItemService.findByOrder(orderDto);
     }
 
     @Override
-    public OrderDto save(OrderDto orderDto){
+    public OrderDto save(OrderDto orderDto) {
         setAuthenticatedUser(orderDto);
         setCurrentTime(orderDto);
         setDefaultStatus(orderDto);
@@ -86,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void delete(Long orderId){
+    public void delete(Long orderId) {
         OrderDto orderDto = findById(orderId);
         orderDto.setActive(false);
         orderRepository.save(orderMapper.toEntity(orderDto));
@@ -94,16 +95,25 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<OrderDto> getOrdersForAuthenticatedUserPageable(Pageable pageable){
+    public Page<OrderDto> getOrdersForAuthenticatedUserPageable(Pageable pageable, LocalDate startDate, LocalDate endDate) {
 
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
         List<OrderDto> listToView;
 
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+
         UserDto authenticatedUser = userService.findAuthenticatedUser();
-        List<OrderDto> ordersImmutable = findByCustomer(authenticatedUser);
+        List<OrderDto> ordersImmutable = findByCustomer(authenticatedUser)
+                .stream()
+                .filter(order -> !order.getCreated().isBefore(startDateTime) && !order.getCreated().isAfter(endDateTime))
+                .toList();
         List<OrderDto> orders = new ArrayList<>(ordersImmutable);
+
+
         orders.sort(new OrderComparator());
 
         if (orders.size() < startItem) {
@@ -134,7 +144,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public double calcTotalPrice(OrderDto orderDto){
+    public double calcTotalPrice(OrderDto orderDto) {
         List<OrderItemDto> orderItemDtos = findOrderItems(orderDto);
         return orderItemDtos.stream()
                 .mapToDouble(orderItemDto -> orderItemDto.getDishPrice() * orderItemDto.getQuantity())
@@ -142,28 +152,25 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    private void setAuthenticatedUser(OrderDto orderDto){
+    private void setAuthenticatedUser(OrderDto orderDto) {
         UserDto customer = userService.findAuthenticatedUser();
         orderDto.setCustomer(customer);
     }
 
-    private void setCurrentTime(OrderDto orderDto){
+    private void setCurrentTime(OrderDto orderDto) {
         orderDto.setCreated(LocalDateTime.now());
     }
-    private void setDefaultStatus(OrderDto orderDto){
+
+    private void setDefaultStatus(OrderDto orderDto) {
         orderDto.setStatus("Preparing");
     }
 
-    private void setActive(OrderDto orderDto){
+    private void setActive(OrderDto orderDto) {
         orderDto.setActive(true);
     }
 
-    private void sortOrders(List<OrderDto> orders){
-//        OrderComparator orderComparator = new OrderComparator();
+    private void sortOrders(List<OrderDto> orders) {
         Collections.sort(orders, new OrderComparator());
-//        Collections.sort(orders, orderComparator);
-//        orders.sort(orderComparator);
     }
-
 
 }

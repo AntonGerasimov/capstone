@@ -9,8 +9,10 @@ import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.asm.Advice;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,18 +82,25 @@ public class UserController {
     public String viewPersonalAccount(
             @PathVariable Long id,
             Model model,
-            @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size
+            @RequestParam("page") Optional<Integer> pageOptional,
+            @RequestParam("size") Optional<Integer> sizeOptional,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startDateOptional,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> endDateOptional
     ) {
 
-        int currentPage = page.orElse(1);
-        int pageSize = size.orElse(PAGE_SIZE);
+        int currentPage = pageOptional.orElse(1);
+        int pageSize = sizeOptional.orElse(PAGE_SIZE);
 
-        Page<OrderDto> ordersPage = orderService.getOrdersForAuthenticatedUserPageable(PageRequest.of(currentPage - 1, pageSize));
+        LocalDate startDate = startDateOptional.orElse(LocalDate.of(2000,1,1));
+        LocalDate endDate = endDateOptional.orElse(LocalDate.now());
+
+        Page<OrderDto> ordersPage = orderService.getOrdersForAuthenticatedUserPageable(PageRequest.of(currentPage - 1, pageSize), startDate, endDate);
 
         model.addAttribute("user", userService.findAuthenticatedUser());
         model.addAttribute("ordersPage", ordersPage);
         model.addAttribute("totalPricesMap", orderService.getTotalPrices());
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
 
         int totalPages = ordersPage.getTotalPages();
         if (totalPages > 0) {
