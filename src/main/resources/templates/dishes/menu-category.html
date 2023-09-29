@@ -36,8 +36,8 @@
                                 height="300"
                                 onerror="this.src='/images/default.jpeg';"
                         />
-                        <a class="image-button" style="position: absolute; top: 5%; left: 75%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; cursor: pointer;" th:href="@{/dishes/{dishId}/edit(dishId=${menuItem.id})}"><span class="bi bi-pen"></span></a>
-                        <form th:action="@{/dishes/{dishId}(dishId=${menuItem.id})}" th:method="delete" onsubmit="return confirm('Are you sure you want to delete this dish?');">
+                        <a sec:authorize="hasAnyRole('admin', 'manager')" class="image-button" style="position: absolute; top: 5%; left: 75%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; cursor: pointer;" th:href="@{/dishes/{dishId}/edit(dishId=${menuItem.id})}"><span class="bi bi-pen"></span></a>
+                        <form sec:authorize="hasAnyRole('admin', 'manager')" th:action="@{/dishes/{dishId}(dishId=${menuItem.id})}" th:method="delete" onsubmit="return confirm('Are you sure you want to delete this dish?');">
                             <button class="image-button" style="position: absolute; top: 5%; left: 90%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.5); color: white; border: none; cursor: pointer;" type="submit"><span class="bi bi-trash"></span></button>
                         </form>
 

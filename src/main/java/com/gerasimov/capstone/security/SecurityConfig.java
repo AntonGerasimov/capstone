@@ -19,6 +19,7 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String ROLE_ADMIN = "admin";
+    private static final String ROLE_MANAGER = "manager";
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -46,38 +47,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                     .antMatchers("/users").hasRole(ROLE_ADMIN)
-//                    .antMatchers("/cart/**").authenticated()
-//                    .antMatchers("/menu/**").permitAll() // Publicly accessible URLs
-//                    .antMatchers("/**").permitAll()
-//                    .anyRequest().authenticated() // All other URLs require authentication
+                    .antMatchers("/users/*/edit").hasRole(ROLE_ADMIN)
+                    .antMatchers("/dishes/**").hasAnyRole(ROLE_ADMIN, ROLE_MANAGER)
+                    .antMatchers("/cart/**").authenticated()
+                    .antMatchers("/users/*/personal-account").authenticated()
                     .anyRequest().permitAll()
                     .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint())
                 .and()
-                .formLogin() // Enable form-based authentication
-                    .loginPage("/login") // Custom login page URL
+                .formLogin()
+                    .loginPage("/login")
                     .loginProcessingUrl("/login")
-                    .permitAll() // Allow access to the login page
-//                    .successHandler(savedRequestAwareAuthenticationSuccessHandler())
+                    .permitAll()
                     .successHandler(new RefererRedirectionAuthenticationSuccessHandler())
                     .and()
-                //                    .disable()
-                .logout() // Enable logout
+                .logout()
                     .logoutUrl("/logout")
                     .logoutSuccessUrl("/")
                     .invalidateHttpSession(true)
-                    .permitAll() // Allow access to the logout page
+                    .permitAll()
                     .and()
                 .csrf().disable().cors();
 
     }
-
-//    public SavedRequestAwareAuthenticationSuccessHandler savedRequestAwareAuthenticationSuccessHandler() {
-//        SavedRequestAwareAuthenticationSuccessHandler handler = new SavedRequestAwareAuthenticationSuccessHandler();
-//        handler.setDefaultTargetUrl("/"); // Set the default target URL after successful login
-//        handler.setAlwaysUseDefaultTargetUrl(false);
-//        return handler;
-//    }
 
 }

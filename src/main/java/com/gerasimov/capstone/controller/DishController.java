@@ -56,24 +56,8 @@ public class DishController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            DishDto newDish = dishService.save(dishDto);
+            DishDto newDish = dishService.save(dishDto, imageFile);
             log.info(String.format("New dish was created: ", newDish.toString()));
-            if (imageFile != null && !imageFile.isEmpty()) {
-                try {
-                    // Define the directory where you want to save the image (e.g., /templates/static/images)
-                    String uploadDir = "src/main/resources/static/images/";
-
-                    // Generate a unique filename for the uploaded image
-                    String fileName = String.format("%d.jpeg", newDish.getId());
-                    Path filePath = Path.of(uploadDir, fileName);
-
-                    // Copy the image file to the destination directory
-                    Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
             return "redirect:/menu";
         } catch (RestaurantException e) {
             redirectAttributes.addFlashAttribute("restaurantException", e.getMessage());
@@ -82,8 +66,12 @@ public class DishController {
     }
 
     @PutMapping("/dishes/{dishId}/edit")
-    public String updateDish(@PathVariable Long dishId, @ModelAttribute DishDto dishDto) {
-        dishService.update(dishDto);
+    public String updateDish(
+            @PathVariable Long dishId,
+            @ModelAttribute DishDto dishDto,
+            @RequestParam("image") MultipartFile imageFile
+    ) {
+        dishService.update(dishDto, imageFile);
         return "redirect:/menu";
     }
     @DeleteMapping("/dishes/{dishId}")

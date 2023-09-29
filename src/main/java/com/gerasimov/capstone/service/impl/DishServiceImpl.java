@@ -16,8 +16,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -77,6 +82,27 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
+    public Map<String, Integer> findCategoryImageMap(){
+        List<String> menuCategories = getCategories();
+        List<DishDto> menuItems = findAvailable();
+        Map<String, Integer> categoryImageMap = new HashMap<>();
+
+        for (String category : menuCategories) {
+            Optional<DishDto> firstMatchingItem = menuItems.stream()
+                    .filter(item -> Objects.equals(item.getCategory(), category))
+                    .findFirst();
+
+            if (firstMatchingItem.isPresent()) {
+                DishDto matchingItem = firstMatchingItem.get();
+                int matchingValue = matchingItem.getId().intValue(); // Assuming DishDto has a getValue() method
+                categoryImageMap.put(category, matchingValue);
+            }
+        }
+
+        return categoryImageMap;
+    }
+
+    @Override
     public List<DishDto> findAvailable() {
         return dishRepository.findByIsAvailableTrue().stream()
                 .map(dishMapper::toDto).toList();
@@ -119,17 +145,43 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public DishDto save(DishDto dishDto){
+    public DishDto save(DishDto dishDto, MultipartFile imageFile){
         setAvailable(dishDto);
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                String uploadDir = System.getProperty("user.dir") + "/src/main/upload/images/";
+
+                String fileName = String.format("%d.jpeg", dishDto.getId());
+                Path filePath = Path.of(uploadDir, fileName);
+
+                Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         Dish savedDish = dishRepository.save(dishMapper.toEntity(dishDto));
         return dishMapper.toDto(savedDish);
     }
 
     @Override
     @Transactional
-    public void update(DishDto dishDto) {
+    public void update(DishDto dishDto, MultipartFile imageFile) {
         log.info(String.format("Updating dish %s", dishDto.toString()));
         setAvailable(dishDto);
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                String uploadDir = System.getProperty("user.dir") + "/src/main/upload/images/";
+
+                String fileName = String.format("%d.jpeg", dishDto.getId());
+                Path filePath = Path.of(uploadDir, fileName);
+
+                Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         dishRepository.save(dishMapper.toEntity(dishDto));
     }
 

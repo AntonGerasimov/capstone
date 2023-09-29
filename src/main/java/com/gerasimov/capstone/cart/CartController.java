@@ -57,8 +57,8 @@ public class CartController {
 
         Page<String> menuPage = dishService.findPaginatedMenuCategories(PageRequest.of(currentPage - 1, pageSize));
 
-
         model.addAttribute("menuPage", menuPage);
+        model.addAttribute("categoryImages", dishService.findCategoryImageMap());
 
         int totalPages = menuPage.getTotalPages();
         if (totalPages > 0) {

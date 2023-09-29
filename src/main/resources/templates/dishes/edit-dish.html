@@ -21,7 +21,7 @@
             <a class="btn btn-light" href="javascript:history.back();"><span class="bi bi-chevron-left"></span></a>
             <br>
             <h1>Edit dish</h1>
-            <form th:action="@{/dishes/{dishId}/edit(dishId=${dish.id})}" th:method="PUT" th:object="${dish}">
+            <form th:action="@{/dishes/{dishId}/edit(dishId=${dish.id})}" th:method="PUT" enctype="multipart/form-data" th:object="${dish}">
 
                 <label sec:authorize="hasRole('admin')" for="id">Id:</label>
                 <input sec:authorize="hasRole('admin')" class="form-control" type="text" id = "id" name = "id" th:field="*{id}" th:readonly="true" />
@@ -40,6 +40,11 @@
                 <label for="price">Price</label>
                 <input class="form-control" type="text" id="price" name="price" th:field="*{price}" required/>
                 <br>
+
+                <div class="form-outline mb-4">
+                    <label class="form-label" for="image">Image</label>
+                    <input type="file" id="image" class="form-control" name="image" accept="image/*" />
+                </div>
 
 
                 <div class="d-grid gap-2">
