@@ -147,11 +147,11 @@ public class DishServiceImpl implements DishService {
     @Override
     public DishDto save(DishDto dishDto, MultipartFile imageFile){
         setAvailable(dishDto);
+        Dish savedDish = dishRepository.save(dishMapper.toEntity(dishDto));
         if (imageFile != null && !imageFile.isEmpty()) {
             try {
                 String uploadDir = System.getProperty("user.dir") + "/src/main/upload/images/";
-
-                String fileName = String.format("%d.jpeg", dishDto.getId());
+                String fileName = String.format("%d.jpeg", savedDish.getId());
                 Path filePath = Path.of(uploadDir, fileName);
 
                 Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
@@ -160,7 +160,6 @@ public class DishServiceImpl implements DishService {
                 e.printStackTrace();
             }
         }
-        Dish savedDish = dishRepository.save(dishMapper.toEntity(dishDto));
         return dishMapper.toDto(savedDish);
     }
 

@@ -14,7 +14,7 @@
 
 <div class="container mt-5 text-center">
     <div style="margin-top: 100px;" sec:authorize="hasAnyRole('admin', 'manager')">
-        <a class="button" href="/dishes/add">Add dish</a>
+        <a class="btn btn-primary" href="/dishes/add">Add dish</a>
     </div>
 
     <th:block th:each="menuItem, iStat : ${menuPage.content}">
