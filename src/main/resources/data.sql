@@ -43,7 +43,7 @@ INSERT INTO orders (customer_id, created, status, delivery_address_id, is_active
 INSERT INTO dishes (name, description, category, price, is_available) VALUES
     ('Shwarma',
         'A tantalizing Middle Eastern delight, our shawarma is a savory masterpiece of marinated and spit-roasted meat, thinly sliced to perfection. ',
-        'Shwarma','5.5', TRUE),
+        'Shwarma','5.5', FALSE),
     ('Margherita Pizza',
         'A classic Italian favorite with a thin, crispy crust topped with rich tomato sauce, fresh mozzarella cheese, fragrant basil leaves, and a drizzle of olive oil.',
         'Pizza','12.99', TRUE),

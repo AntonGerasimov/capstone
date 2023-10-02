@@ -5,11 +5,16 @@ import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.DishService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @AllArgsConstructor
@@ -18,7 +23,32 @@ public class DishController {
     private final DishService dishService;
 
     @GetMapping("/dishes")
-    public String viewManageDishes(Model model){
+    public String viewManageDishes(
+            Model model,
+            @RequestParam(name = "page", defaultValue = "1") int currentPage,
+            @RequestParam(name = "size", defaultValue = "3") int pageSize,
+            @RequestParam(value = "minPrice", defaultValue = "0.0") double minPrice,
+            @RequestParam(value = "maxPrice", defaultValue = "1000.0") double maxPrice
+            ){
+
+        Page<DishDto> menuPage = dishService.findManageMenuPage(
+                PageRequest.of(currentPage - 1, pageSize),
+                null, minPrice, maxPrice
+        );
+
+        model.addAttribute("menuPage", menuPage);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+
+        int totalPages = menuPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = new ArrayList<>();
+            for (int i = 1; i <= totalPages; i++) {
+                pageNumbers.add(i);
+            }
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
         return "dishes/list";
     }
 

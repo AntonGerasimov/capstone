@@ -59,43 +59,29 @@
                         <h5 class="card-title" th:text="${menuItem.name}"></h5>
                         <p class="card-text" style="max-height: 8em; overflow: hidden;" th:text="${menuItem.description}"></p>
                         <p class="card-text" th:text="'$' + ${menuItem.price}"></p>
-
-                        <div id="cartButtonContainer" class="mt-auto">
-
-                            <div th:id="'btnAddToCart-' + ${menuItem.id}" th:style="${dishQuantityMap.containsKey(menuItem.name)  ? 'display: none;' : 'display: block;'}">
-                                <button class="btn btn-primary" th:data-dish-id="${menuItem.id}" onclick="initialAddToCart(this)">Add to cart</button>
-                                <a th:href="@{/dishes/{id}(id=${menuItem.id})}" class="btn btn-primary">Show more</a>
-                            </div>
-
-                            <div th:id="'quantityElement-' + ${menuItem.id}" th:style="${dishQuantityMap.containsKey(menuItem.name)  ? 'display: block;' : 'display: none;'}">
-                                <button class="btn btn-outline-primary" th:data-dish-id="${menuItem.id}" onclick="removeFromCart(this)">-</button>
-                                <span th:id="'quantityId-' + ${menuItem.id}" class="ms-1 me-1" th:text="${dishQuantityMap[menuItem.name]}"></span>
-                                <button class="btn btn-outline-primary" th:data-dish-id="${menuItem.id}" onclick="addToCart(this)">+</button>
-                                <a href="/cart" class="btn btn-primary">Go to cart</a>
-                            </div>
-                        </div>
                     </div>
+
+                    <div th:if="${not menuItem.isAvailable}" th:attr="disabled='disabled'" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
+                        <button class="btn btn-primary mt-5">Return the dish to the menu</button>
+
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-
-
-
 <nav th:if="${menuPage.totalPages > 0}" aria-label="Page navigation">
     <ul class="pagination justify-content-center">
         <li class="page-item" th:class="${menuPage.first} ? disabled">
-            <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=1, minPrice=${minPrice}, maxPrice=${maxPrice})}" aria-label="First">
+            <a class="page-link" th:href="@{/dishes(size=${menuPage.size}, page=1, minPrice=${minPrice}, maxPrice=${maxPrice})}" aria-label="First">
                 <span aria-hidden="true">&laquo;&laquo;</span>
             </a>
         </li>
         <li class="page-item" th:class="${menuPage.hasPrevious} ? '' : 'disabled'">
             <a class="page-link"
-               th:href="@{/menu/{category}(
-                    category=${category},
-                    size=${menuPage.size},
+               th:href="@{/dishes(size=${menuPage.size},
                     page=${menuPage.number}, minPrice=${minPrice}, maxPrice=${maxPrice}
                     )}"
                aria-label="Previous">
@@ -104,16 +90,16 @@
         </li>
         <th:block th:each="pageNumber : ${pageNumbers}">
             <li class="page-item" th:class="${pageNumber==(menuPage.number + 1)} ? 'active' : ''">
-                <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=${pageNumber}, minPrice=${minPrice}, maxPrice=${maxPrice})}" th:text="${pageNumber}"></a>
+                <a class="page-link" th:href="@{/dishes(size=${menuPage.size}, page=${pageNumber}, minPrice=${minPrice}, maxPrice=${maxPrice})}" th:text="${pageNumber}"></a>
             </li>
         </th:block>
         <li class="page-item" th:class="${menuPage.hasNext} ? '' : 'disabled'">
-            <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=${menuPage.number + 2}, minPrice=${minPrice}, maxPrice=${maxPrice})}" aria-label="Next">
+            <a class="page-link" th:href="@{/dishes(size=${menuPage.size}, page=${menuPage.number + 2}, minPrice=${minPrice}, maxPrice=${maxPrice})}" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
         <li class="page-item" th:class="${menuPage.last} ? disabled">
-            <a class="page-link" th:href="@{/menu/{category}(category=${category}, size=${menuPage.size}, page=${menuPage.totalPages}, minPrice=${minPrice}, maxPrice=${maxPrice})}" aria-label="Last">
+            <a class="page-link" th:href="@{/dishes(size=${menuPage.size}, page=${menuPage.totalPages}, minPrice=${minPrice}, maxPrice=${maxPrice})}" aria-label="Last">
                 <span aria-hidden="true">&raquo;&raquo;</span>
             </a>
         </li>

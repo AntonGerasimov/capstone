@@ -60,7 +60,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .loginPage("/login")
                     .loginProcessingUrl("/login")
                     .permitAll()
-                    .successHandler(new RefererRedirectionAuthenticationSuccessHandler())
                     .and()
                 .logout()
                     .logoutUrl("/logout")

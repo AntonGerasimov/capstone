@@ -67,7 +67,12 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public Page<DishDto> findByFilter(String category, boolean isAvailable,double minPrice, double maxPrice, Pageable pageable){
+    public Page<DishDto> findManageMenuPage(Pageable pageable, Boolean isAvailable, double minPrice, double maxPrice){
+        return findByFilter(null, isAvailable, minPrice, maxPrice, pageable);
+    }
+
+    @Override
+    public Page<DishDto> findByFilter(String category, Boolean isAvailable,double minPrice, double maxPrice, Pageable pageable){
         DishSpecifications dishSpecifications = new DishSpecifications();
         dishSpecifications.setCategory(category);
         dishSpecifications.setAvailable(isAvailable);

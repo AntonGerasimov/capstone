@@ -19,18 +19,22 @@ import java.time.LocalDateTime;
 public class DishSpecifications implements Specification<Dish> {
 
     private String category;
-    private boolean isAvailable;
+    private Boolean isAvailable;
     private double minPrice;
     private double maxPrice;
 
 
     @Override
     public Predicate toPredicate(Root<Dish> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        Predicate categoryPredicate = cb.equal(root.get("category"), category);
-        Predicate availablePredicate = cb.equal(root.get("isAvailable"), isAvailable);
+        Predicate categoryPredicate = (category != null) ? cb.equal(root.get("category"), category) : cb.conjunction();
+        Predicate availablePredicate = (isAvailable != null) ? cb.equal(root.get("isAvailable"), isAvailable) : cb.conjunction();
         Predicate pricePredicate = cb.between(root.get("price"), minPrice, maxPrice);
 
         return cb.and(categoryPredicate, availablePredicate, pricePredicate);
 
+    }
+
+    public void setAvailable(Boolean isAvailable) {
+        this.isAvailable = isAvailable;
     }
 }

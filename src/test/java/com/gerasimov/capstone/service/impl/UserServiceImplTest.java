@@ -3,7 +3,6 @@ package com.gerasimov.capstone.service.impl;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Role;
 import com.gerasimov.capstone.entity.User;
-import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.mapper.UserMapper;
 import com.gerasimov.capstone.repository.UserRepository;
 import com.gerasimov.capstone.service.UserService;
@@ -38,8 +37,10 @@ class UserServiceImplTest {
         MockitoAnnotations.initMocks(this);
     }
 
+
+//    methodName__whenStateUnderTest_thenExpectedBehavior
     @Test
-    void findIdTest(){
+    void findById_whenUserExistsTest_thenUserDtoIsReturned(){
         Long userId = 2L;
 
         User user = new User();

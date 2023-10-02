@@ -19,7 +19,9 @@ public interface DishService {
 
     Page<DishDto> findPaginatedCategoryItems(Pageable pageable, String category, Double minPrice, Double maxPrice);
 
-    Page<DishDto> findByFilter(String category, boolean isAvailable, double minPrice, double maxPrice, Pageable pageable);
+    Page<DishDto> findManageMenuPage(Pageable pageable, Boolean isAvailable, double minPrice, double MaxPrice);
+
+    Page<DishDto> findByFilter(String category, Boolean isAvailable, double minPrice, double maxPrice, Pageable pageable);
 
     List<DishDto> findAvailable();
 
