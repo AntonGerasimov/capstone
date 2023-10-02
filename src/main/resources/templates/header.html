@@ -18,15 +18,18 @@
             </button>
             <div class="collapse navbar-collapse ms-5" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link" th:href="@{/}">Home</a>
-                    <a class="nav-link" th:href="@{/menu}">Menu</a>
+                    <a class="nav-link" sec:authorize="hasAnyRole('admin', 'manager')" th:href="@{/dishes}">Manage menu</a>
+                </div>
+                <div class="navbar-nav">
                     <a class="nav-link" sec:authorize="hasRole('admin')" th:href="@{/users}">Manage users</a>
                 </div>
             </div>
 
             <div class="collapse navbar-collapse">
                 <div class="navbar-nav ms-auto">
-                    <a class="nav-link ms-1" sec:authorize="isAuthenticated()" href="/cart" role="menuitem"> Cart</a>
+                    <a class="nav-link ms-1" sec:authorize="isAuthenticated()" href="/cart" role="menuitem"> Cart
+                        <span id="cart-count"></span>
+                    </a>
                     <a class="nav-link ms-1" sec:authorize="isAuthenticated()" href="javascript: document.logoutForm.submit()" role="menuitem"> Logout</a>
                     <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
                         <input hidden type="submit" value="Sign Out"/>
@@ -39,6 +42,24 @@
 
         </div>
     </nav>
+
+    <script>
+    function updateCartCount() {
+        $.get("/updateCartCount", function(data) {
+        if (data > 0) {
+            $("#cart-count").text('('+data+')').show();
+        } else {
+            $("#cart-count").hide();
+        }
+        });
+    }
+
+    // Call the function once to initialize the cart count
+    updateCartCount();
+
+    // Update the cart count periodically (e.g., every .05 seconds)
+    setInterval(updateCartCount, 50);
+    </script>
 
 </header>
 

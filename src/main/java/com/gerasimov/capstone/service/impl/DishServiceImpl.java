@@ -1,14 +1,12 @@
 package com.gerasimov.capstone.service.impl;
 
-import com.gerasimov.capstone.domain.AddressDto;
-import com.gerasimov.capstone.domain.AddressDtoLight;
 import com.gerasimov.capstone.domain.DishDto;
-import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.entity.Dish;
 import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.mapper.DishMapper;
 import com.gerasimov.capstone.repository.DishRepository;
 import com.gerasimov.capstone.service.DishService;
+import com.gerasimov.capstone.specification.DishSpecifications;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,7 +22,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -66,25 +63,24 @@ public class DishServiceImpl implements DishService {
 
     @Override
     public Page<DishDto> findPaginatedCategoryItems(Pageable pageable, String category, Double minPrice, Double maxPrice) {
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage * pageSize;
-        List<DishDto> list;
+        return findByFilter(category, true, minPrice, maxPrice, pageable);
+    }
 
-        List<DishDto> menuItems = findDishByCategory(category)
+    @Override
+    public Page<DishDto> findByFilter(String category, boolean isAvailable,double minPrice, double maxPrice, Pageable pageable){
+        DishSpecifications dishSpecifications = new DishSpecifications();
+        dishSpecifications.setCategory(category);
+        dishSpecifications.setAvailable(isAvailable);
+        dishSpecifications.setMinPrice(minPrice);
+        dishSpecifications.setMaxPrice(maxPrice);
+        Page<Dish> dishesPage = dishRepository.findAll(dishSpecifications, pageable);
+
+        List<DishDto> orderDtoList = dishesPage
+                .getContent()
                 .stream()
-                .filter(dish -> dish.getPrice() >= minPrice && dish.getPrice() <= maxPrice)
+                .map(dishMapper::toDto)
                 .toList();
-
-
-        if (menuItems.size() < startItem) {
-            list = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, menuItems.size());
-            list = menuItems.subList(startItem, toIndex);
-        }
-
-        return new PageImpl<DishDto>(list, PageRequest.of(currentPage, pageSize), menuItems.size());
+        return new PageImpl<>(orderDtoList, pageable, dishesPage.getTotalElements());
     }
 
     @Override
@@ -208,13 +204,6 @@ public class DishServiceImpl implements DishService {
             uniqueCategories.add(category);
         }
         return new ArrayList<>(uniqueCategories);
-    }
-
-    private List<DishDto> findDishByCategory(String category){
-        List<DishDto> menuItems = findAvailable();
-        return menuItems.stream()
-                .filter(dish -> category.equals(dish.getCategory()))
-                .toList();
     }
 
     private void setAvailable(DishDto dishDto){

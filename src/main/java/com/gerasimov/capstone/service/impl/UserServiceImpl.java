@@ -1,21 +1,19 @@
 package com.gerasimov.capstone.service.impl;
 
-import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Role;
 import com.gerasimov.capstone.entity.User;
 import com.gerasimov.capstone.mapper.UserMapper;
 import com.gerasimov.capstone.repository.UserRepository;
 import com.gerasimov.capstone.security.UserDetailsImpl;
-import com.gerasimov.capstone.service.OrderService;
 import com.gerasimov.capstone.service.RoleService;
 import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
+import com.gerasimov.capstone.specification.UserSpecifications;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -45,34 +42,31 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Page<UserDto> findAll(Pageable pageable, boolean commonRole, boolean managerRole, boolean adminRole) {
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage * pageSize;
-        List<UserDto> listToView;
+    public Page<UserDto> findAllByRoles(boolean isCommonPresent, boolean isManagerPresent, boolean isAdminPresent, Pageable pageable) {
+        List<Role> roles = findRolesList(isCommonPresent, isManagerPresent, isAdminPresent);
+        return findByFilter(roles, pageable);
+    }
 
-        List<UserDto> users = userRepository.findAll().stream()
+    @Override
+    public Page<UserDto> findByFilter(List<Role> roles, Pageable pageable) {
+        UserSpecifications userSpecifications = new UserSpecifications();
+        userSpecifications.setRoles(roles);
+        Page<User> usersPage = userRepository.findAll(userSpecifications, pageable);
+
+        List<UserDto> userDtoList = usersPage
+                .getContent()
+                .stream()
                 .map(userMapper::toDto)
-                .filter(UserDto::isActive)
-                .filter(userDto -> filterUserByRoles(userDto, commonRole, managerRole, adminRole))
                 .toList();
 
-        if (users.size() < startItem) {
-            listToView = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, users.size());
-            listToView = users.subList(startItem, toIndex);
-        }
-
-        return new PageImpl<UserDto>(listToView, PageRequest.of(currentPage, pageSize), users.size());
-
+        return new PageImpl<>(userDtoList, pageable, usersPage.getTotalElements());
     }
 
     @Override
     public UserDto findAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if ((authentication != null) && (authentication.isAuthenticated())) {
-            UserDetailsImpl userDetails = ( UserDetailsImpl) authentication.getPrincipal();
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             return findByUsername(userDetails.getUsername());
         } else {
             throw new RestaurantException(ERROR_NO_LOGGED_USER);
@@ -175,15 +169,20 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
-    private boolean filterUserByRoles(UserDto userDto, boolean commonRole, boolean managerRole, boolean adminRole){
-        String roleName = userDto.getRole().getName();
-        return  (commonRole && roleName.equals("ROLE_common")) ||
-                (managerRole && roleName.equals("ROLE_manager")) ||
-                (adminRole && roleName.equals("ROLE_admin"));
+    private List<Role> findRolesList(boolean common, boolean manager, boolean admin) {
+        List<Role> rolesList = new ArrayList<>();
+        addRoleToList(rolesList, common, "ROLE_common");
+        addRoleToList(rolesList, manager, "ROLE_manager");
+        addRoleToList(rolesList, admin, "ROLE_admin");
+        return rolesList;
     }
 
-
+    private void addRoleToList(List<Role> rolesList, boolean isPresent, String roleName) {
+        if (isPresent) {
+            Role role = roleService.findByName(roleName);
+            rolesList.add(role);
+        }
+    }
 
     private void validateEmail(UserDto userDto) {
         if (emailExists(userDto.getEmail())) {

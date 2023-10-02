@@ -9,9 +9,9 @@ import com.gerasimov.capstone.service.UserService;
 import com.gerasimov.capstone.exception.RestaurantException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.asm.Advice;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -35,31 +34,19 @@ public class UserController {
     private RoleService roleService;
     private OrderService orderService;
 
-    private static final int PAGE_SIZE = 2;
+    private static final String PAGE_SIZE = "2";
 
     @GetMapping
     public String listUsers(
             Model model,
-            @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size,
-            @RequestParam(name = "isShowCommon") Optional<Boolean> isShowCommonOptional,
-            @RequestParam(name = "isShowManager", defaultValue = "false") String isShowManagerStr,
+            @RequestParam(name = "page", defaultValue = "1") int currentPage,
+            @RequestParam(name = "size", defaultValue = "2") int pageSize,
+            @RequestParam(name = "isShowCommon", defaultValue = "false") boolean isShowCommon,
+            @RequestParam(name = "isShowManager", defaultValue = "false") boolean isShowManager,
             @RequestParam(name = "isShowAdmin", defaultValue = "false") boolean isShowAdmin
             ) {
 
-        log.info("optional " + isShowCommonOptional);
-        log.info("optional " + isShowManagerStr);
-        log.info("optional " + isShowAdmin);
-        boolean isShowCommon = isShowCommonOptional.orElse(false);
-        boolean isShowManager = Boolean.parseBoolean(isShowManagerStr);
-        log.info("isShowCommon " + isShowCommon);
-        log.info("isShowCommon " + isShowManager);
-        log.info("isShowCommon " + isShowAdmin);
-
-        int currentPage = page.orElse(1);
-        int pageSize = size.orElse(PAGE_SIZE);
-
-        Page<UserDto> usersPage = userService.findAll(PageRequest.of(currentPage - 1, pageSize), isShowCommon, isShowManager, isShowAdmin);
+        Page<UserDto> usersPage = userService.findAllByRoles(isShowCommon, isShowManager, isShowAdmin, PageRequest.of(currentPage - 1, pageSize));
 
         model.addAttribute("usersPage", usersPage);
         model.addAttribute("isShowCommon", isShowCommon);
@@ -99,19 +86,17 @@ public class UserController {
     public String viewPersonalAccount(
             @PathVariable Long id,
             Model model,
-            @RequestParam("page") Optional<Integer> pageOptional,
-            @RequestParam("size") Optional<Integer> sizeOptional,
-            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> startDateOptional,
-            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> endDateOptional
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = PAGE_SIZE) int size,
+            @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
 
-        int currentPage = pageOptional.orElse(1);
-        int pageSize = sizeOptional.orElse(PAGE_SIZE);
+        startDate = setDefaultStartDateIfNull(startDate);
+        endDate = setDefaultEndDateIfNull(endDate);
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<OrderDto> ordersPage = orderService.getOrdersForAuthenticatedUserPageable(startDate, endDate, pageable);
 
-        LocalDate startDate = startDateOptional.orElse(LocalDate.of(2000,1,1));
-        LocalDate endDate = endDateOptional.orElse(LocalDate.now());
-
-        Page<OrderDto> ordersPage = orderService.getOrdersForAuthenticatedUserPageable(PageRequest.of(currentPage - 1, pageSize), startDate, endDate);
 
         model.addAttribute("user", userService.findAuthenticatedUser());
         model.addAttribute("ordersPage", ordersPage);
@@ -119,14 +104,7 @@ public class UserController {
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
 
-        int totalPages = ordersPage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = new ArrayList<>();
-            for (int i = 1; i <= totalPages; i++) {
-                pageNumbers.add(i);
-            }
-            model.addAttribute("pageNumbers", pageNumbers);
-        }
+        model.addAttribute("pageNumbers", findPageNumbers(ordersPage.getTotalPages()));
 
         return "users/personal-account";
     }
@@ -165,5 +143,23 @@ public class UserController {
         }
     }
 
+    private LocalDate setDefaultStartDateIfNull(LocalDate startDate){
+        return (startDate != null) ? startDate : LocalDate.of(2000, 1, 1);
+    }
+
+    private LocalDate setDefaultEndDateIfNull(LocalDate endDate){
+        return (endDate != null) ? endDate : LocalDate.now();
+    }
+
+    private List<Integer> findPageNumbers(int totalPages){
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = new ArrayList<>();
+            for (int i = 1; i <= totalPages; i++) {
+                pageNumbers.add(i);
+            }
+            return pageNumbers;
+        }
+        return new ArrayList<>();
+    }
 
 }

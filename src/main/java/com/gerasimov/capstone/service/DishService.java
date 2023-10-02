@@ -12,11 +12,14 @@ import java.util.Map;
 public interface DishService {
     List<DishDto> findAll();
 
+
     Page<String> findPaginatedMenuCategories(Pageable pageable);
 
     Map<String, Integer> findCategoryImageMap();
 
     Page<DishDto> findPaginatedCategoryItems(Pageable pageable, String category, Double minPrice, Double maxPrice);
+
+    Page<DishDto> findByFilter(String category, boolean isAvailable, double minPrice, double maxPrice, Pageable pageable);
 
     List<DishDto> findAvailable();
 

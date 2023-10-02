@@ -29,16 +29,18 @@
 
                 <br>
                 <label for="name">Name</label>
-                <input class="form-control" type="text" id="name" name="name" th:field="*{name}" required />
+                <input class="form-control" type="text" id="name" name="name" th:field="*{name}" maxlength="50" required />
                 <br>
                 <label for="description">Description</label>
-                <input class="form-control" type="text" id="description" name="description" th:field="*{description}" required />
+                <input class="form-control" type="text" id="description" name="description" th:field="*{description}" maxlength="1000" required />
                 <br>
                 <label for="category">Category</label>
-                <input class="form-control" type="text" id="category" name="category" th:field="*{category}" required/>
+                <input class="form-control" type="text" id="category" name="category" th:field="*{category}" maxlength="50" required/>
                 <br>
                 <label for="price">Price</label>
-                <input class="form-control" type="text" id="price" name="price" th:field="*{price}" required/>
+                <input class="form-control" type="text" id="price" name="price" th:field="*{price}" maxlength="10" required/>
+                <div id="priceError" class="form-text" style="color: red;"></div>
+
                 <br>
 
                 <div class="form-outline mb-4">
@@ -55,6 +57,30 @@
         </div>
     </div>
 </div>
+
+<script>
+
+    var priceInput = document.getElementById("price");
+    var priceError = document.getElementById("priceError");
+
+    function validatePrice(input, error) {
+        var priceValue = input.value.trim();
+        var regex = /^\d+(\.\d{1,2})?$/;
+
+        if (!regex.test(priceValue)) {
+            input.setCustomValidity("Please use no more than two numbers after decimal point");
+            error.textContent = "Please use no more than two numbers after decimal point";
+        } else {
+            input.setCustomValidity("");
+            error.textContent = "";
+        }
+    }
+
+    priceInput.addEventListener("input", function () {
+        validatePrice(priceInput, priceError);
+    });
+
+</script>
 
 </body>
 </html>

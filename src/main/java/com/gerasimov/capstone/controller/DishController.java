@@ -5,27 +5,22 @@ import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.DishService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 @Controller
 @AllArgsConstructor
 @Slf4j
 public class DishController {
     private final DishService dishService;
+
+    @GetMapping("/dishes")
+    public String viewManageDishes(Model model){
+        return "dishes/list";
+    }
 
     @GetMapping("/dishes/{id}")
     public String viewDish(@PathVariable Long id, Model model) {
@@ -58,7 +53,7 @@ public class DishController {
         try {
             DishDto newDish = dishService.save(dishDto, imageFile);
             log.info(String.format("New dish was created: ", newDish.toString()));
-            return "redirect:/menu";
+            return "redirect:/";
         } catch (RestaurantException e) {
             redirectAttributes.addFlashAttribute("restaurantException", e.getMessage());
             return "redirect:/dishes/add";
@@ -72,12 +67,12 @@ public class DishController {
             @RequestParam("image") MultipartFile imageFile
     ) {
         dishService.update(dishDto, imageFile);
-        return "redirect:/menu";
+        return "redirect:/";
     }
     @DeleteMapping("/dishes/{dishId}")
     public String deleteDish(@PathVariable Long dishId){
         dishService.delete(dishId);
-        return "redirect:/menu";
+        return "redirect:/";
     }
 
 

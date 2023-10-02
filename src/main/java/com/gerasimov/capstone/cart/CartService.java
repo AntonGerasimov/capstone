@@ -1,17 +1,13 @@
 package com.gerasimov.capstone.cart;
 
 import com.gerasimov.capstone.domain.*;
+import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -23,20 +19,6 @@ public class CartService {
     private UserService userService;
     private AddressService addressService;
     private OrderService orderService;
-
-
-//    public Page<Map.Entry<String, List<DishDto>>> getMenu(int page, int size) {
-//        // Group menu items by category and paginate the result
-//        Page<DishDto> dishesPage = dishService.findAvailable(PageRequest.of(page, size));
-//        Map<String, List<DishDto>> menuItemsByCategory = dishesPage.stream()
-//                .collect(Collectors.groupingBy(DishDto::getCategory));
-//        return menuItemsByCategory.entrySet().stream()
-//                .collect(Collectors.collectingAndThen(
-//                        Collectors.toList(),
-//                        list -> Page.<Map.Entry<String, List<DishDto>>>empty()
-//                                .map(menuItemsByCategoryPage -> list, dishesPage.getPageable(), list.size())
-//                ));
-//    }
 
     public List<DishDto> getHotSales() {
         return dishService.findHotSale();
@@ -54,6 +36,13 @@ public class CartService {
 
     public List<OrderItemDto> getCart() {
         return cart.getCart();
+    }
+
+    public int getNumberOfItemsInCart(){
+        return getCart()
+                .stream()
+                .mapToInt(OrderItemDto::getQuantity)
+                .sum();
     }
 
     public Map<String, Integer> createDishQuantityMap() {
@@ -82,11 +71,13 @@ public class CartService {
 
     public void removeFromCart(Long dishId) {
         DishDto dishDto = dishService.findById(dishId);
-        Optional<OrderItemDto> existingItem = findExistingItemInCart(dishDto);
 
-        if (existingItem.isPresent()) {
-            cart.removeItem(existingItem.get());
-        }
+        validateRemoveItem(dishDto);
+
+        findExistingItemInCart(dishDto).ifPresent(existingItem -> {
+            decreaseQuantityOfExistingCartItem(existingItem);
+            if (existingItem.getQuantity() == 0) cart.removeItem(existingItem);
+        });
     }
 
     public List<AddressDto> findAddressesForUser() {
@@ -123,12 +114,22 @@ public class CartService {
         existingItem.setQuantity(existingItem.getQuantity() + 1);
     }
 
+    private void decreaseQuantityOfExistingCartItem(OrderItemDto existingItem) {
+        existingItem.setQuantity(existingItem.getQuantity() - 1);
+    }
+
     private void addNewCartItem(DishDto dishDto) {
         OrderItemDto orderItemDto = new OrderItemDto();
         orderItemDto.setDish(dishDto);
         orderItemDto.setQuantity(1);
         orderItemDto.setDishPrice(dishDto.getPrice());
         cart.addItem(orderItemDto);
+    }
+
+    private void validateRemoveItem(DishDto dishDto){
+        if (findExistingItemInCart(dishDto).isEmpty()) {
+            throw new RestaurantException("Attempt to remove item that is not in the cart");
+        }
     }
 
 }

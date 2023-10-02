@@ -2,16 +2,14 @@ package com.gerasimov.capstone.cart;
 
 import com.gerasimov.capstone.domain.DishDto;
 import com.gerasimov.capstone.domain.OrderDto;
-import com.gerasimov.capstone.domain.OrderItemDto;
+import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.DishService;
 import com.gerasimov.capstone.service.OrderService;
+import com.gerasimov.capstone.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -19,12 +17,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -37,25 +32,11 @@ public class CartController {
     private OrderService orderService;
     private DishService dishService;
 
-
-
     @GetMapping("/")
-    public String showMainPage(Model model) {
-
-        model.addAttribute("hotSales", cartService.getHotSales());
-//        model.addAttribute("menuItemsByCategory", cartService.getMenu());
-        model.addAttribute("dishQuantityMap", cartService.createDishQuantityMap());
-
-        return "index";
-    }
-    @GetMapping("/menu")
     public String viewMenu(
             Model model,
-            @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size) {
-
-        int currentPage = page.orElse(1);
-        int pageSize = size.orElse(PAGE_SIZE);
+            @RequestParam(name = "page", defaultValue = "1") int currentPage,
+            @RequestParam(name = "size", defaultValue = "2") int pageSize) {
 
         Page<String> menuPage = dishService.findPaginatedMenuCategories(PageRequest.of(currentPage - 1, pageSize));
 
@@ -78,18 +59,12 @@ public class CartController {
     public String viewCategory(
             @PathVariable String category,
             Model model,
-            @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size,
-            @RequestParam(value = "minPrice", required = false) Optional<Double> minPriceOptional,
-            @RequestParam(value = "maxPrice", required = false) Optional<Double> maxPriceOptional
+            @RequestParam(name = "page", defaultValue = "1") int currentPage,
+            @RequestParam(name = "size", defaultValue = "2") int pageSize,
+            @RequestParam(value = "minPrice", defaultValue = "0.0") double minPrice,
+            @RequestParam(value = "maxPrice", defaultValue = "1000.0") double maxPrice
 
     ) {
-
-        int currentPage = page.orElse(1);
-        int pageSize = size.orElse(PAGE_SIZE);
-
-        Double minPrice = minPriceOptional.orElse(0.0);
-        Double maxPrice = maxPriceOptional.orElse(1000.0);
 
         Page<DishDto> menuPage = dishService.findPaginatedCategoryItems(
                 PageRequest.of(currentPage - 1, pageSize),
@@ -125,6 +100,12 @@ public class CartController {
         return "cart/cart"; // Return the Thymeleaf template name
     }
 
+    @GetMapping("/updateCartCount")
+    @ResponseBody
+    public int updateCartCount() {
+        return cartService.getNumberOfItemsInCart();
+    }
+
     @GetMapping("/checkout")
     public String viewCheckout(Model model) {
         model.addAttribute("cartItems", cartService.getCart());
@@ -144,23 +125,22 @@ public class CartController {
 
     @PostMapping("/cart/{dishId}/add")
     @ResponseBody
-    public String addItemToCart(@PathVariable Long dishId, HttpServletResponse response, Authentication authentication) {
+    public void addItemToCart(@PathVariable Long dishId, HttpServletResponse response, Authentication authentication) {
+
         if ((authentication == null) || (!authentication.isAuthenticated())) {
-            // User is not authenticated, so set a 403 status code and return an error message.
-            log.info("Not authenticated user");
+            // User is not authenticated, so set a 403 status code
+            log.info("User tries to add to cart, but is not logged");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Set the status code to 403
-            return "You do not have permission to perform this action.";
+            return;
         }
-        log.info("Authenticated user");
         log.info("Post request for adding item to cart");
         cartService.addToCart(dishId);
-        return "Dish added to cart successfully";
     }
 
-    @PostMapping("/cart/{id}/remove")
+    @PutMapping("/cart/{id}/remove")
     @ResponseBody
     public String removeItemFromCart(@PathVariable Long id) {
-        log.info("Post request for adding item to cart");
+        log.info("Put request for removing item to cart");
         cartService.removeFromCart(id);
         return "Dish added to cart successfully";
     }

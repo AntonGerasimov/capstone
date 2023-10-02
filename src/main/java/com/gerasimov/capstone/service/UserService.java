@@ -12,7 +12,9 @@ import java.util.List;
 
 public interface UserService {
 
-    Page<UserDto> findAll(Pageable pageable, boolean commonRole, boolean managerRole, boolean adminRole);
+    Page<UserDto> findAllByRoles(boolean commonRole, boolean managerRole, boolean adminRole, Pageable pageable);
+
+    Page<UserDto> findByFilter(List<Role> roles, Pageable pageable);
 
     UserDto findAuthenticatedUser();
 

@@ -1,11 +1,12 @@
 package com.gerasimov.capstone.service.impl;
 
-import com.gerasimov.capstone.domain.DishDto;
 import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.OrderItemDto;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Order;
+import com.gerasimov.capstone.entity.User;
 import com.gerasimov.capstone.exception.RestaurantException;
+import com.gerasimov.capstone.specification.OrderSpecifications;
 import com.gerasimov.capstone.mapper.OrderMapper;
 import com.gerasimov.capstone.mapper.UserMapper;
 import com.gerasimov.capstone.repository.OrderRepository;
@@ -16,16 +17,13 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -60,8 +58,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> findByCustomer(UserDto userDto) {
-        List<Order> orders = orderRepository.findByCustomer(userMapper.toEntity(userDto));
-        return orders.stream()
+        return orderRepository.findByCustomer(userMapper.toEntity(userDto)).stream()
                 .map(orderMapper::toDto)
                 .toList();
     }
@@ -94,36 +91,28 @@ public class OrderServiceImpl implements OrderService {
         log.info("Delete order with id " + orderDto.getId());
     }
 
+
     @Override
-    public Page<OrderDto> getOrdersForAuthenticatedUserPageable(Pageable pageable, LocalDate startDate, LocalDate endDate) {
+    public Page<OrderDto> getOrdersForAuthenticatedUserPageable(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        User customer = userMapper.toEntity(userService.findAuthenticatedUser());
+        return getOrderByFilter(customer, startDate, endDate, pageable);
+    }
 
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage * pageSize;
-        List<OrderDto> listToView;
+    @Override
+    public Page<OrderDto> getOrderByFilter(User customer, LocalDate startDate, LocalDate endDate, Pageable pageable){
+        OrderSpecifications orderSpecifications = new OrderSpecifications();
+        orderSpecifications.setCustomer(customer);
+        orderSpecifications.setStartDateTime(setStartDateTime(startDate));
+        orderSpecifications.setEndDateTime(setEndDateTime(endDate));
+        Page<Order> ordersPage = orderRepository.findAll(orderSpecifications, pageable);
 
-        LocalDateTime startDateTime = startDate.atStartOfDay();
-        LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
-
-
-        UserDto authenticatedUser = userService.findAuthenticatedUser();
-        List<OrderDto> ordersImmutable = findByCustomer(authenticatedUser)
+        List<OrderDto> orderDtoList = ordersPage
+                .getContent()
                 .stream()
-                .filter(order -> !order.getCreated().isBefore(startDateTime) && !order.getCreated().isAfter(endDateTime))
+                .map(orderMapper::toDto)
+                .sorted(new OrderComparator())
                 .toList();
-        List<OrderDto> orders = new ArrayList<>(ordersImmutable);
-
-
-        orders.sort(new OrderComparator());
-
-        if (orders.size() < startItem) {
-            listToView = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, orders.size());
-            listToView = orders.subList(startItem, toIndex);
-        }
-
-        return new PageImpl<OrderDto>(listToView, PageRequest.of(currentPage, pageSize), orders.size());
+        return new PageImpl<>(orderDtoList, pageable, ordersPage.getTotalElements());
     }
 
     @Override
@@ -169,8 +158,12 @@ public class OrderServiceImpl implements OrderService {
         orderDto.setActive(true);
     }
 
-    private void sortOrders(List<OrderDto> orders) {
-        Collections.sort(orders, new OrderComparator());
+    private LocalDateTime setStartDateTime(LocalDate startDate){
+        return startDate.atStartOfDay();
+    }
+
+    private LocalDateTime setEndDateTime(LocalDate endDate){
+        return endDate.atTime(23, 59, 59);
     }
 
 }

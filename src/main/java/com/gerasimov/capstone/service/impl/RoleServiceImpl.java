@@ -22,4 +22,10 @@ public class RoleServiceImpl implements RoleService {
     public Role findCommonRole(){
         return roleRepository.findById(1L).orElseThrow(()-> new RestaurantException("Can't find common role in database"));
     }
+
+    @Override
+    public Role findByName(String roleName){
+        return roleRepository.findByName(roleName).orElseThrow( () ->
+                new RestaurantException(String.format("Can't find role with name %s", roleName)));
+    }
 }

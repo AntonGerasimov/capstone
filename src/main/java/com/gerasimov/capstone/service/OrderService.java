@@ -4,6 +4,7 @@ import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.OrderItemDto;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Order;
+import com.gerasimov.capstone.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -27,7 +28,9 @@ public interface OrderService {
 
     void delete(Long orderId);
 
-    Page<OrderDto> getOrdersForAuthenticatedUserPageable(Pageable pageable, LocalDate startDate, LocalDate endDate);
+    Page<OrderDto> getOrdersForAuthenticatedUserPageable(LocalDate startDate, LocalDate endDate, Pageable pageable);
+
+    Page<OrderDto> getOrderByFilter(User customer, LocalDate startDate, LocalDate endDate, Pageable pageable);
 
     Map<Long, Double> getTotalPrices();
     double calcTotalPrice(OrderDto orderDto);
