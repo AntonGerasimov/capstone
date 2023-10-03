@@ -32,8 +32,6 @@ import java.util.*;
 @Slf4j
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
-    private static final String ROLE_ADMIN = "ROLE_admin";
-    private static final String ERROR_NO_LOGGED_USER = "Can't find authenticated user. Please, sign in";
     private UserRepository userRepository;
     private RoleService roleService;
     private UserMapper userMapper;
@@ -69,7 +67,7 @@ public class UserServiceImpl implements UserService {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             return findByUsername(userDetails.getUsername());
         } else {
-            throw new RestaurantException(ERROR_NO_LOGGED_USER);
+            throw new RestaurantException("Can't find authenticated user. Please, sign in");
         }
     }
 
@@ -203,7 +201,7 @@ public class UserServiceImpl implements UserService {
 
     private boolean isAuthenticatedUserAdmin() {
         UserDto authenticatedUser = findAuthenticatedUser();
-        boolean isAdmin = authenticatedUser.getRole().getName().equals(ROLE_ADMIN);
+        boolean isAdmin = authenticatedUser.getRole().getName().equals("ROLE_admin");
         log.info(String.format("isAuthenticatedUserAdmin: %s", isAdmin));
         return isAdmin;
     }

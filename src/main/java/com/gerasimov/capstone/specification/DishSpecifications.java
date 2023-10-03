@@ -1,7 +1,6 @@
 package com.gerasimov.capstone.specification;
 
 import com.gerasimov.capstone.entity.Dish;
-import com.gerasimov.capstone.entity.User;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,7 +10,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.time.LocalDateTime;
 
 @Component
 @NoArgsConstructor

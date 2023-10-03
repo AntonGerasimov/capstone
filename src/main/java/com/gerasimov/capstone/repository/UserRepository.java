@@ -1,6 +1,5 @@
 package com.gerasimov.capstone.repository;
 
-import com.gerasimov.capstone.entity.Order;
 import com.gerasimov.capstone.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
