@@ -50,7 +50,6 @@ public class AddressController {
     ) {
         model.addAttribute("address", new AddressDto());
 
-
         String referrer = request.getHeader("referer");
         model.addAttribute("referrer", referrer);
         return "users/new-address";

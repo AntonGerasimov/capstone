@@ -43,23 +43,6 @@
         </div>
     </nav>
 
-    <script>
-    function updateCartCount() {
-        $.get("/updateCartCount", function(data) {
-        if (data > 0) {
-            $("#cart-count").text('('+data+')').show();
-        } else {
-            $("#cart-count").hide();
-        }
-        });
-    }
-
-    // Call the function once to initialize the cart count
-    updateCartCount();
-
-    // Update the cart count periodically (e.g., every .05 seconds)
-    setInterval(updateCartCount, 50);
-    </script>
 
 </header>
 

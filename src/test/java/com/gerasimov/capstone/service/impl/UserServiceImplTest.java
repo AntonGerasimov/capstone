@@ -6,76 +6,81 @@ import com.gerasimov.capstone.entity.User;
 import com.gerasimov.capstone.mapper.UserMapper;
 import com.gerasimov.capstone.repository.UserRepository;
 import com.gerasimov.capstone.service.UserService;
-import lombok.extern.slf4j.Slf4j;
+import com.gerasimov.capstone.specification.UserSpecifications;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-@Slf4j
 class UserServiceImplTest {
 
+    @InjectMocks
+    private UserServiceImpl userService;
+
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
+
     @Mock
-    private UserService userService;
+    private RoleServiceImpl roleService;
 
     @Mock
     private UserMapper userMapper;
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
+    @Test
+    void testFindAllByRolesWhenUserExistsThenUserDtoIsReturned() {
+        List<User> users = new ArrayList<>();
+        users.add(new User());
+        Page<User> userPage = new PageImpl<>(users);
+
+        List<UserDto> userDtos = new ArrayList<>();
+        userDtos.add(new UserDto());
+        Page<UserDto> expectedUserDtoPage = new PageImpl<>(userDtos);
+
+        when(userRepository.findAll(any(UserSpecifications.class), any(Pageable.class))).thenReturn(userPage);
+        when(userMapper.toDto(any(User.class))).thenReturn(new UserDto());
+
+        Page<UserDto> actualUserDtoPage = userService.findAllByRoles(true, true, true, PageRequest.of(0, 1));
+
+        assertEquals(expectedUserDtoPage.getContent().size(), actualUserDtoPage.getContent().size());
     }
 
-
-//    methodName__whenStateUnderTest_thenExpectedBehavior
     @Test
-    void findById_whenUserExistsTest_thenUserDtoIsReturned(){
-        Long userId = 2L;
+    void testFindAllByRolesWhenNoUserExistsThenEmptyPageIsReturned() {
+        Page<User> userPage = Page.empty();
 
+        when(userRepository.findAll(any(UserSpecifications.class), any(Pageable.class))).thenReturn(userPage);
+
+        Page<UserDto> actualUserDtoPage = userService.findAllByRoles(true, true, true, PageRequest.of(0, 1));
+
+        assertEquals(0, actualUserDtoPage.getContent().size());
+    }
+
+    @Test
+    void testFindByIdWhenUserExistsTestThenUserDtoIsReturned() {
         User user = new User();
-        user.setId(2L);
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setEmail("john@gmail.com");
-        user.setUsername("john");
-        user.setPassword("$2a$12$WocppmSlhS5v.r8CN4SSUeJuCdwh6ZhQMOANEn.jh/knDCn4xy.Bi");
-        user.setRole(new Role(2L, "ROLE_manager"));
-        user.setActive(true);
-
         UserDto expectedUserDto = new UserDto();
-        expectedUserDto.setId(2L);
-        expectedUserDto.setFirstName("John");
-        expectedUserDto.setLastName("Doe");
-        expectedUserDto.setEmail("john@gmail.com");
-        expectedUserDto.setUsername("john");
-        expectedUserDto.setPassword("$2a$12$WocppmSlhS5v.r8CN4SSUeJuCdwh6ZhQMOANEn.jh/knDCn4xy.Bi");
-        expectedUserDto.setRole(new Role(2L, "ROLE_manager"));
-        expectedUserDto.setActive(true);
 
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userMapper.toDto(any())).thenReturn(expectedUserDto);
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(userMapper.toDto(userRepository.findById(userId).get())).thenReturn(expectedUserDto);
-
-        UserDto actualUserDto = userService.findById(userId);
-
-        log.info(userMapper.toDto(userRepository.findById(userId).get()).toString());
-
-//        assertEquals(userRepository.findById(2L), Optional.of(user));
+        UserDto actualUserDto = userService.findById(1L);
 
         assertEquals(expectedUserDto, actualUserDto);
-
     }
-
-
 }

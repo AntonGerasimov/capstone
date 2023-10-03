@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +18,7 @@ public interface DishService {
 
     Page<DishDto> findPaginatedCategoryItems(Pageable pageable, String category, Double minPrice, Double maxPrice);
 
-    Page<DishDto> findManageMenuPage(Pageable pageable, Boolean isAvailable, double minPrice, double MaxPrice);
+    Page<DishDto> findManageMenuPage(Pageable pageable, Boolean isAvailable, double minPrice, double maxPrice);
 
     Page<DishDto> findByFilter(String category, Boolean isAvailable, double minPrice, double maxPrice, Pageable pageable);
 
@@ -27,15 +26,13 @@ public interface DishService {
 
     Map<String, List<DishDto>> groupDishesByCategory(List<DishDto> dishDtos);
 
-    List<DishDto> findHotSale();
-
     DishDto findById(Long id);
-
-    List<DishDto> getCartItems(HttpSession httpSession);
 
     DishDto save(DishDto dishDto, MultipartFile imageFile);
 
     void update(DishDto dishDto, MultipartFile imageFile);
+
+    void makeAvailable(Long dishId);
 
     void delete(Long dishId);
 }

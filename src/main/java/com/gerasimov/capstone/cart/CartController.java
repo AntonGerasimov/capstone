@@ -140,7 +140,7 @@ public class CartController {
     @PutMapping("/cart/{id}/remove")
     @ResponseBody
     public String removeItemFromCart(@PathVariable Long id) {
-        log.info("Put request for removing item to cart");
+        log.info("Put request for removing item from cart");
         cartService.removeFromCart(id);
         return "Dish added to cart successfully";
     }

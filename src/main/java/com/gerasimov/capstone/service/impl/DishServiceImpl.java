@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -58,7 +57,7 @@ public class DishServiceImpl implements DishService {
             listToView = menuCategories.subList(startItem, toIndex);
         }
 
-        return new PageImpl<String>(listToView, PageRequest.of(currentPage, pageSize), menuCategories.size());
+        return new PageImpl<>(listToView, PageRequest.of(currentPage, pageSize), menuCategories.size());
     }
 
     @Override
@@ -101,7 +100,7 @@ public class DishServiceImpl implements DishService {
 
             if (firstMatchingItem.isPresent()) {
                 DishDto matchingItem = firstMatchingItem.get();
-                int matchingValue = matchingItem.getId().intValue(); // Assuming DishDto has a getValue() method
+                int matchingValue = matchingItem.getId().intValue();
                 categoryImageMap.put(category, matchingValue);
             }
         }
@@ -122,33 +121,9 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public List<DishDto> findHotSale() {
-        List<DishDto> hotSale = new ArrayList<>();
-        DishDto dishDto1 = findById(1L);
-        hotSale.add(dishDto1);
-
-        DishDto dishDto2 = findById(2L);
-        hotSale.add(dishDto2);
-
-        return hotSale;
-    }
-
-    @Override
     public DishDto findById(Long id) {
         Dish dish = dishRepository.findById(id).orElseThrow(() -> new RestaurantException(String.format("Can't find dish with id %d in database", id)));
         return dishMapper.toDto(dish);
-    }
-
-    @Override
-    public List<DishDto> getCartItems(HttpSession session) {
-        // Retrieve the cart data from the user's session
-        List<DishDto> cartItems = (List<DishDto>) session.getAttribute("cart");
-
-        if (cartItems == null) {
-            cartItems = new ArrayList<>();
-            session.setAttribute("cart", cartItems);
-        }
-        return cartItems;
     }
 
     @Override
@@ -189,6 +164,14 @@ public class DishServiceImpl implements DishService {
             }
         }
         dishRepository.save(dishMapper.toEntity(dishDto));
+    }
+
+    @Override
+    @Transactional
+    public void makeAvailable(Long dishId){
+        Dish dish = dishRepository.findById(dishId).orElseThrow(() -> new RestaurantException("Attempt to make available dish, which doesn't exist") );
+        dish.setAvailable(true);
+        dishRepository.save(dish);
     }
 
     @Override

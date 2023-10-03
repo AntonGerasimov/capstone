@@ -1,5 +1,6 @@
 package com.gerasimov.capstone.service.impl;
 
+import com.gerasimov.capstone.comparator.OrderComparator;
 import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.OrderItemDto;
 import com.gerasimov.capstone.domain.UserDto;
@@ -70,11 +71,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto save(OrderDto orderDto) {
+
+        validateAddress(orderDto);
         setAuthenticatedUser(orderDto);
         setCurrentTime(orderDto);
         setDefaultStatus(orderDto);
         setActive(orderDto);
-
         Order order = orderMapper.toEntity(orderDto);
         OrderDto savedOrderDto = orderMapper.toDto(orderRepository.save(order));
         log.info(String.format("Order was created: %s", savedOrderDto.toString()));
@@ -138,6 +140,14 @@ public class OrderServiceImpl implements OrderService {
         return orderItemDtos.stream()
                 .mapToDouble(orderItemDto -> orderItemDto.getDishPrice() * orderItemDto.getQuantity())
                 .sum();
+    }
+
+    private void validateAddress(OrderDto orderDto) {
+        if (orderDto.getDeliveryAddress() == null
+                || orderDto.getDeliveryAddress().getStreet() == null
+                || orderDto.getDeliveryAddress().getHouse() == null) {
+            throw new RestaurantException("Invalid or incomplete address in the order");
+        }
     }
 
 

@@ -6,6 +6,8 @@
     <title>Edit User</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 </head>
 <body>
@@ -21,7 +23,8 @@
             <a class="btn btn-light" href="javascript:history.back();"><span class="bi bi-chevron-left"></span></a>
             <br>
             <h1>Edit dish</h1>
-            <form th:action="@{/dishes/{dishId}/edit(dishId=${dish.id})}" th:method="PUT" enctype="multipart/form-data" th:object="${dish}">
+<!--            <form th:action="@{/dishes/{dishId}/edit(dishId=${dish.id})}" th:method="PUT" enctype="multipart/form-data" th:object="${dish}">-->
+            <form id="editDishForm" th:data-dish-id="${dish.id}" th:action="@{/dishes/{dishId}/edit(dishId=${dish.id})}" method="put" enctype="multipart/form-data" th:object="${dish}">
 
                 <label sec:authorize="hasRole('admin')" for="id">Id:</label>
                 <input sec:authorize="hasRole('admin')" class="form-control" type="text" id = "id" name = "id" th:field="*{id}" th:readonly="true" />
@@ -41,8 +44,6 @@
                 <input class="form-control" type="text" id="price" name="price" th:field="*{price}" maxlength="10" required/>
                 <div id="priceError" class="form-text" style="color: red;"></div>
 
-                <br>
-
                 <div class="form-outline mb-4">
                     <label class="form-label" for="image">Image</label>
                     <input type="file" id="image" class="form-control" name="image" accept="image/*" />
@@ -50,9 +51,11 @@
 
 
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button id="submitButton" class="btn btn-primary" th:data-dish-id="${dish.id}" th:data-referrer="${referrer}" type="submit">Save</button>
                 </div>
             </form>
+
+
 
         </div>
     </div>
@@ -79,6 +82,40 @@
     priceInput.addEventListener("input", function () {
         validatePrice(priceInput, priceError);
     });
+
+
+
+document.getElementById('editDishForm').addEventListener('submit', function (e) {
+
+    console.log('Attempt to edit dish');
+    e.preventDefault();
+
+    var submitButton = document.getElementById('submitButton');
+
+    var dishId = submitButton.getAttribute('data-dish-id');
+    var referrer = submitButton.getAttribute('data-referrer');
+    console.log('Dish id ' + dishId);
+    console.log('Referrer ' + referrer);
+
+
+    var formData = new FormData(this);
+
+    $.ajax({
+        type: 'put', // You can use POST here since you are updating data
+        url: '/dishes/' + dishId + '/edit',
+        data: formData,
+        processData: false,  // Don't process the data
+        contentType: false,  // Don't set content type (it will be set by FormData)
+        success: function () {
+            console.log('success edit');
+            window.location.replace(referrer);
+        },
+        error: function () {
+                console.error("AJAX Request Failed: " + textStatus + ", " + errorThrown);
+                alert('Error while editing the dish');
+        }
+    });
+});
 
 </script>
 

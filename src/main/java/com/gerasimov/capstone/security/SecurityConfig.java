@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/users").hasRole(ROLE_ADMIN)
                     .antMatchers("/dishes/**").hasAnyRole(ROLE_ADMIN, ROLE_MANAGER)
                     .antMatchers("/users/*/edit").authenticated()
-//                    .antMatchers("/cart/**").authenticated()
+                    .antMatchers("/cart").authenticated()
                     .antMatchers("/users/*/personal-account").authenticated()
                     .anyRequest().permitAll()
                     .and()

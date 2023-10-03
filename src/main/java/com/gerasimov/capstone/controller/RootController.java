@@ -2,6 +2,7 @@ package com.gerasimov.capstone.controller;
 
 import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.UserDto;
+import com.gerasimov.capstone.entity.User;
 import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.OrderService;
 import com.gerasimov.capstone.service.UserService;

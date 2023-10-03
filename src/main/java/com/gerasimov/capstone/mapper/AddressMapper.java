@@ -10,15 +10,11 @@ import org.mapstruct.factory.Mappers;
 public interface AddressMapper {
     AddressMapper INSTANCE = Mappers.getMapper(AddressMapper.class);
 
-//    @Mapping(target = "user", source = "address.user")
     @Mapping(target = "user", source = "user")
     AddressDto toDto(Address address);
 
-//    @Mapping(target = "user", source = "user")
     @Mapping(target = "user", source = "user") // Map from UserDto
     Address toEntity(AddressDto addressDto);
-
-
 
 }
 

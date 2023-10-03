@@ -20,10 +20,6 @@ public class CartService {
     private AddressService addressService;
     private OrderService orderService;
 
-    public List<DishDto> getHotSales() {
-        return dishService.findHotSale();
-    }
-
     public double calculateTotalPrice() {
         double totalPrice = 0.0;
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,9 +61,12 @@ public class DishController {
     }
 
     @GetMapping("/dishes/{id}/edit")
-    public String editDish(@PathVariable Long id, Model model){
+    public String editDish(@PathVariable Long id, Model model, HttpServletRequest request){
         DishDto dishDto = dishService.findById(id);
         model.addAttribute("dish", dishDto);
+
+        String referrer = request.getHeader("referer");
+        model.addAttribute("referrer", referrer);
         return "dishes/edit-dish";
     }
 
@@ -82,7 +86,7 @@ public class DishController {
     ) {
         try {
             DishDto newDish = dishService.save(dishDto, imageFile);
-            log.info(String.format("New dish was created: ", newDish.toString()));
+            log.info(String.format("New dish was created: %s", newDish.toString()));
             return "redirect:/";
         } catch (RestaurantException e) {
             redirectAttributes.addFlashAttribute("restaurantException", e.getMessage());
@@ -91,18 +95,25 @@ public class DishController {
     }
 
     @PutMapping("/dishes/{dishId}/edit")
-    public String updateDish(
+    @ResponseBody
+    public void updateDish(
             @PathVariable Long dishId,
             @ModelAttribute DishDto dishDto,
             @RequestParam("image") MultipartFile imageFile
     ) {
         dishService.update(dishDto, imageFile);
-        return "redirect:/";
     }
+
+    @PutMapping("/dishes/{dishId}/make-available")
+    @ResponseBody
+    public void makeDishAvailable(@PathVariable Long dishId){
+        dishService.makeAvailable(dishId);
+    }
+
     @DeleteMapping("/dishes/{dishId}")
-    public String deleteDish(@PathVariable Long dishId){
+    @ResponseBody
+    public void deleteDish(@PathVariable Long dishId){
         dishService.delete(dishId);
-        return "redirect:/";
     }
 
 

@@ -1,4 +1,4 @@
-package com.gerasimov.capstone.service.impl;
+package com.gerasimov.capstone.comparator;
 
 import com.gerasimov.capstone.domain.OrderDto;
 

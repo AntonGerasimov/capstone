@@ -15,6 +15,10 @@ public class RoleServiceImpl implements RoleService {
     private RoleRepository roleRepository;
     @Override
     public List<Role> findAll(){
+        List<Role> roles = roleRepository.findAll();
+        if (roles.isEmpty()){
+            throw new RestaurantException("No roles found in the database");
+        }
         return roleRepository.findAll();
     }
 
