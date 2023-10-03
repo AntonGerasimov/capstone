@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class OrderItemMapperTest {
 
-    private final OrderItemMapper orderItemMapper = Mappers.getMapper(OrderItemMapper.class);
+    private final OrderItemMapper orderItemMapper = OrderItemMapper.INSTANCE;
 
     @Test
     void testToDtoWhenOrderItemNotNullThenReturnOrderItemDto() {
@@ -33,5 +33,29 @@ class OrderItemMapperTest {
         OrderItemDto orderItemDto = orderItemMapper.toDto(null);
 
         assertNull(orderItemDto);
+    }
+
+    @Test
+    void testToEntityWhenOrderItemDtoNotNullThenReturnOrderItem() {
+
+        OrderItemDto orderItemDto = new OrderItemDto();
+        orderItemDto.setId(1L);
+        orderItemDto.setDishPrice(10.0);
+        orderItemDto.setQuantity(2);
+
+        OrderItem orderItem = orderItemMapper.toEntity(orderItemDto);
+
+        assertNotNull(orderItem);
+        assertEquals(orderItem.getId(), orderItemDto.getId());
+        assertEquals(orderItem.getDishPrice(), orderItemDto.getDishPrice());
+        assertEquals(orderItem.getQuantity(), orderItemDto.getQuantity());
+    }
+
+    @Test
+    void testToEntityWhenOrderItemDtoNullThenReturnNull() {
+
+        OrderItem orderItem = orderItemMapper.toEntity(null);
+
+        assertNull(orderItem);
     }
 }

@@ -2,17 +2,14 @@ package com.gerasimov.capstone.mapper;
 
 import com.gerasimov.capstone.domain.DishDto;
 import com.gerasimov.capstone.entity.Dish;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
 class DishMapperTest {
 
-    private DishMapper dishMapper = DishMapper.INSTANCE;
+    private final DishMapper dishMapper = DishMapper.INSTANCE;
 
     @Test
     void testToDtoWhenEntityProvidedThenDtoReturned() {
@@ -42,5 +39,35 @@ class DishMapperTest {
         DishDto dishDto = dishMapper.toDto(null);
 
         assertNull(dishDto);
+    }
+
+    @Test
+    void testToEntityWhenDtoProvidedThenEntityReturned() {
+
+        DishDto dishDto = new DishDto();
+        dishDto.setId(1L);
+        dishDto.setName("Test Dish");
+        dishDto.setDescription("Test Description");
+        dishDto.setCategory("Test Category");
+        dishDto.setPrice(10.0);
+        dishDto.setAvailable(true);
+
+        Dish dish = dishMapper.toEntity(dishDto);
+
+        assertNotNull(dish);
+        assertEquals(dish.getId(), dishDto.getId());
+        assertEquals(dish.getName(), dishDto.getName());
+        assertEquals(dish.getDescription(), dishDto.getDescription());
+        assertEquals(dish.getCategory(), dishDto.getCategory());
+        assertEquals(dish.getPrice(), dishDto.getPrice());
+        assertEquals(dish.isAvailable(), dishDto.isAvailable());
+    }
+
+    @Test
+    void testToEntityWhenNullDtoProvidedThenNullReturned() {
+
+        Dish dish = dishMapper.toEntity(null);
+
+        assertNull(dish);
     }
 }

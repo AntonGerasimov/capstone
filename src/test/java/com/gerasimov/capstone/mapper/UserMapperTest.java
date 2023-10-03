@@ -20,7 +20,7 @@ class UserMapperTest {
         user.setEmail("john.doe@example.com");
         user.setUsername("johndoe");
         user.setPassword("password");
-        user.setRole(new Role(3L, "ROLE_common"));
+        user.setRole(new Role(1L, "ROLE_common"));
         user.setActive(true);
 
         UserDto userDto = userMapper.toDto(user);
@@ -38,11 +38,39 @@ class UserMapperTest {
 
     @Test
     void testToDtoWhenGivenNullUserEntityThenReturnNull() {
-        // Act
         UserDto userDto = userMapper.toDto(null);
-
-        // Assert
         assertNull(userDto);
     }
 
+    @Test
+    void testToEntityWhenGivenValidUserDtoThenMapToUserEntity() {
+        UserDto userDto = new UserDto();
+
+        userDto.setId(1L);
+        userDto.setFirstName("John");
+        userDto.setLastName("Doe");
+        userDto.setEmail("john.doe@example.com");
+        userDto.setUsername("johndoe");
+        userDto.setPassword("password");
+        userDto.setRole(new Role(1L, "ROLE_common"));
+        userDto.setActive(true);
+
+        User user = userMapper.toEntity(userDto);
+
+        assertNotNull(user);
+        assertEquals(userDto.getId(), user.getId());
+        assertEquals(userDto.getFirstName(), user.getFirstName());
+        assertEquals(userDto.getLastName(), user.getLastName());
+        assertEquals(userDto.getEmail(), user.getEmail());
+        assertEquals(userDto.getUsername(), user.getUsername());
+        assertEquals(userDto.getPassword(), user.getPassword());
+        assertEquals(userDto.getRole(), user.getRole());
+        assertEquals(userDto.isActive(), user.isActive());
+    }
+
+    @Test
+    void testToEntityWhenGivenNullUserDtoThenReturnNull() {
+        User user = userMapper.toEntity(null);
+        assertNull(user);
+    }
 }
