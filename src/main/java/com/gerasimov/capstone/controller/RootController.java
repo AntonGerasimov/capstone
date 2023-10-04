@@ -2,7 +2,6 @@ package com.gerasimov.capstone.controller;
 
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.exception.RestaurantException;
-import com.gerasimov.capstone.service.OrderService;
 import com.gerasimov.capstone.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 public class RootController {
 
     private UserService userService;
-    private OrderService orderService;
 
     @GetMapping("/login")
     public String loginNotDefault(Model model) {
