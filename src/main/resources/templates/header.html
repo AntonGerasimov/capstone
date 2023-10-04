@@ -23,9 +23,6 @@
                 <div class="navbar-nav">
                     <a class="nav-link" sec:authorize="hasRole('admin')" th:href="@{/users}">Manage users</a>
                 </div>
-                <div class="navbar-nav">
-                    <a class="nav-link" sec:authorize="hasAnyRole('admin', 'manager')" th:href="@{/orders}">View all orders</a>
-                </div>
             </div>
 
             <div class="collapse navbar-collapse">
