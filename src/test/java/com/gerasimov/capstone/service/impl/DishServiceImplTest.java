@@ -1,5 +1,6 @@
 package com.gerasimov.capstone.service.impl;
 
+import com.gerasimov.capstone.service.impl.DishServiceImpl;
 import com.gerasimov.capstone.domain.DishDto;
 import com.gerasimov.capstone.entity.Dish;
 import com.gerasimov.capstone.exception.RestaurantException;

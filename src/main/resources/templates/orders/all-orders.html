@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Addresses</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+
+<div th:replace="~{header :: header}"></div>
+
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-lg-10 col-md-9 mt-5">
+            <h2>All orders</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Created</th>
+                    <th>Delivery address</th>
+                    <th>Status</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${ordersPage}" th:if="${order.isActive}">
+                    <td th:text="${order.id}"></td>
+                    <td th:text="${order.getFormattedCreated()}"></td>
+                    <td th:text="${order.deliveryAddress.toCartString()}"></td>
+                    <td th:text="${order.status}"></td>
+                    <td>
+                        <a class="btn" th:href="@{/orders/{orderId}/edit(orderId=${order.id})}"><span class="bi bi-pen"></span></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<nav th:if="${ordersPage.totalPages > 0}" aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:class="${ordersPage.first} ? disabled">
+            <a class="page-link" th:href="@{/orders(size=${ordersPage.size}, page=1, startDate=${startDate}, endDate=${endDate})}" aria-label="First">
+                <span aria-hidden="true">&laquo;&laquo;</span>
+            </a>
+        </li>
+        <li class="page-item" th:class="${ordersPage.hasPrevious} ? '' : 'disabled'">
+            <a class="page-link"
+               th:href="@{/orders(size=${ordersPage.size},
+                    page=${ordersPage.number}, startDate=${startDate}, endDate=${endDate}
+                    )}"
+               aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <th:block th:each="pageNumber : ${pageNumbers}">
+            <li class="page-item" th:class="${pageNumber==(ordersPage.number + 1)} ? 'active' : ''">
+                <a class="page-link" th:href="@{/orders(size=${ordersPage.size}, page=${pageNumber}, startDate=${startDate}, endDate=${endDate})}" th:text="${pageNumber}"></a>
+            </li>
+        </th:block>
+        <li class="page-item" th:class="${ordersPage.hasNext} ? '' : 'disabled'">
+            <a class="page-link" th:href="@{/orders(size=${ordersPage.size}, page=${ordersPage.number + 2}, startDate=${startDate}, endDate=${endDate})}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        <li class="page-item" th:class="${ordersPage.last} ? disabled">
+            <a class="page-link" th:href="@{/orders(size=${ordersPage.size}, page=${ordersPage.totalPages}, startDate=${startDate}, endDate=${endDate})}" aria-label="Last">
+                <span aria-hidden="true">&raquo;&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+</body>
+</html>

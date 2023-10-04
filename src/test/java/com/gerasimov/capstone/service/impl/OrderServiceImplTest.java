@@ -1,5 +1,6 @@
 package com.gerasimov.capstone.service.impl;
 
+import com.gerasimov.capstone.service.impl.OrderServiceImpl;
 import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Order;
@@ -41,7 +42,6 @@ class OrderServiceImplTest {
 
     @Mock
     private UserMapper userMapper;
-
     @InjectMocks
     private OrderServiceImpl orderService;
 
@@ -54,30 +54,6 @@ class OrderServiceImplTest {
         orderDto = new OrderDto();
     }
 
-    @Test
-    void testFindAllWhenOrdersExistThenReturnOrderDtoList() {
-        List<Order> orders = List.of(order);
-        List<OrderDto> orderDtos = List.of(orderDto);
-
-        when(orderRepository.findAll()).thenReturn(orders);
-        when(orderMapper.toDto(order)).thenReturn(orderDto);
-
-        List<OrderDto> result = orderService.findAll();
-
-        assertEquals(orderDtos, result);
-    }
-
-    @Test
-    void testFindAllWhenNoOrdersThenReturnEmptyList() {
-        List<Order> orders = Collections.emptyList();
-        List<OrderDto> orderDtos = Collections.emptyList();
-
-        when(orderRepository.findAll()).thenReturn(orders);
-
-        List<OrderDto> result = orderService.findAll();
-
-        assertEquals(orderDtos, result);
-    }
 
     @Test
     void testGetOrdersForAuthenticatedUserPageableWhenOrdersExistThenReturnPageWithOrderDtos() {

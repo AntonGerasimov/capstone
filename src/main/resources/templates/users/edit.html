@@ -20,7 +20,7 @@
             <h1>Edit user account</h1>
             <form th:action="@{/users/{id}/edit/(id=${user.id})}" th:method="PUT" th:object="${user}">
                 <label sec:authorize="hasRole('admin')" for="id">Id:</label>
-                <input sec:authorize="hasRole('admin')" class="form-control" type="text" id = "id" name = "id" th:field="*{id}" th:readonly="true" />
+                <input sec:authorize="hasRole('admin')" class="form-control" type="text" id = "id" name = "id" th:field="*{id}" disabled />
                 <input sec:authorize="!hasRole('admin')" class="form-control" type="hidden" id = "idHidden" name = "idHidden" th:field="*{id}" />
 
                 <br>

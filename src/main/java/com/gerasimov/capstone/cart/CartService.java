@@ -35,6 +35,11 @@ public class CartService {
     }
 
     public int getNumberOfItemsInCart(){
+
+        if (getCart()==null){
+            return 0;
+        }
+
         return getCart()
                 .stream()
                 .mapToInt(OrderItemDto::getQuantity)

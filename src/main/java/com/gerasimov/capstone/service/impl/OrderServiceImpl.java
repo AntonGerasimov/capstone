@@ -37,12 +37,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderItemService orderItemService;
 
     @Override
-    public List<OrderDto> findAll() {
-        List<Order> orderEntities = orderRepository.findAll();
-        return orderEntities.stream()
-                .map(orderMapper::toDto)
-                .sorted(Comparator.comparingLong(OrderDto::getId).reversed())
-                .toList();
+    public Page<OrderDto> findAll(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        return getOrderByFilter(null, startDate, endDate, pageable);
     }
 
     @Override
@@ -139,6 +135,26 @@ public class OrderServiceImpl implements OrderService {
         return orderItemDtos.stream()
                 .mapToDouble(orderItemDto -> orderItemDto.getDishPrice() * orderItemDto.getQuantity())
                 .sum();
+    }
+
+    @Override
+    public List<String> getStatusesList(){
+        List<String> statusesList = new ArrayList<>();
+
+        statusesList.add("Preparing");
+        statusesList.add("Cooking");
+        statusesList.add("Out for delivery");
+        statusesList.add("Delivered");
+
+        return statusesList;
+    }
+
+    @Override
+    @Transactional
+    public void changeOrderStatus(Long orderId, String status){
+        OrderDto orderDto = findById(orderId);
+        orderDto.setStatus(status);
+        orderRepository.save(orderMapper.toEntity(orderDto));
     }
 
     private void validateAddress(OrderDto orderDto) {

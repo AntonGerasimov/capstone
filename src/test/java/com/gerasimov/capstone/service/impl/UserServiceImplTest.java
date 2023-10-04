@@ -1,5 +1,6 @@
 package com.gerasimov.capstone.service.impl;
 
+import com.gerasimov.capstone.service.impl.UserServiceImpl;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Role;
 import com.gerasimov.capstone.entity.User;

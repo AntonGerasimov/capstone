@@ -99,7 +99,6 @@ public class UserController {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Order.desc("created")));
         Page<OrderDto> ordersPage = orderService.getOrdersForAuthenticatedUserPageable(startDate, endDate, pageable);
 
-
         model.addAttribute("user", userService.findAuthenticatedUser());
         model.addAttribute("ordersPage", ordersPage);
         model.addAttribute("totalPricesMap", orderService.getTotalPrices());
@@ -119,6 +118,7 @@ public class UserController {
         model.addAttribute("roles", roles);
         return "users/edit";
     }
+
 
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

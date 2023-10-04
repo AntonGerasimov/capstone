@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface OrderService {
-    List<OrderDto> findAll();
+    Page<OrderDto> findAll(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
     OrderDto findById(Long id);
 
@@ -33,4 +33,8 @@ public interface OrderService {
 
     Map<Long, Double> getTotalPrices();
     double calcTotalPrice(OrderDto orderDto);
+
+    List<String> getStatusesList();
+
+    void changeOrderStatus(Long orderId, String status);
 }

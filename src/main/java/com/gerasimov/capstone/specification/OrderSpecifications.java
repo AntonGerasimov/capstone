@@ -22,11 +22,9 @@ public class OrderSpecifications implements Specification<Order> {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
 
-
     @Override
     public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-
-        Predicate customerPredicate = cb.equal(root.get("customer"), customer);
+        Predicate customerPredicate = (customer != null) ? cb.equal(root.get("customer"), customer) : cb.conjunction();
         Predicate datePredicate = cb.between(root.get("created"), startDateTime, endDateTime);
         return cb.and(customerPredicate, datePredicate);
     }

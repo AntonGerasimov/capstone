@@ -1,5 +1,6 @@
 package com.gerasimov.capstone.service.impl;
 
+import com.gerasimov.capstone.service.impl.AddressServiceImpl;
 import com.gerasimov.capstone.domain.AddressDto;
 import com.gerasimov.capstone.domain.UserDto;
 import com.gerasimov.capstone.entity.Address;

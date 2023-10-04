@@ -1,5 +1,6 @@
 package com.gerasimov.capstone.service.impl;
 
+import com.gerasimov.capstone.service.impl.RoleServiceImpl;
 import com.gerasimov.capstone.entity.Role;
 import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.repository.RoleRepository;
