@@ -1,6 +1,5 @@
 package com.gerasimov.capstone.service.impl;
 
-import com.gerasimov.capstone.comparator.OrderComparator;
 import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.OrderItemDto;
 import com.gerasimov.capstone.domain.UserDto;
@@ -42,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orderEntities = orderRepository.findAll();
         return orderEntities.stream()
                 .map(orderMapper::toDto)
+                .sorted(Comparator.comparingLong(OrderDto::getId).reversed())
                 .toList();
     }
 
@@ -112,7 +112,6 @@ public class OrderServiceImpl implements OrderService {
                 .getContent()
                 .stream()
                 .map(orderMapper::toDto)
-                .sorted(new OrderComparator())
                 .toList();
         return new PageImpl<>(orderDtoList, pageable, ordersPage.getTotalElements());
     }

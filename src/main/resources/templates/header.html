@@ -23,6 +23,9 @@
                 <div class="navbar-nav">
                     <a class="nav-link" sec:authorize="hasRole('admin')" th:href="@{/users}">Manage users</a>
                 </div>
+                <div class="navbar-nav">
+                    <a class="nav-link" sec:authorize="hasAnyRole('admin', 'manager')" th:href="@{/orders}">View all orders</a>
+                </div>
             </div>
 
             <div class="collapse navbar-collapse">
@@ -35,7 +38,7 @@
                         <input hidden type="submit" value="Sign Out"/>
                     </form>
                     <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/users/{id}/personal-account(id=${#authentication.principal.userDto.id})}"><span sec:authentication="name"></span></a>
-                    <a class="nav-link" sec:authorize="!isAuthenticated()" th:href="@{/login-default}">Log in</a>
+                    <a class="nav-link" sec:authorize="!isAuthenticated()" th:href="@{/login}">Log in</a>
                     <a class="nav-link me-1" sec:authorize="!isAuthenticated()" th:href="@{/users/registration}">Register</a>
                 </div>
             </div>

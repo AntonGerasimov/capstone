@@ -30,14 +30,14 @@
                     <p th:text="${error}"></p>
                 </div>
                 <br>
-                <form th:action="@{/login-default}" th:object="${newUser}" method="post">
+                <form th:action="@{/login}" th:object="${newUser}" method="post">
                     <div class="form-group">
                         <label class="form-label" for="username">Username</label>
-                        <input type="text" id="username" th:field="*{username}" class="form-control" />
+                        <input type="text" id="username" th:field="*{username}" maxlength="30" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="password">Password</label>
-                        <input type="password" id="password" th:field="*{password}" class="form-control" />
+                        <input type="password" id="password" th:field="*{password}" maxlength="64" class="form-control" />
                     </div>
                     <br>
                     <div class="d-grid gap-2">

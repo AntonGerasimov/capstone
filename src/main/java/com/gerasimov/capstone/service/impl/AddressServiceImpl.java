@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -81,6 +82,7 @@ public class AddressServiceImpl implements AddressService {
         return addressesEntities.stream()
                 .filter(Address::isActive)
                 .map(addressMapper::toDto)
+                .sorted(Comparator.comparingLong(AddressDto::getId).reversed())
                 .toList();
     }
 

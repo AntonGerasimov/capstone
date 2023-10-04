@@ -13,8 +13,13 @@
 
 
 <div class="container mt-5 text-center">
-    <div style="margin-top: 100px;" sec:authorize="hasAnyRole('admin', 'manager')">
-        <a class="btn btn-primary" href="/dishes/add">Add dish</a>
+
+    <div style="margin-top: 80px;" class="mb-3">
+        <h2 class="text-primary" >Menu</h2>
+    </div>
+
+    <div style="margin-top: 50px;" sec:authorize="hasAnyRole('admin', 'manager')">
+        <a class="btn btn-primary" href="/dishes/add">Add new dish</a>
     </div>
 
     <th:block th:each="menuItem, iStat : ${menuPage.content}">
@@ -46,35 +51,32 @@
 <nav th:if="${menuPage.totalPages > 0}" aria-label="Page navigation">
     <ul class="pagination justify-content-center">
         <li class="page-item" th:class="${menuPage.first} ? disabled">
-            <a class="page-link" th:href="@{/menu(size=${menuPage.size}, page=1)}" aria-label="First">
+            <a class="page-link" th:href="@{/(size=${menuPage.size}, page=1)}" aria-label="First">
                 <span aria-hidden="true">&laquo;&laquo;</span>
             </a>
         </li>
         <li class="page-item" th:class="${menuPage.hasPrevious} ? '' : 'disabled'">
-            <a class="page-link" th:href="@{/menu(size=${menuPage.size}, page=${menuPage.number})}" aria-label="Previous">
+            <a class="page-link" th:href="@{/(size=${menuPage.size}, page=${menuPage.number})}" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
         <th:block th:each="pageNumber : ${pageNumbers}">
             <li class="page-item" th:class="${pageNumber==(menuPage.number + 1)} ? 'active' : ''">
-                <a class="page-link" th:href="@{/menu(size=${menuPage.size}, page=${pageNumber})}" th:text="${pageNumber}"></a>
+                <a class="page-link" th:href="@{/(size=${menuPage.size}, page=${pageNumber})}" th:text="${pageNumber}"></a>
             </li>
         </th:block>
         <li class="page-item" th:class="${menuPage.hasNext} ? '' : 'disabled'">
-            <a class="page-link" th:href="@{/menu(size=${menuPage.size}, page=${menuPage.number + 2})}" aria-label="Next">
+            <a class="page-link" th:href="@{/(size=${menuPage.size}, page=${menuPage.number + 2})}" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
         <li class="page-item" th:class="${menuPage.last} ? disabled">
-            <a class="page-link" th:href="@{/menu(size=${menuPage.size}, page=${menuPage.totalPages})}" aria-label="Last">
+            <a class="page-link" th:href="@{/(size=${menuPage.size}, page=${menuPage.totalPages})}" aria-label="Last">
                 <span aria-hidden="true">&raquo;&raquo;</span>
             </a>
         </li>
     </ul>
 </nav>
-
-
-
 
 </body>
 </html>

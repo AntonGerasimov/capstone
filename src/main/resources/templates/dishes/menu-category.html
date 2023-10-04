@@ -16,6 +16,10 @@
             <h2 th:text="${category}" class="text-primary" ></h2>
         </div>
 
+        <div style="margin-top: 100px;" sec:authorize="hasAnyRole('admin', 'manager')">
+            <a class="btn btn-primary" href="/dishes/add">Add new dish</a>
+        </div>
+
         <div class="row mb-5">
             <div class="col-md-4 offset-md-4">
                 <button id="togglePriceFilter" class="btn btn-primary mt-2" onclick="togglePriceFilter()">Filter by Price</button>

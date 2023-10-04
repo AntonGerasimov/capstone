@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -41,12 +42,13 @@ public class UserController {
             Model model,
             @RequestParam(name = "page", defaultValue = "1") int currentPage,
             @RequestParam(name = "size", defaultValue = "2") int pageSize,
-            @RequestParam(name = "isShowCommon", defaultValue = "false") boolean isShowCommon,
-            @RequestParam(name = "isShowManager", defaultValue = "false") boolean isShowManager,
-            @RequestParam(name = "isShowAdmin", defaultValue = "false") boolean isShowAdmin
+            @RequestParam(name = "isShowCommon", defaultValue = "false") Boolean isShowCommon,
+            @RequestParam(name = "isShowManager", defaultValue = "false") Boolean isShowManager,
+            @RequestParam(name = "isShowAdmin", defaultValue = "false") Boolean isShowAdmin
             ) {
 
-        Page<UserDto> usersPage = userService.findAllByRoles(isShowCommon, isShowManager, isShowAdmin, PageRequest.of(currentPage - 1, pageSize));
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("username"));
+        Page<UserDto> usersPage = userService.findAllByRoles(isShowCommon, isShowManager, isShowAdmin, pageable);
 
         model.addAttribute("usersPage", usersPage);
         model.addAttribute("isShowCommon", isShowCommon);
@@ -94,7 +96,7 @@ public class UserController {
 
         startDate = setDefaultStartDateIfNull(startDate);
         endDate = setDefaultEndDateIfNull(endDate);
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Order.desc("created")));
         Page<OrderDto> ordersPage = orderService.getOrdersForAuthenticatedUserPageable(startDate, endDate, pageable);
 
 

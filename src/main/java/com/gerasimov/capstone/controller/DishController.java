@@ -1,7 +1,6 @@
 package com.gerasimov.capstone.controller;
 
 import com.gerasimov.capstone.domain.DishDto;
-import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.DishService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,9 +56,18 @@ public class DishController {
     public String viewDish(@PathVariable Long id, Model model) {
         DishDto dishDto = dishService.findById(id);
         model.addAttribute("dish", dishDto);
-        return "dish";
+        return "dishes/dish";
     }
 
+    @GetMapping("/dishes/add")
+    public String viewNewDishForm(Model model, HttpServletRequest request) {
+        log.info("Get mapping /dishes/add");
+        model.addAttribute("dish", new DishDto());
+
+        String referrer = request.getHeader("referer");
+        model.addAttribute("referrer", referrer);
+        return "dishes/add";
+    }
     @GetMapping("/dishes/{id}/edit")
     public String editDish(@PathVariable Long id, Model model, HttpServletRequest request){
         DishDto dishDto = dishService.findById(id);
@@ -70,28 +78,18 @@ public class DishController {
         return "dishes/edit-dish";
     }
 
-    @GetMapping("/dishes/add")
-    public String viewNewDishForm(Model model) {
-        log.info("Get mapping /dishes/add");
-        model.addAttribute("dish", new DishDto());
-        return "dishes/add";
-    }
+
 
     @PostMapping("/dishes/add")
-    public String saveDish(
+    @ResponseBody
+    public void addNewDish(
             @ModelAttribute("dish") DishDto dishDto,
             @RequestParam("image") MultipartFile imageFile,
             Model model,
             RedirectAttributes redirectAttributes
     ) {
-        try {
-            DishDto newDish = dishService.save(dishDto, imageFile);
-            log.info(String.format("New dish was created: %s", newDish.toString()));
-            return "redirect:/";
-        } catch (RestaurantException e) {
-            redirectAttributes.addFlashAttribute("restaurantException", e.getMessage());
-            return "redirect:/dishes/add";
-        }
+        DishDto newDish = dishService.save(dishDto, imageFile);
+        log.info(String.format("New dish was created: %s", newDish.toString()));
     }
 
     @PutMapping("/dishes/{dishId}/edit")

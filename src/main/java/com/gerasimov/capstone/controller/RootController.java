@@ -1,8 +1,6 @@
 package com.gerasimov.capstone.controller;
 
-import com.gerasimov.capstone.domain.OrderDto;
 import com.gerasimov.capstone.domain.UserDto;
-import com.gerasimov.capstone.entity.User;
 import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.OrderService;
 import com.gerasimov.capstone.service.UserService;
@@ -12,11 +10,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @Controller
 @Slf4j
@@ -32,19 +28,13 @@ public class RootController {
         return "login";
     }
 
-    @GetMapping("/login-default")
-    public String login(Model model) {
-        model.addAttribute("newUser", new UserDto());
-        return "login";
-    }
-
     @GetMapping("/logout")
     public String logout() {
         log.info("Logout");
         return "redirect:/";
     }
 
-    @PostMapping("/login-default")
+    @PostMapping("/login")
     public String viewAfterLogin(
             @ModelAttribute UserDto newUser,
             RedirectAttributes redirectAttributes,
@@ -63,13 +53,6 @@ public class RootController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/login";
         }
-    }
-
-    @GetMapping("/orders")
-    public ModelAndView getAllOrders(Model model){
-        List<OrderDto> orders = orderService.findAll();
-        model.addAttribute("orders", orders);
-        return new ModelAndView("orders");
     }
 
 }

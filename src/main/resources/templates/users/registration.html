@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Create User</title>
+    <title>Create new user</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.1/css/bootstrap.min.css}"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
@@ -51,12 +51,12 @@
 
                 <div class="form-outline mb-4">
                     <label class="form-label" for="password">Password</label>
-                    <input type="password" id="password" class="form-control" th:field="*{password}" maxlength="30"required>
+                    <input type="password" id="password" class="form-control" th:field="*{password}" maxlength="64"required>
                 </div>
 
                 <div class="form-outline mb-4">
                     <label class="form-label" for="repeatPassword">Repeat password</label>
-                    <input type="password" id="repeatPassword" class="form-control" name="repeatPassword" maxlength="30"required>
+                    <input type="password" id="repeatPassword" class="form-control" name="repeatPassword" maxlength="64"required>
                     <div id="passwordError" class="form-text" style="color: red;"></div>
                 </div>
 

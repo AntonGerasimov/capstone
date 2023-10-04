@@ -42,12 +42,11 @@
             <td>
                 <button class="btn btn-outline-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="removeFromCart(this)">-</button>
                 <span  th:id="@{quantityId-{dishId}(dishId=${item.dish.id})}" class="ms-1 me-1" th:text="${item.quantity}"></span>
-                <!--                th:id="@{quantity-${item.dish.id}}"-->
                 <button class="btn btn-outline-primary" type="button" th:data-dish-id="${item.dish.id}" onclick="addToCart(this)">+</button>
             </td>
 
-            <td th:text="'$' + ${item.dishPrice}"></td>
-            <td th:text="'$' + ${#numbers.formatDecimal(item.quantity * item.dishPrice,1,2)}"></td>
+            <td th:id="@{price-{dishId}(dishId=${item.dish.id})}" th:text="'$' + ${item.dishPrice}"></td>
+            <td th:id="@{totalPrice-{dishId}(dishId=${item.dish.id})}" th:text="'$' + ${#numbers.formatDecimal(item.quantity * item.dishPrice,1,2)}"></td>
 
             <td>
                 <button class="btn" type="button" th:data-dish-id="${item.dish.id}" onclick="removeItem(this)"><span class="bi bi-trash"></span></button>
@@ -78,6 +77,7 @@
             type: 'post',
             success: function() {
                 increaseQuantity(id);
+                updateTotalPriceRow(id);
                 updateTotalPrice();
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -95,6 +95,7 @@
             type: 'put',
             success: function() {
                 decreaseQuantity(id);
+                updateTotalPriceRow(id);
                 updateTotalPrice();
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -169,21 +170,39 @@ function updateTotalPrice() {
     var totalPriceElement = document.getElementById('totalPriceOfCart');
     var totalPrice = calculateTotalPrice();
     var divTotalPriceAndCheckout = document.getElementById('totalPriceAndCheckout');
+
     if (totalPrice == 0){
         divTotalPriceAndCheckout.style.display = 'none';
     } else{
         divTotalPriceAndCheckout.style.display = 'inline-block';
     }
-    totalPriceElement.textContent = 'Total Price: $' + totalPrice.toFixed(2); // Format the total to two decimal places
+
+    if (totalPriceElement && totalPrice && divTotalPriceAndCheckout){
+        totalPriceElement.textContent = 'Total Price: $' + totalPrice.toFixed(2);
+    }
 }
 
-// Calc totalPrice before to show cart page
+    function updateTotalPriceRow(id) {
+
+        var quantityElement = document.getElementById('quantityId-' + id);
+        var priceElement = document.getElementById('price-' + id);
+        var totalPriceElement = document.getElementById('totalPrice-' + id);
+
+        if (quantityElement && priceElement && totalPriceElement) {
+            var quantity = parseInt(quantityElement.textContent);
+            var price = parseFloat(priceElement.textContent.replace('$', ''));
+
+            var totalPrice = quantity * price;
+
+            totalPriceElement.textContent = '$' + totalPrice.toFixed(2);
+        }
+
+    }
+
+
 window.onload = function() {
     updateTotalPrice();
 };
-
-
-
 
 </script>
 

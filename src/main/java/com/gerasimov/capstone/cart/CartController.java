@@ -2,16 +2,13 @@ package com.gerasimov.capstone.cart;
 
 import com.gerasimov.capstone.domain.DishDto;
 import com.gerasimov.capstone.domain.OrderDto;
-import com.gerasimov.capstone.exception.RestaurantException;
 import com.gerasimov.capstone.service.DishService;
 import com.gerasimov.capstone.service.OrderService;
-import com.gerasimov.capstone.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -97,7 +93,7 @@ public class CartController {
         model.addAttribute("cartItems", cartService.getCart());
         model.addAttribute("totalPrice", cartService.calculateTotalPrice());
 
-        return "cart/cart"; // Return the Thymeleaf template name
+        return "cart/cart";
     }
 
     @GetMapping("/updateCartCount")
@@ -139,27 +135,23 @@ public class CartController {
 
     @PutMapping("/cart/{id}/remove")
     @ResponseBody
-    public String removeItemFromCart(@PathVariable Long id) {
+    public void removeItemFromCart(@PathVariable Long id) {
         log.info("Put request for removing item from cart");
         cartService.removeFromCart(id);
-        return "Dish added to cart successfully";
     }
 
     @PostMapping("/cart/make-order")
     @ResponseBody
-    public String makeOrder(@RequestParam("selectedAddressId") Long selectedAddressId) {
-        log.info("Begin making order");
+    public void makeOrder(@RequestParam("selectedAddressId") Long selectedAddressId) {
         cartService.makeOrder(selectedAddressId);
         cartService.clearCart();
-        return "Order was created successfully";
     }
 
     @DeleteMapping("/cart/{id}/deleteItem")
     @ResponseBody
-    public String deleteItem(@PathVariable Long id) {
-        log.info("Put request for resetting quantity");
+    public void deleteItem(@PathVariable Long id) {
+        log.info("Delete request for deleting item from cart");
         cartService.removeFromCart(id);
-        return "Item was deleted successfully";
     }
 
 
